@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import DSKit
 
 class ViewController: UIViewController {
 
@@ -15,9 +16,11 @@ class ViewController: UIViewController {
         
         view.backgroundColor = .white
         
-        let label = UILabel()
+        let label = CapLabel()
         
-        label.text = "Hello, World!"
+        label.text = "안녕하세요 반갑습니다~!"
+        label.typographyStyle = .largeRegular
+        label.attrTextColor = .blue
         
         view.addSubview(label)
         
