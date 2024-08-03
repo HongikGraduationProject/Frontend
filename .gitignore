@@ -4,6 +4,9 @@
 .AppleDouble
 .LSOverride
 
+# Secrets
+Secrets/*
+
 # Icon must end with two
 Icon
 
