@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import MainAppFeatures
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -16,7 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
         window = UIWindow(windowScene: windowScene)
         
-        let vc = ViewController()
+        let vc = SelectMainCategoryVC()
         
         window?.rootViewController = vc
         window?.makeKeyAndVisible()
