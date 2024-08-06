@@ -66,6 +66,8 @@ let project = Project(
             sources: ["Modules/Presentation/DSKit/Source/**"],
             resources: ["Modules/Presentation/DSKit/Resource/**"],
             dependencies: [
+                .target(name: "Entity"),
+                
                 // ThirdParty
                 .external(name: "RxSwift"),
                 .external(name: "RxCocoa"),

@@ -57,8 +57,6 @@ public class CapLabel: UILabel {
         
         let attributes = currentTypographyStyle.typography.attributes()
         let colorAttribute: [NSAttributedString.Key: Any] = [.foregroundColor: currentAttrTextColor]
-        let finalAttributes = colorAttribute.merging(attributes) { first, _ in first }
-        
         let attrText = NSMutableAttributedString()
         
         // 행간높이 설정이 두번째 라인부터 적용되도록 설정하는 코드입니다.
