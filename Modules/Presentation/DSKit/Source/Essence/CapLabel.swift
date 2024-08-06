@@ -59,8 +59,26 @@ public class CapLabel: UILabel {
         let colorAttribute: [NSAttributedString.Key: Any] = [.foregroundColor: currentAttrTextColor]
         let finalAttributes = colorAttribute.merging(attributes) { first, _ in first }
         
-        if let text = self.text {
-            self.attributedText = NSAttributedString(string: text, attributes: finalAttributes)
+        let attrText = NSMutableAttributedString()
+        
+        // 행간높이 설정이 두번째 라인부터 적용되도록 설정하는 코드입니다.
+        if let text, !text.isEmpty {
+            let splittedText = text.split(separator: "\n")
+            
+            for (index, line) in splittedText.enumerated() {
+                
+                if index == 0, attributes[.paragraphStyle] != nil {
+                    let attributesForLine1 = currentTypographyStyle.typography.attributes()
+                    (attributesForLine1[.paragraphStyle] as! NSMutableParagraphStyle).lineHeightMultiple = 1.0
+                    attrText.append(NSAttributedString(string: String(line), attributes: attributesForLine1))
+                } else {
+                    attrText.append(NSAttributedString(string: String("\n\(line)"), attributes: attributes))
+                }
+            }
+            
+            attrText.addAttributes(colorAttribute, range: .init(location: 0, length: attrText.length))
+            
+            self.attributedText = attrText
         }
     }
 }
