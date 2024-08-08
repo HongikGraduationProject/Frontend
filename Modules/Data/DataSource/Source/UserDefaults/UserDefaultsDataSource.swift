@@ -12,6 +12,12 @@ public enum CapUserDefaultKey: String {
     
     // 메인 카테고리
     case selectedMainCategories = "selectedMainCategories"
+    
+    // 토큰
+    case accessToken = "accessToken"
+    
+    // imei
+    case imei = "imei"
 }
 
 /// UserDefaults를 사용하여 로컬에 데이터를 저장힙니다.
