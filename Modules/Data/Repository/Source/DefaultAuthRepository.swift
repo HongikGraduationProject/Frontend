@@ -13,6 +13,8 @@ import Util
 
 public class DefaultAuthRepository: AuthRepository {
     
+    let authService: AuthService = .init()
+    
     public func checkAuthTokenExists() -> Bool {
         if let accessToken: String = UserDefaultsDataSource.shared.fetchData(key: .accessToken) {
             printIfDebug("로컬에 저장된 토큰: \(accessToken)")
@@ -22,16 +24,19 @@ public class DefaultAuthRepository: AuthRepository {
         return false
     }
     
-    public func createAccessToken() -> RxSwift.Single<Void> {
-        .just(())
+    public func createAccessToken(imei: String) -> RxSwift.Single<Void> {
+        authService
+            .request(api: .issueAccessToken(imei: imei), with: .plain)
+            .map { _ in return () }
     }
     
-    private func saveAccessToken() {
-        
+    public func getImei() -> String? {
+        UserDefaultsDataSource.shared.fetchData(key: .imei)
     }
     
-    private func createImeiAndSave() {
-        
-        
+    public func createImei() -> String {
+        let uuidString = UUID().uuidString
+        UserDefaultsDataSource.shared.saveData(key: .imei, value: uuidString)
+        return uuidString
     }
 }
