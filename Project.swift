@@ -120,6 +120,7 @@ let project = Project(
                 
                 // ThirdParty
                 .external(name: "Moya"),
+                .external(name: "RxMoya"),
             ]
         ),
         .target(
