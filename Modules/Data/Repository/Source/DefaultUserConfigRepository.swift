@@ -1,6 +1,6 @@
 //
 //  DefaultUserConfigRepository.swift
-//  App
+//  Repository
 //
 //  Created by choijunios on 8/8/24.
 //
