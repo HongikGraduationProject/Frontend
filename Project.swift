@@ -110,7 +110,10 @@ let project = Project(
             product: .framework,
             bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).dataSource",
             deploymentTargets: DeploymentSettings.deploymentVersion,
-            sources: ["Modules/Data/DataSource/Source/**"],
+            sources: [
+                "Modules/Data/DataSource/Source/**",
+                .glob(.relativeToRoot("Secrets/DataSource/**"))
+            ],
             dependencies: [
                 .target(name: "Entity"),
                 .target(name: "Util"),
