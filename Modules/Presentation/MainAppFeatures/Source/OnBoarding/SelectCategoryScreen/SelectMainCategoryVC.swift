@@ -11,39 +11,12 @@ import RxSwift
 import Entity
 import DSKit
 
-public class SelectMainCategoryVM: CategorySelectionCellViewModelable {
-    
-    public var previousSelectedStates: [Entity.MainCategory : RxCocoa.Driver<Bool>] = [:]
-    public var categorySelectionState: RxRelay.PublishRelay<DSKit.CategoryState> = .init()
-    
-    let disposeBag: DisposeBag = .init()
-    
-    init() {
-        
-        // Input
-        categorySelectionState
-            .subscribe(onNext: { result in
-                
-                print("\(result.category.korWordText) : \(result.isActive ? "활성화" : "비활성화")")
-            })
-            .disposed(by: disposeBag)
-        
-        // Output
-        MainCategory.allCasesExceptAll
-            .forEach { category in
-                let relay = BehaviorRelay<Bool>(value: false)
-                previousSelectedStates[category] = relay.asDriver()
-            }
-    }
-}
-
 public class SelectMainCategoryVC: UIViewController {
     
     typealias Cell = CategorySelectionCell
     
-    let viewModel: SelectMainCategoryVM = .init()
-    
     // Init
+    let viewModel: SelectMainCategoryVM
     
     // View
     let titleLabel: CapLabel = {
@@ -77,7 +50,9 @@ public class SelectMainCategoryVC: UIViewController {
     // Observable
     private let disposeBag = DisposeBag()
     
-    public init() {
+    public init(viewModel: SelectMainCategoryVM) {
+        self.viewModel = viewModel
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -90,7 +65,7 @@ public class SelectMainCategoryVC: UIViewController {
     }
     
     private func setAppearance() {
-        view.backgroundColor = .gray
+        view.backgroundColor = DSKitAsset.Colors.gray1.color
     }
     
     private func setLayout() {
@@ -167,3 +142,7 @@ extension SelectMainCategoryVC: UICollectionViewDataSource, UICollectionViewDele
     
 }
 
+@available(iOS 17.0, *)
+#Preview("Preview", traits: .defaultLayout) {
+    SelectMainCategoryVC(viewModel: SelectMainCategoryVM())
+}
