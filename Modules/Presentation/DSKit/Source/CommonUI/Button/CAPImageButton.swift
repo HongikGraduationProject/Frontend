@@ -66,7 +66,7 @@ public class CAPImageButton: TappableUIView {
     public required init?(coder: NSCoder) { fatalError() }
     
     private func setAppearance() {
-        self.backgroundColor = DSKitAsset.Colors.primary90.color
+        self.backgroundColor = .white
         self.layer.cornerRadius = 12
         clipsToBounds = true
     }
@@ -103,7 +103,7 @@ public class CAPImageButton: TappableUIView {
             .subscribe(onNext: { [weak self] _ in
                 guard let self else { return }
                 setAppearanceToAccent()
-                UIView.animate(withDuration: 0.5) { [weak self] in
+                UIView.animate(withDuration: 0.35) { [weak self] in
                     self?.setAppearanceToIdle()
                 }
             })
@@ -111,13 +111,11 @@ public class CAPImageButton: TappableUIView {
     }
     
     private func setAppearanceToIdle() {
-        label.attrTextColor = idleTextColor
-        self.backgroundColor = idleBackgroundColor
+        backgroundView.alpha = 1.0
     }
     
     private func setAppearanceToAccent() {
-        label.attrTextColor = accentTextColor
-        self.backgroundColor = accentBackgroundColor
+        backgroundView.alpha = 0.5
     }
 }
 
