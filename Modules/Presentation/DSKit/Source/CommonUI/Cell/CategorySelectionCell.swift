@@ -173,9 +173,9 @@ public class CategorySelectionView: TappableUIView {
             UIView.animate(withDuration: 0.25) { [weak self] in
                 guard let self else { return }
                 
-                backgroundColor = .cyan
+                backgroundColor = DSKitAsset.Colors.sub19.color
                 layer.borderWidth = 1.5
-                layer.borderColor = UIColor.blue.cgColor
+                layer.borderColor = DSKitAsset.Colors.primary80.color.cgColor
             }
             
         } else {
@@ -183,7 +183,7 @@ public class CategorySelectionView: TappableUIView {
             UIView.animate(withDuration: 0.25) { [weak self] in
                 guard let self else { return }
                 
-                backgroundColor = .white
+                backgroundColor = DSKitAsset.Colors.gray0.color
                 layer.borderWidth = 0.0
             }
         }

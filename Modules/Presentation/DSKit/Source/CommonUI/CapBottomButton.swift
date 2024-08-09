@@ -18,10 +18,16 @@ public class CapBottomButton: TappableUIView {
     let label: CapLabel = {
         let label = CapLabel()
         label.numberOfLines = 2
-        label.typographyStyle = .baseBold
+        label.typographyStyle = .baseSemiBold
         label.attrTextColor = .white
         return label
     }()
+    
+    public var idleBackgroundColor: UIColor = DSKitAsset.Colors.primary90.color
+    public var idleTextColor: UIColor = .white
+    
+    public var accentBackgroundColor: UIColor = DSKitAsset.Colors.gray10.color
+    public var accentTextColor: UIColor = DSKitAsset.Colors.gray40.color
     
     public override var intrinsicContentSize: CGSize {
         .init(
@@ -45,7 +51,7 @@ public class CapBottomButton: TappableUIView {
     public required init?(coder: NSCoder) { fatalError() }
     
     private func setAppearance() {
-        self.backgroundColor = .blue
+        self.backgroundColor = DSKitAsset.Colors.primary90.color
         self.layer.cornerRadius = 12
     }
     
@@ -67,12 +73,22 @@ public class CapBottomButton: TappableUIView {
         self.rx.tap
             .subscribe(onNext: { [weak self] _ in
                 guard let self else { return }
-                alpha = 0.5
-                UIView.animate(withDuration: 0.35) { [weak self] in
-                    self?.alpha = 1.0
+                setAppearanceToAccent()
+                UIView.animate(withDuration: 0.5) { [weak self] in
+                    self?.setAppearanceToIdle()
                 }
             })
             .disposed(by: disposeBag)
+    }
+    
+    private func setAppearanceToIdle() {
+        label.attrTextColor = idleTextColor
+        self.backgroundColor = idleBackgroundColor
+    }
+    
+    private func setAppearanceToAccent() {
+        label.attrTextColor = accentTextColor
+        self.backgroundColor = accentBackgroundColor
     }
 }
 

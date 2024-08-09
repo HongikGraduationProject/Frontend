@@ -16,18 +16,28 @@ public class ClickToStartVC: UIViewController {
     // Init
     
     // View
-    let titleLabel: CapLabel = {
-        let label = CapLabel()
-        label.typographyStyle = .extraLargeBold
-        label.attrTextColor = .black
-        label.textAlignment = .center
-        label.text = "반갑습니다!"
+    let titleLabel: UILabel = {
+        let label = UILabel()
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.25
+        paragraphStyle.paragraphSpacing = 20
+        paragraphStyle.alignment = .center
+
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: DSKitFontFamily.GmarketSansTTF.bold.font(size: 24),
+            .kern: -0.025 * 24,
+            .paragraphStyle: paragraphStyle
+        ]
+
+        label.attributedText = NSAttributedString(string: "반갑습니다!", attributes: attributes)
+        
         return label
     }()
     let subTitleLabel: CapLabel = {
         let label = CapLabel()
         label.typographyStyle = .baseRegular
-        label.attrTextColor = .black
+        label.attrTextColor = DSKitAsset.Colors.gray50.color
         label.textAlignment = .center
         label.text = "Shortcap과 함께, 더 똑똑한 숏폼의 세계로!"
         return label
