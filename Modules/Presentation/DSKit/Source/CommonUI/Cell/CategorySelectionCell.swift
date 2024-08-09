@@ -202,25 +202,25 @@ extension MainCategory {
     var image: UIImage {
         switch self {
         case .technology:
-            DSKitAsset.categoryGear.image
+            DSKitAsset.Images.categoryGear.image
         case .beauty:
-            DSKitAsset.categoryLipstick.image
+            DSKitAsset.Images.categoryLipstick.image
         case .cook:
-            DSKitAsset.categoryFork.image
+            DSKitAsset.Images.categoryFork.image
         case .living:
-            DSKitAsset.categoryHouse.image
+            DSKitAsset.Images.categoryHouse.image
         case .health:
-            DSKitAsset.categoryHealth.image
+            DSKitAsset.Images.categoryHealth.image
         case .travel:
-            DSKitAsset.categoryLuggage.image
+            DSKitAsset.Images.categoryLuggage.image
         case .art:
-            DSKitAsset.categoryBrush.image
+            DSKitAsset.Images.categoryBrush.image
         case .news:
-            DSKitAsset.categoryEarth.image
+            DSKitAsset.Images.categoryEarth.image
         case .entertainment:
-            DSKitAsset.categoryEntertain.image
+            DSKitAsset.Images.categoryEntertain.image
         case .other:
-            DSKitAsset.categoryEtc.image
+            DSKitAsset.Images.categoryEtc.image
         case .all:
             fatalError("잘못된 접근입니다.")
         }
