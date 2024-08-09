@@ -55,7 +55,7 @@ public class ClickToStartVC: UIViewController {
     
     private func setLayout() {
         let titleLabelStack = VStack([titleLabel, subTitleLabel], spacing: 12, alignment: .center)
-        let imageView = DSKitAsset.onBoardingMain.image.toView()
+        let imageView = DSKitAsset.Images.onBoardingMain.image.toView()
         let imageAndTitleStack = VStack([imageView, titleLabelStack], spacing: 65, alignment: .center)
         
         [
