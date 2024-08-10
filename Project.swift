@@ -22,7 +22,10 @@ let project = Project(
             sources: ["Modules/App/Source/**"],
             resources: ["Modules/App/Resource/**"],
             dependencies: [
-                .target(name: "MainAppFeatures")
+                .target(name: "MainAppFeatures"),
+                
+                // ThirdParty : Service locator
+                .external(name: "Swinject"),
             ]
         ),
         
