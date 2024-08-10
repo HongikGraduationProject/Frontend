@@ -183,6 +183,42 @@ public extension BaseNetworkService {
         }
         return nil
     }
+    
+    func requestDecodable<T: Decodable>(api: TagetAPI, with: RequestType) async throws -> T {
+        let url = api.baseURL.appending(path: api.path)
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = api.method.rawValue
+        
+        api.headers?.forEach({ (key: String, value: String) in
+            urlRequest.setValue(value, forHTTPHeaderField: key)
+        })
+        
+        if with == .withToken, let accessToken: String = UserDefaultsDataSource.shared.fetchData(key: .accessToken) {
+            let bearerToken = "Bearer \(accessToken)"
+            urlRequest.setValue(bearerToken, forHTTPHeaderField: "Authorization")
+        }
+        
+        do {
+            let (data, respose) = try await URLSession.shared.data(for: urlRequest)
+            let decoded = try JSONDecoder().decode(T.self, from: data)
+            return decoded
+        } catch {
+            
+            if let moyaError = error as? MoyaError, let httpError = responseToHTTPError(error: moyaError) {
+                throw httpError
+            }
+            
+            if let decodingError = error as? DecodingError {
+                #if DEBUG
+                print("\(#function) 디코딩 에러")
+                #endif
+                
+                throw decodingError
+            }
+            
+            throw error
+        }
+    }
 }
 
 // MARK: HTTPResponseException+Extension
