@@ -28,21 +28,44 @@ public class HuntingShortFormVM: HuntingShortFormViewModelable {
     }
     
     private let youtubeDeepLink: String = "youtube://www.youtube.com/shorts"
+    private let youtubeWebLink: String = "https://www.youtube.com/shorts"
+    
     private let instagramDeepLink: String = "instagram://"
+    private let instagramWebLink: String = "https://www.instagram.com/reels"
     
     public func openYoutubeApp() {
-        openDeepLink(url: .init(string: youtubeDeepLink)!)
+        let deepLink: URL = .init(string: youtubeDeepLink)!
+        let webLink: URL = .init(string: youtubeWebLink)!
+        
+        if openDeepLink(url: deepLink) {
+            return
+        }
+        
+        if openDeepLink(url: webLink) {
+            return
+        }
+        deepLinkError.accept("유튜브를 열 수 없습니다.")
     }
     
     public func openInstagramApp() {
-        openDeepLink(url: .init(string: instagramDeepLink)!)
+        let deepLink: URL = .init(string: instagramDeepLink)!
+        let webLink: URL = .init(string: instagramWebLink)!
+        
+        if openDeepLink(url: deepLink) {
+            return
+        }
+        
+        if openDeepLink(url: webLink) {
+            return
+        }
+        deepLinkError.accept("인스타그램을 열 수 없습니다.")
     }
     
-    private func openDeepLink(url: URL) {
+    private func openDeepLink(url: URL) -> Bool {
         if UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        } else {
-            deepLinkError.accept("클릭한 앱을 열 수 없습니다.")
+            return true
         }
+        return false
     }
 }
