@@ -11,8 +11,16 @@ import RxCocoa
 import RxSwift
 import Entity
 import DSKit
+import BaseFeature
 
-public class HuntingShortFormVC: UIViewController {
+public protocol HuntingShortFormViewModelable: BaseVMable {
+    func openYoutubeApp()
+    func openInstagramApp()
+}
+
+public class HuntingShortFormVC: BaseVC {
+    
+    var viewModel: HuntingShortFormViewModelable?
     
     // Init
     
@@ -110,6 +118,34 @@ public class HuntingShortFormVC: UIViewController {
     
     private func setObservable() {
         
+    }
+    
+    public func bind(viewModel: HuntingShortFormViewModelable) {
+        
+        self.viewModel = viewModel
+        
+        // Input
+        youtubeButton
+            .rx.tap
+            .subscribe(onNext: { [viewModel] _ in
+                viewModel.openYoutubeApp()
+            })
+            .disposed(by: disposeBag)
+        
+        instagramButton
+            .rx.tap
+            .subscribe(onNext: { [viewModel] _ in
+                viewModel.openInstagramApp()
+            })
+            .disposed(by: disposeBag)
+        
+        // Output
+        viewModel
+            .alert?
+            .drive(onNext: { [weak self] alertVO in
+                self?.showAlert(alertVO: alertVO)
+            })
+            .disposed(by: disposeBag)
     }
 }
 

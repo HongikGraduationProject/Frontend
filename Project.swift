@@ -18,7 +18,7 @@ let project = Project(
             productName: DeploymentSettings.productName,
             bundleId: DeploymentSettings.bundleIdentifierPrefix,
             deploymentTargets: DeploymentSettings.deploymentVersion,
-            infoPlist: ShorcapInfoPlist.app,
+            infoPlist: ShorcapInfoPlist.mainApp,
             sources: ["Modules/App/Source/**"],
             resources: ["Modules/App/Resource/**"],
             dependencies: [
@@ -33,28 +33,47 @@ let project = Project(
             name: "MainAppFeatures",
             destinations: .iOS,
             product: .staticFramework,
-            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).features",
+            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).mainAppFeatures",
             deploymentTargets: DeploymentSettings.deploymentVersion,
             sources: ["Modules/Presentation/MainAppFeatures/Source/**"],
             resources: ["Modules/Presentation/MainAppFeatures/Resource/**"],
             dependencies: [
-                .target(name: "UseCase"),
-                .target(name: "Repository"),
-                .target(name: "DSKit"),
+                .target(name: "BaseFeature"),
             ]
         ),
         .target(
             name: "AppExtensionFeatures",
             destinations: .iOS,
             product: .staticFramework,
-            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).features",
+            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).extensionAppFeatures",
             deploymentTargets: DeploymentSettings.deploymentVersion,
             sources: ["Modules/Presentation/AppExtensionFeatures/Source/**"],
             resources: ["Modules/Presentation/AppExtensionFeatures/Resource/**"],
             dependencies: [
+                .target(name: "BaseFeature"),
+            ]
+        ),
+        .target(
+            name: "BaseFeature",
+            destinations: .iOS,
+            product: .framework,
+            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).baseFeature",
+            deploymentTargets: DeploymentSettings.deploymentVersion,
+            sources: ["Modules/Presentation/BaseFeature/Source/**"],
+            resources: ["Modules/Presentation/BaseFeature/Resource/**"],
+            dependencies: [
+                
                 .target(name: "UseCase"),
+                .target(name: "Entity"),
+                
                 .target(name: "Repository"),
+                
                 .target(name: "DSKit"),
+                
+                
+                // ThirdParty
+                .external(name: "RxSwift"),
+                .external(name: "RxCocoa"),
             ]
         ),
         .target(

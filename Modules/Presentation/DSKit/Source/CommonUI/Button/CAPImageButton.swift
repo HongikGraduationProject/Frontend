@@ -103,7 +103,7 @@ public class CAPImageButton: TappableUIView {
             .subscribe(onNext: { [weak self] _ in
                 guard let self else { return }
                 setAppearanceToAccent()
-                UIView.animate(withDuration: 0.35) { [weak self] in
+                UIView.animate(withDuration: 0.45) { [weak self] in
                     self?.setAppearanceToIdle()
                 }
             })
