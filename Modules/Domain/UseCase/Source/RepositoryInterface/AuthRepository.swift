@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Entity
 import RxSwift
 
 public protocol AuthRepository {
@@ -15,6 +16,7 @@ public protocol AuthRepository {
     
     /// AccessToken을 생성한 후 로컬저장소에 저장합니다.
     func createAccessToken(imei: String) -> Single<Void>
+    func createAccessToken(imei: String) async throws
     
     /// Imei값을 가져옵니다.
     func getImei() -> String?

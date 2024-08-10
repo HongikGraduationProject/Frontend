@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct CAPResponse<T: Decodable>: Decodable {
-    let result: String
-    let message: String?
-    let data: T?
+public struct CAPResponse<T: Decodable>: Decodable {
+    public let result: String
+    public let message: String?
+    public let data: T?
 }

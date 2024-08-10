@@ -10,6 +10,7 @@
 ///         - 하나의 객체가 하나의 ViewController를 닫고 여는 과정을 일관되게 하기 위해서 입니다.
 ///  - Parent Child Coordinator
 ///     - Coodinator는 스스로 종료(VC제거, 자신 메모리 해제)될 수 있다.
+///     - 부모 Coordinator는 특정 자식 Coodinator가 인지할 수 있다
 ///     - Coodinator는 자식 Coodinator를 가질 수 있다.
 ///     - Coodinator는 모든 자식 Coodinator를 종료할 수 있다. (VC를 닫고 메모리 해제)
 /// - 의존성
@@ -18,11 +19,13 @@
 import UIKit
 
 public protocol Coordinator: AnyObject {
+    
     /// weak참조를 사용합니다.
     var viewController: UIViewController? { get set }
     var navigationController: UINavigationController? { get set }
     var children: [Coordinator] { get set }
     var parent: Coordinator? { get set }
+    var finishDelegate: CoordinatorFinishDelegate? { get set }
     
     /// 화면조율을 시작합니다.
     func start()
@@ -75,7 +78,14 @@ public extension Coordinator {
         // 자식이 없다면 애니메이션과 함께 현재 뷰컨트롤러를 종료합니다.
         navigationController?.popViewController(animated: hasChild ? false : animated)
         
-        // 부모로 부터 자신을 제거합니다.
+        // 자식 코디네이터를 부모 배열에서 제거합니다.
         parent?.removeChild(self)
+        
+        // 위임자에게 특정 코디네이터가 종료되었음을 알립니다.
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
     }
+}
+
+public protocol CoordinatorFinishDelegate: AnyObject {
+    func coordinatorDidFinish(childCoordinator: Coordinator)
 }

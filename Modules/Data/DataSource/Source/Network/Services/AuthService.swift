@@ -8,4 +8,6 @@
 import Foundation
 
 /// AuthService입니다.
-public class AuthService: BaseNetworkService<AuthAPI> { }
+public typealias AuthService = BaseNetworkService<AuthAPI>
+
+public class DefaultAuthService: AuthService { }

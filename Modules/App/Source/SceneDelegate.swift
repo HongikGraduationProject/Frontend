@@ -5,23 +5,38 @@
 //
 
 import UIKit
+import Swinject
 import MainAppFeatures
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    private let injector: Injector = DependencyInjector(container: Container())
+    private var appCoordinator: DefaultRootCoordinator?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-    
-        window = UIWindow(windowScene: windowScene)
         
-        let viewModel = HuntingShortFormVM()
-        let viewController = HuntingShortFormVC()
-        viewController.bind(viewModel: viewModel)
-        window?.rootViewController = viewController
+        let rootNavigationController = UINavigationController()
+        
+        window = UIWindow(windowScene: windowScene)
+        window?.rootViewController = rootNavigationController
         window?.makeKeyAndVisible()
+        
+        injector
+            .assemble([
+                DataAssembly(),
+                DomainAssembly(),
+            ])
+        
+        let rootCoordinator: DefaultRootCoordinator = .init(
+            dependency: .init(
+                navigationController: rootNavigationController,
+                injector: injector
+            )
+        )
+        
+        rootCoordinator.start()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
