@@ -17,7 +17,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
         window = UIWindow(windowScene: windowScene)
         
-        window?.rootViewController = HuntingShortFormVC()
+        let viewModel = HuntingShortFormVM()
+        let viewController = HuntingShortFormVC()
+        viewController.bind(viewModel: viewModel)
+        window?.rootViewController = viewController
         window?.makeKeyAndVisible()
     }
 

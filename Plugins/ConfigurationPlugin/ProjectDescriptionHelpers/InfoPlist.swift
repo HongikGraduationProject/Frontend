@@ -9,7 +9,7 @@ import ProjectDescription
 
 public enum ShorcapInfoPlist {
     
-    public static let app: InfoPlist = .extendingDefault(with: [
+    public static let mainApp: InfoPlist = .extendingDefault(with: [
         "NSAppTransportSecurity" : [
             "NSAllowsArbitraryLoads" : true
         ],
@@ -24,6 +24,17 @@ public enum ShorcapInfoPlist {
                     ]
                 ]
             ]
+        ],
+        
+        // 화면을 Portrait으로 고정
+        "UISupportedInterfaceOrientations": [
+            "UIInterfaceOrientationPortrait"
+        ],
+        
+        // URLScheme
+        "LSApplicationQueriesSchemes": [
+            "youtube",
+            "instagram"
         ]
     ])
 }
