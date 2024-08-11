@@ -11,8 +11,13 @@ import BaseFeature
 public class SelectMainCategoryCO: Coordinator {
     
     public struct Dependency {
-        weak var viewModel: SelectMainCategoryViewModelable?
-        var navigationController: UINavigationController
+        var viewModel: SelectMainCategoryViewModelable?
+        var navigationController: UINavigationController?
+        
+        public init(viewModel: SelectMainCategoryViewModelable? = nil, navigationController: UINavigationController?) {
+            self.viewModel = viewModel
+            self.navigationController = navigationController
+        }
     }
     
     public var viewController: UIViewController?
@@ -23,17 +28,25 @@ public class SelectMainCategoryCO: Coordinator {
     
     public var finishDelegate: (any BaseFeature.CoordinatorFinishDelegate)?
     
-    weak var viewModel: SelectMainCategoryViewModelable!
+    let viewModel: SelectMainCategoryViewModelable!
     
-    init(dependency: Dependency) {
+    public init(dependency: Dependency) {
         self.navigationController = dependency.navigationController
         self.viewModel = dependency.viewModel
     }
     
     public func start() {
-        
+        self.viewModel.coordinator = self
         let vc = SelectMainCategoryVC(viewModel: viewModel)
         vc.bind()
         navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+// MARK: InitFlow
+extension SelectMainCategoryCO {
+    
+    func showHutingShortFormScreen() {
+        
     }
 }

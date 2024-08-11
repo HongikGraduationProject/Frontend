@@ -17,6 +17,7 @@ public protocol DependencyAssemblable {
 /// DI 등록한 서비스 사용
 public protocol DependencyResolvable {
     func resolve<T>(_ serviceType: T.Type) -> T
+    func resolve<T>(_ serviceType: T.Type, name: String) -> T
 }
 
 public typealias Injector = DependencyAssemblable & DependencyResolvable
@@ -41,5 +42,9 @@ public final class DependencyInjector: Injector {
     
     public func resolve<T>(_ serviceType: T.Type) -> T {
         container.resolve(serviceType)!
+    }
+    
+    public func resolve<T>(_ serviceType: T.Type, name: String) -> T {
+        container.resolve(serviceType, name: name)!
     }
 }

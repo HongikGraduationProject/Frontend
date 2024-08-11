@@ -12,6 +12,8 @@ import DataSource
 
 public class DefaultUserConfigRepository: UserConfigRepository {
     
+    public init() { }
+    
     public func getPreferedCategories() -> [MainCategory]? {
         
         guard let stringData: String = UserDefaultsDataSource.shared.fetchData(key: .selectedMainCategories) else {

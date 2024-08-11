@@ -13,6 +13,10 @@ import DataSource
 public struct DataAssembly: Assembly {
     public func assemble(container: Container) {
         
+        container.register(UserConfigRepository.self) { resolver in
+            return DefaultUserConfigRepository()
+        }
+        
         container.register(AuthService.self) { _ in
             return DefaultAuthService()
         }
