@@ -16,7 +16,7 @@ public class SelectMainCategoryVC: UIViewController {
     typealias Cell = CategorySelectionCell
     
     // Init
-    let viewModel: SelectMainCategoryVM
+    let viewModel: SelectMainCategoryViewModelable
     
     // View
     let titleLabel: CapLabel = {
@@ -49,7 +49,7 @@ public class SelectMainCategoryVC: UIViewController {
     // Observable
     private let disposeBag = DisposeBag()
     
-    public init(viewModel: SelectMainCategoryVM) {
+    public init(viewModel: SelectMainCategoryViewModelable) {
         self.viewModel = viewModel
         
         super.init(nibName: nil, bundle: nil)
@@ -182,9 +182,4 @@ extension SelectMainCategoryVC: UICollectionViewDataSource, UICollectionViewDele
         13
     }
     
-}
-
-@available(iOS 17.0, *)
-#Preview("Preview", traits: .defaultLayout) {
-    SelectMainCategoryVC(viewModel: SelectMainCategoryVM())
 }

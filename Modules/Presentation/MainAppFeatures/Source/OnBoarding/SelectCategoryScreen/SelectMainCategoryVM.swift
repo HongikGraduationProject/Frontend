@@ -6,12 +6,19 @@
 //
 
 import UIKit
+import BaseFeature
 import RxCocoa
 import RxSwift
 import Entity
 import DSKit
+import UseCase
 
-public protocol SelectMainCategoryViewModelable: CategorySelectionCellViewModelable {
+public protocol SelectMainCategoryViewModelable: AnyObject, CategorySelectionCellViewModelable {
+    
+    // Input
+    var nextButtonClicked: PublishRelay<Void> { get }
+    
+    // Output
     var nextable: Driver<Bool>? { get }
     var selectedCategoryCount: Driver<Int>? { get }
     
@@ -22,6 +29,10 @@ public protocol SelectMainCategoryViewModelable: CategorySelectionCellViewModela
 
 public class SelectMainCategoryVM: SelectMainCategoryViewModelable {
     
+    // Init
+    let userConfigRepository: UserConfigRepository
+    weak var coordinator: Coordinator?
+    
     // Config
     public var defaultTitleText: String = "선호하는 카테고리를 선택해 주세요."
     public var isCategoryCountTitle: Bool = true
@@ -29,15 +40,20 @@ public class SelectMainCategoryVM: SelectMainCategoryViewModelable {
     // Input
     public var previousSelectedStates: [MainCategory : Driver<Bool>] = [:]
     public var categorySelectionState: PublishRelay<CategoryState> = .init()
+    public var nextButtonClicked: PublishRelay<Void> = .init()
     
     // Output
     public var selectedCategoryCount: Driver<Int>?
     public var nextable: Driver<Bool>?
     
     // State
-    var editingState: [MainCategory: Bool] = [:]
+    var editingCategorySelectionState: [MainCategory: Bool] = [:]
     
-    init() {
+    let disposeBag: DisposeBag = .init()
+    
+    init(coordinator: Coordinator, userConfigRepository: UserConfigRepository) {
+        self.coordinator = coordinator
+        self.userConfigRepository = userConfigRepository
         
         // Input
         let selectionCnt = categorySelectionState
@@ -46,9 +62,9 @@ public class SelectMainCategoryVM: SelectMainCategoryViewModelable {
                 print("\(result.category.korWordText) : \(result.isActive ? "활성화" : "비활성화")")
                 
                 // 수정상태를 기록
-                self?.editingState[result.category] = result.isActive
+                self?.editingCategorySelectionState[result.category] = result.isActive
                 
-                let activeCategoryCnt = self?.editingState.reduce(0) { (partialResult, arg1) in
+                let activeCategoryCnt = self?.editingCategorySelectionState.reduce(0) { (partialResult, arg1) in
                     let (_, isActive) = arg1
                     // 활성화 상태인 카테고리수만 1을 더한다.
                     return partialResult + (isActive ? 1 : 0)
@@ -57,6 +73,25 @@ public class SelectMainCategoryVM: SelectMainCategoryViewModelable {
                 return activeCategoryCnt
             }
             .share()
+        
+        nextButtonClicked
+            .subscribe { [weak self] _ in
+                guard let self else { return }
+                
+                // 카테고리 저장
+                let categories = editingCategorySelectionState
+                    .compactMap { (key: MainCategory, value: Bool) in
+                        value ? key : nil
+                    }
+                
+                userConfigRepository
+                    .savePreferedCategories(categories: categories)
+                
+                // 카테고리 저장 프로우가 끝났음을 알림
+                coordinator.finishDelegate?
+                    .coordinatorDidFinish(childCoordinator: coordinator)
+            }
+            .disposed(by: disposeBag)
         
         // 선택된 카태고리 수를 반환
         selectedCategoryCount = selectionCnt

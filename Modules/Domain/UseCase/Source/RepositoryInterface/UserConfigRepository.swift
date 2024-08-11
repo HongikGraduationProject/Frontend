@@ -11,8 +11,8 @@ import Entity
 public protocol UserConfigRepository {
     
     /// 선택된 메인 카테고리들을 가져옵니다.
-    func getSelectedMainCategories() -> [MainCategory]?
+    func getPreferedCategories() -> [MainCategory]?
     
     /// 선택된 메인 카테고리들을 저장합니다.
-    func saveSelectedMainCategories(categories: [MainCategory])
+    func savePreferedCategories(categories: [MainCategory])
 }
