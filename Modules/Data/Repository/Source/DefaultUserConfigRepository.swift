@@ -12,7 +12,7 @@ import DataSource
 
 public class DefaultUserConfigRepository: UserConfigRepository {
     
-    public func getSelectedMainCategories() -> [MainCategory]? {
+    public func getPreferedCategories() -> [MainCategory]? {
         
         guard let stringData: String = UserDefaultsDataSource.shared.fetchData(key: .selectedMainCategories) else {
             return nil
@@ -25,7 +25,7 @@ public class DefaultUserConfigRepository: UserConfigRepository {
         }
     }
     
-    public func saveSelectedMainCategories(categories: [MainCategory]) {
+    public func savePreferedCategories(categories: [MainCategory]) {
         
         let indexStr: String = categories.map { String($0.rawValue) }.joined(separator: ",")
         
