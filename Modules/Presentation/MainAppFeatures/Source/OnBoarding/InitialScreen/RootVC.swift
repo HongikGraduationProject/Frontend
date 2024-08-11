@@ -12,19 +12,9 @@ import RxSwift
 import Entity
 import DSKit
 
-public protocol InitialViewModelable: BaseVMable {
-    // Input
-    var viewDidLoad: PublishRelay<Void> { get }
+public class RootVC: BaseVC {
     
-    // Output
-    var tokenFlowNextable: Driver<Void> { get }
-}
-
-public class InitialVC: BaseVC {
-    
-    weak var coordinator: Coordinator?
-    
-    var viewModel: InitialViewModelable?
+    var viewModel: RootViewModelable?
     
     // Init
     
@@ -33,8 +23,7 @@ public class InitialVC: BaseVC {
     // Observable
     private let disposeBag = DisposeBag()
     
-    public init(coordinator: Coordinator) {
-        self.coordinator = coordinator
+    public init() {
         super.init(nibName: nil, bundle: nil)
     }
     public required init?(coder: NSCoder) { fatalError() }
@@ -58,18 +47,11 @@ public class InitialVC: BaseVC {
         
     }
     
-    public func bind(viewModel: InitialViewModelable) {
+    public func bind(viewModel: RootViewModelable) {
         
         self.viewModel = viewModel
         
         // Output
-        viewModel
-            .tokenFlowNextable
-            .drive(onNext: { [weak coordinator] _ in
-                coordinator?.finish(false)
-            })
-            .disposed(by: disposeBag)
-        
         viewModel
             .alert?
             .drive(onNext: { [weak self] alertVO in
