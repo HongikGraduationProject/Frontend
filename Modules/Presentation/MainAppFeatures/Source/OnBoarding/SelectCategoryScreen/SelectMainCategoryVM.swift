@@ -12,6 +12,7 @@ import RxSwift
 import Entity
 import DSKit
 import UseCase
+import Util
 
 public protocol SelectMainCategoryViewModelable: AnyObject, CategorySelectionCellViewModelable {
     
@@ -25,13 +26,14 @@ public protocol SelectMainCategoryViewModelable: AnyObject, CategorySelectionCel
     // Config
     var defaultTitleText: String { get }
     var isCategoryCountTitle: Bool { get }
+    var coordinator: SelectMainCategoryCO? { get set }
 }
 
-public class SelectMainCategoryVM: SelectMainCategoryViewModelable {
+public class InitialSelectMainCategoryVM: SelectMainCategoryViewModelable {
     
     // Init
     let userConfigRepository: UserConfigRepository
-    weak var coordinator: Coordinator?
+    public weak var coordinator: SelectMainCategoryCO?
     
     // Config
     public var defaultTitleText: String = "선호하는 카테고리를 선택해 주세요."
@@ -51,8 +53,7 @@ public class SelectMainCategoryVM: SelectMainCategoryViewModelable {
     
     let disposeBag: DisposeBag = .init()
     
-    init(coordinator: Coordinator, userConfigRepository: UserConfigRepository) {
-        self.coordinator = coordinator
+    public init(userConfigRepository: UserConfigRepository) {
         self.userConfigRepository = userConfigRepository
         
         // Input
@@ -87,9 +88,8 @@ public class SelectMainCategoryVM: SelectMainCategoryViewModelable {
                 userConfigRepository
                     .savePreferedCategories(categories: categories)
                 
-                // 카테고리 저장 프로우가 끝났음을 알림
-                coordinator.finishDelegate?
-                    .coordinatorDidFinish(childCoordinator: coordinator)
+                // 카테고리 저장 프로우가 끝났음, 비디오 존재 여부 확인(UseCase)
+                printIfDebug("비디오 확인 시작")
             }
             .disposed(by: disposeBag)
         
