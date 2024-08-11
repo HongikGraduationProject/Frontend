@@ -10,17 +10,6 @@ import UseCase
 import MainAppFeatures
 import BaseFeature
 
-public protocol RootCoordinator: Coordinator {
-    // Flow
-    func tokenFlow()
-    func categorySelectionFlow()
-    func showMainTabBarFlow()
-    
-    // Screen
-    func showCategorySelectionScreen()
-    func showShortFormHuntingScreen()
-}
-
 class DefaultRootCoordinator: RootCoordinator {
     
     public struct Dependency {
@@ -43,27 +32,21 @@ class DefaultRootCoordinator: RootCoordinator {
     }
     
     func start() {
-        tokenFlow()
+        let vc = RootVC()
+        viewController = vc
+        
+        let vm = RootVM(
+            coordinator: self,
+            authUseCase: injector.resolve(AuthUseCase.self)
+        )
+        
+        vc.bind(viewModel: vm)
+        
+        navigationController?.pushViewController(vc, animated: false)
     }
 }
 
 extension DefaultRootCoordinator {
-    
-    func tokenFlow() { 
-        let initialCoordinator: InitialCoordinator = .init(
-            dependency: .init(
-                authUseCase: injector.resolve(AuthUseCase.self),
-                navigationController: navigationController
-            )
-        )
-        addChild(initialCoordinator)
-        
-        initialCoordinator.start()
-    }
-    
-    func categorySelectionFlow() { 
-        
-    }
     
     func showMainTabBarFlow() {
         
@@ -74,6 +57,13 @@ extension DefaultRootCoordinator {
     }
     
     func showShortFormHuntingScreen() {
+        
+    }
+}
+
+extension DefaultRootCoordinator: CoordinatorFinishDelegate {
+    
+    func coordinatorDidFinish(childCoordinator: Coordinator) {
         
     }
 }
