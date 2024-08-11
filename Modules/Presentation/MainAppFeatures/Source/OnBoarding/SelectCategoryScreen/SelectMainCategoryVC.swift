@@ -23,7 +23,7 @@ public class SelectMainCategoryVC: UIViewController {
         let label = CapLabel()
         label.typographyStyle = .extraLargeBold
         label.attrTextColor = .black
-        label.text = "숏폼의 카테고리를 선택하세요."
+        label.text = "선호하는 카테고리를 선택해 주세요."
         return label
     }()
     
