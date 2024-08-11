@@ -13,18 +13,28 @@ import DSKit
 
 public protocol SelectMainCategoryViewModelable: CategorySelectionCellViewModelable {
     var nextable: Driver<Bool>? { get }
+    var selectedCategoryCount: Driver<Int>? { get }
+    
+    // Config
+    var defaultTitleText: String { get }
+    var isCategoryCountTitle: Bool { get }
 }
 
 public class SelectMainCategoryVM: SelectMainCategoryViewModelable {
+    
+    // Config
+    public var defaultTitleText: String = "선호하는 카테고리를 선택해 주세요."
+    public var isCategoryCountTitle: Bool = true
 
     // Input
     public var previousSelectedStates: [MainCategory : Driver<Bool>] = [:]
     public var categorySelectionState: PublishRelay<CategoryState> = .init()
     
     // Output
-    public var selectedCategoriesCount: Driver<Int>?
+    public var selectedCategoryCount: Driver<Int>?
     public var nextable: Driver<Bool>?
     
+    // State
     var editingState: [MainCategory: Bool] = [:]
     
     init() {
@@ -34,10 +44,12 @@ public class SelectMainCategoryVM: SelectMainCategoryViewModelable {
             .compactMap { [weak self] result in
                 
                 print("\(result.category.korWordText) : \(result.isActive ? "활성화" : "비활성화")")
+                
+                // 수정상태를 기록
                 self?.editingState[result.category] = result.isActive
                 
                 let activeCategoryCnt = self?.editingState.reduce(0) { (partialResult, arg1) in
-                    let (category, isActive) = arg1
+                    let (_, isActive) = arg1
                     // 활성화 상태인 카테고리수만 1을 더한다.
                     return partialResult + (isActive ? 1 : 0)
                 }
@@ -47,7 +59,7 @@ public class SelectMainCategoryVM: SelectMainCategoryViewModelable {
             .share()
         
         // 선택된 카태고리 수를 반환
-        selectedCategoriesCount = selectionCnt
+        selectedCategoryCount = selectionCnt
             .asDriver(onErrorJustReturn: 0)
         
         nextable = selectionCnt

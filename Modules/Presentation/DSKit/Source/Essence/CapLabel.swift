@@ -52,6 +52,19 @@ public class CapLabel: UILabel {
     }
     public required init?(coder: NSCoder) { fatalError() }
     
+    public func applyAttribute(attributes: [NSAttributedString.Key: Any], range: NSRange) {
+        guard let currentString = self.attributedText else { return }
+        let mutableString = NSMutableAttributedString(attributedString: currentString)
+        
+        attributes.forEach { (key: NSAttributedString.Key, value: Any) in
+            mutableString.addAttribute(
+                key,
+                value: value,
+                range: range
+            )
+        }
+        self.attributedText = mutableString
+    }
     
     private func updateText() {
         
