@@ -23,7 +23,6 @@ public class SelectMainCategoryVC: UIViewController {
         let label = CapLabel()
         label.typographyStyle = .extraLargeBold
         label.attrTextColor = .black
-        label.text = "선호하는 카테고리를 선택해 주세요."
         return label
     }()
     
@@ -95,6 +94,49 @@ public class SelectMainCategoryVC: UIViewController {
     
     private func setObservable() {
         
+    }
+    
+    public func bind() {
+        
+        // Output
+        viewModel
+            .nextable?
+            .drive(onNext: { [nextButton] isNextable in
+                nextButton.setState(isNextable)
+            })
+            .disposed(by: disposeBag)
+        
+        titleLabel.text = viewModel.defaultTitleText
+        
+        viewModel
+            .selectedCategoryCount?
+            .filter { [viewModel] count in viewModel.isCategoryCountTitle }
+            .drive { [titleLabel, viewModel] count in
+                
+                if count == 0 {
+                    // 선택된 카테고리가 없는 경우 기본 라벨로 변경
+                    titleLabel.text = viewModel.defaultTitleText
+                    return
+                }
+                
+                let countText = "\(count)개의 메인 카테고리"
+                let wholeText = "총 \(countText)를 선택하셨네요!"
+                
+                titleLabel.text = wholeText
+                
+                if let range = wholeText.range(of: countText) {
+                    // 선택개수 표시부분에 파란 라벨 적용
+                    let nsRange = NSRange(range, in: wholeText)
+                    
+                    titleLabel.applyAttribute(
+                        attributes: [
+                            .foregroundColor : DSKitAsset.Colors.primary80.color
+                        ],
+                        range: nsRange
+                    )
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }
 
