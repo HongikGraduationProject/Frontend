@@ -47,6 +47,9 @@ public class CapBottomButton: TappableUIView {
         setAppearance()
         setLayout()
         setObservable()
+        
+        // 초기상태는 클릭불가 상태를 기본으로 합니다.
+        setState(false)
     }
     public required init?(coder: NSCoder) { fatalError() }
     
@@ -89,6 +92,23 @@ public class CapBottomButton: TappableUIView {
     private func setAppearanceToAccent() {
         label.attrTextColor = accentTextColor
         self.backgroundColor = accentBackgroundColor
+    }
+    
+    private func setAppearanceToDisabled() {
+        self.backgroundColor = DSKitAsset.Colors.gray10.color
+        label.attrTextColor = DSKitAsset.Colors.gray40.color
+    }
+    
+    @MainActor
+    public func setState(_ isEnabled: Bool) {
+        
+        self.isUserInteractionEnabled = isEnabled
+        
+        if isEnabled {
+            setAppearanceToIdle()
+        } else {
+            setAppearanceToDisabled()
+        }
     }
 }
 

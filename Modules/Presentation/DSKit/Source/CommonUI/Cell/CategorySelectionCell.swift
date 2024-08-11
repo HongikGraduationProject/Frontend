@@ -17,6 +17,7 @@ public typealias CategoryState = (category: MainCategory, isActive: Bool)
 public protocol CategorySelectionCellViewModelable {
     var previousSelectedStates: [MainCategory: Driver<Bool>] { get }
     var categorySelectionState: PublishRelay<CategoryState> { get }
+    var selectedCategoriesCount: Driver<Int>? { get }
 }
 
 /// 설명: 이미지와 라벨이 중앙에 배치되는 셀로 클릭할 수 있습니다.
