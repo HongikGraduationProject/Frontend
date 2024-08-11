@@ -9,7 +9,8 @@ import Foundation
 
 public protocol RootCoordinator: Coordinator {
     // Flow
-    func showMainTabBarFlow()
+    func executeMainTabBarFlow()
+    func executeCheckSavedShortFormFlow()
     
     // Screen
     func showCategorySelectionScreen()
