@@ -98,6 +98,12 @@ public class SelectMainCategoryVC: UIViewController {
     
     public func bind() {
         
+        // Input
+        nextButton
+            .rx.tap
+            .bind(to: viewModel.nextButtonClicked)
+            .disposed(by: disposeBag)
+        
         // Output
         viewModel
             .nextable?

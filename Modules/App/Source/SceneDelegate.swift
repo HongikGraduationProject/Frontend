@@ -12,12 +12,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     private let injector: Injector = DependencyInjector(container: Container())
-    private var appCoordinator: DefaultRootCoordinator?
+    private var rootCoordinator: DefaultRootCoordinator?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let rootNavigationController = UINavigationController()
+        rootNavigationController.setNavigationBarHidden(true, animated: false)
         
         window = UIWindow(windowScene: windowScene)
         window?.rootViewController = rootNavigationController
@@ -27,16 +28,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             .assemble([
                 DataAssembly(),
                 DomainAssembly(),
+                PresentationAssembly(),
             ])
         
-        let rootCoordinator: DefaultRootCoordinator = .init(
+        self.rootCoordinator = .init(
             dependency: .init(
                 navigationController: rootNavigationController,
                 injector: injector
             )
         )
-        
-        rootCoordinator.start()
+
+        rootCoordinator?.start()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

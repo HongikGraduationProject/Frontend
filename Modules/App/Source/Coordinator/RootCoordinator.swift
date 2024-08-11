@@ -37,7 +37,8 @@ class DefaultRootCoordinator: RootCoordinator {
         
         let vm = RootVM(
             coordinator: self,
-            authUseCase: injector.resolve(AuthUseCase.self)
+            authUseCase: injector.resolve(AuthUseCase.self), 
+            userConfigRepository: injector.resolve(UserConfigRepository.self)
         )
         
         vc.bind(viewModel: vm)
@@ -52,15 +53,20 @@ extension DefaultRootCoordinator {
         
     }
     
-    func executeCheckSavedShortFormFlow() {
-        print("토큰 플로우 실행")
-    }
-    
     func showCategorySelectionScreen() {
         
+        let coordinator = SelectMainCategoryCO(
+            dependency: .init(
+                viewModel: injector.resolve(SelectMainCategoryViewModelable.self, name: "Init"),
+                navigationController: navigationController
+            )
+        )
+        addChild(coordinator)
+        coordinator.start()
     }
     
     func showShortFormHuntingScreen() {
+        
         
     }
 }
@@ -69,9 +75,5 @@ extension DefaultRootCoordinator: CoordinatorFinishDelegate {
     
     func coordinatorDidFinish(childCoordinator: Coordinator) {
         
-        if let coordinator = childCoordinator as? SelectMainCategoryCO {
-            // 메인카테고리 선택이 끝난 경우, 숏폼 존재여부 확인
-            executeCheckSavedShortFormFlow()
-        }
     }
 }
