@@ -26,9 +26,6 @@ public protocol RootViewModelable: BaseVMable {
 
 public class RootVM: RootViewModelable {
     
-    let userConfigRepository: UserConfigRepository
-    let summariesRepository: SummariesRepository
-    
     public weak var coordinator: RootCoordinator?
     
     // Input
@@ -39,19 +36,18 @@ public class RootVM: RootViewModelable {
     
     // Init
     let authUseCase: AuthUseCase
+    let onBoardingUseCase: OnBoardingCheckUseCase
     
     let disposeBag: DisposeBag = .init()
     
     public init(
         coordinator: RootCoordinator,
-        authUseCase: AuthUseCase,
-        userConfigRepository: UserConfigRepository,
-        summariesRepository: SummariesRepository
+        onBoardingUseCase: OnBoardingCheckUseCase,
+        authUseCase: AuthUseCase
     ) {
         self.coordinator = coordinator
         self.authUseCase = authUseCase
-        self.userConfigRepository = userConfigRepository
-        self.summariesRepository = summariesRepository
+        self.onBoardingUseCase = onBoardingUseCase
         
         // MARK: 토큰 확인 플로우
         let checkExistingMemberResult = viewDidLoad
@@ -87,20 +83,17 @@ public class RootVM: RootViewModelable {
         // 1. 기존유저이나 카테고리를 선택하지 않은 경우
         // 2. 새로운 유저인 경우
         
-        let checkCategoriesExistsResult = Observable
+        let categoryExistsResult = Observable
             .merge(
                 userIsExistingMember,
                 tokenFlowFinishSuccessFully
             )
-            .map { [userConfigRepository] _ in
-                userConfigRepository.getPreferedCategories()
+            .map { [onBoardingUseCase] _ in
+                onBoardingUseCase.checkingSelectedCategoriesExists()
             }
         
-        let categoryExists = checkCategoriesExistsResult.filter { $0 != nil }
-        let categoryDoentExist = checkCategoriesExistsResult.filter { $0 == nil }
-        
         // 카테고리 선택화면으로 이동
-        categoryDoentExist
+        categoryExistsResult.filter { !$0 }
             .subscribe { [weak self] _ in
                 // 카테고리를 선택하는 화면으로 이동
                 self?.coordinator?.clickToStartScreen()
@@ -108,9 +101,9 @@ public class RootVM: RootViewModelable {
             .disposed(by: disposeBag)
         
         // MARK: 저장된 숏폼이 있는지 확인
-        let checkingSummariesResult = categoryExists
-            .flatMap { [summariesRepository] _ in
-                summariesRepository.getAllVideoList()
+        let checkingSummariesResult = categoryExistsResult.filter { $0 }
+            .flatMap { [onBoardingUseCase] _ in
+                onBoardingUseCase.checkingSummariesExists()
             }
             .share()
         
@@ -118,8 +111,8 @@ public class RootVM: RootViewModelable {
         let checkingSummariesFailure = checkingSummariesResult.compactMap { $0.error }
         
         checkingSummariesSuccess
-            .subscribe(onNext: { [weak self] list in
-                if !list.isEmpty {
+            .subscribe(onNext: { [weak self] isExists in
+                if isExists {
                     self?.coordinator?.executeMainTabBarFlow()
                 } else {
                     self?.coordinator?.showShortFormHuntingScreen()

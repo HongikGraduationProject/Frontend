@@ -14,5 +14,14 @@ public struct DomainAssembly: Assembly {
             let repository = resolver.resolve(AuthRepository.self)!
             return DefaultAuthUseCase(authRepository: repository)
         }
+        
+        container.register(OnBoardingCheckUseCase.self) { resolver in
+            let userConfigRepository = resolver.resolve(UserConfigRepository.self)!
+            let summariesRepository = resolver.resolve(SummariesRepository.self)!
+            return DefaultOnBoardingCheckUseCase(
+                userConfigRepository: userConfigRepository,
+                summariesRepository: summariesRepository
+            )
+        }
     }
 }

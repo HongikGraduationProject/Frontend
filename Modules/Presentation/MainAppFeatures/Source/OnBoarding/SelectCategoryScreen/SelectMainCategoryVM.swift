@@ -14,7 +14,7 @@ import DSKit
 import UseCase
 import Util
 
-public protocol SelectMainCategoryViewModelable: AnyObject, CategorySelectionCellViewModelable {
+public protocol SelectMainCategoryViewModelable: AnyObject, BaseVMable, CategorySelectionCellViewModelable {
     
     // Input
     var nextButtonClicked: PublishRelay<Void> { get }
@@ -32,13 +32,14 @@ public protocol SelectMainCategoryViewModelable: AnyObject, CategorySelectionCel
 public class InitialSelectMainCategoryVM: SelectMainCategoryViewModelable {
     
     // Init
+    let onBoardingUseCase: OnBoardingCheckUseCase
     let userConfigRepository: UserConfigRepository
     public weak var coordinator: SelectMainCategoryCO?
     
     // Config
     public var defaultTitleText: String = "선호하는 카테고리를 선택해 주세요."
     public var isCategoryCountTitle: Bool = true
-
+    
     // Input
     public var previousSelectedStates: [MainCategory : Driver<Bool>] = [:]
     public var categorySelectionState: PublishRelay<CategoryState> = .init()
@@ -47,13 +48,19 @@ public class InitialSelectMainCategoryVM: SelectMainCategoryViewModelable {
     // Output
     public var selectedCategoryCount: Driver<Int>?
     public var nextable: Driver<Bool>?
+    public var alert: Driver<CapAlertVO>?
     
     // State
     var editingCategorySelectionState: [MainCategory: Bool] = [:]
     
     let disposeBag: DisposeBag = .init()
     
-    public init(userConfigRepository: UserConfigRepository) {
+    public init(
+        onBoardingUseCase: OnBoardingCheckUseCase,
+        userConfigRepository: UserConfigRepository) 
+    {
+        
+        self.onBoardingUseCase = onBoardingUseCase
         self.userConfigRepository = userConfigRepository
         
         // Input
@@ -75,9 +82,9 @@ public class InitialSelectMainCategoryVM: SelectMainCategoryViewModelable {
             }
             .share()
         
-        nextButtonClicked
-            .subscribe { [weak self] _ in
-                guard let self else { return }
+        let categorySaveFinished = nextButtonClicked
+            .compactMap { [weak self] _ -> Void? in
+                guard let self else { return nil }
                 
                 // 카테고리 저장
                 let categories = editingCategorySelectionState
@@ -88,9 +95,27 @@ public class InitialSelectMainCategoryVM: SelectMainCategoryViewModelable {
                 userConfigRepository
                     .savePreferedCategories(categories: categories)
                 
-                // 카테고리 저장 프로우가 끝났음, 비디오 존재 여부 확인(UseCase)
-                printIfDebug("비디오 확인 시작")
+                return ()
             }
+        
+        // MARK: 저장된 숏폼이 있는지 확인
+        let checkingSummariesResult = categorySaveFinished
+            .flatMap { [onBoardingUseCase] _ in
+                onBoardingUseCase.checkingSummariesExists()
+            }
+            .share()
+        
+        let checkingSummariesSuccess = checkingSummariesResult.compactMap { $0.value }
+        let checkingSummariesFailure = checkingSummariesResult.compactMap { $0.error }
+        
+        checkingSummariesSuccess
+            .subscribe(onNext: { [weak self] isExists in
+                if isExists {
+                    self?.coordinator?.finishOnBoardingFlow()
+                } else {
+                    self?.coordinator?.showShortFormHuntingScreen()
+                }
+            })
             .disposed(by: disposeBag)
         
         // 선택된 카태고리 수를 반환
@@ -110,5 +135,21 @@ public class InitialSelectMainCategoryVM: SelectMainCategoryViewModelable {
                 let relay = BehaviorRelay<Bool>(value: false)
                 previousSelectedStates[category] = relay.asDriver()
             }
+        
+        // 토큰 생성 실패
+        alert = checkingSummariesFailure.map { $0.message }
+            .map { message in
+                return CapAlertVO(
+                    title: "시스템 오류",
+                    message: message,
+                    info: [
+                        "닫기": {
+                            // 어플리케이션을 강제 종료합니다.
+                            exit(0)
+                        }
+                    ]
+                )
+            }
+            .asDriver(onErrorJustReturn: .default)
     }
 }

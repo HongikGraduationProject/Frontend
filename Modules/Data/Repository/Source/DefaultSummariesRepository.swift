@@ -19,12 +19,12 @@ public class DefaultSummariesRepository: SummariesRepository {
         self.service = service
     }
     
-    public func getAllVideoList() -> Single<Result<[VideoSummary], SummariesError>> {
+    public func getAllVideoList() -> Single<[VideoSummary]> {
         service
             .request(api: .listAll, with: .withToken)
-            .map(VideoSummaryList.self)
+            .map(CAPResponse<VideoSummaryList>.self)
             .map { response in
-                .success(response.videoSummaryList)
+                response.data?.videoSummaryList ?? []
             }
     }
 }
