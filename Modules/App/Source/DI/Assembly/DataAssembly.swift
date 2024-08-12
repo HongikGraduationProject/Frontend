@@ -25,5 +25,16 @@ public struct DataAssembly: Assembly {
             let service = resolver.resolve(AuthService.self)!
             return DefaultAuthRepository(authService: service)
         }
+        
+        container.register(SummariesService.self) { _ in
+            return DefaultSummariesService()
+        }
+        
+        container.register(SummariesRepository.self) { resolver in
+            let service = resolver.resolve(SummariesService.self)!
+            return DefaultSummariesRepository(
+                service: service
+            )
+        }
     }
 }

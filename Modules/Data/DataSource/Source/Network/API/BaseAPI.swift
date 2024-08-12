@@ -12,6 +12,7 @@ import Moya
 public enum APIType {
     
     case auth
+    case summaries
 }
 
 /// API의 베이스가되는 타입입니다.
@@ -30,6 +31,8 @@ public extension BaseAPI {
         switch apiType {
         case .auth:
             baseUrlString += "/auth"
+        case .summaries:
+            baseUrlString += "/summaries"
         }
         
         return URL(string: baseUrlString)!
