@@ -37,6 +37,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 injector: injector
             )
         )
+        
+        // 인위적인 시간
+        sleep(1)
 
         rootCoordinator?.start()
     }
