@@ -12,6 +12,9 @@ public protocol RootCoordinator: Coordinator {
     func executeMainTabBarFlow()
     
     // Screen
-    func showCategorySelectionScreen()
+    /// 신규 유저가 확인하는 화면입니다.
+    func clickToStartScreen()
+    
+    /// 숏폼이 없는 경우 이동하는 화면입니다.
     func showShortFormHuntingScreen()
 }

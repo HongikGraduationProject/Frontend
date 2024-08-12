@@ -53,11 +53,10 @@ extension DefaultRootCoordinator {
         
     }
     
-    func showCategorySelectionScreen() {
-        
-        let coordinator = SelectMainCategoryCO(
+    func clickToStartScreen() {
+        let coordinator = ClickToStartCO(
             dependency: .init(
-                viewModel: injector.resolve(SelectMainCategoryViewModelable.self, name: "Init"),
+                userConfigRepository: injector.resolve(UserConfigRepository.self),
                 navigationController: navigationController
             )
         )
