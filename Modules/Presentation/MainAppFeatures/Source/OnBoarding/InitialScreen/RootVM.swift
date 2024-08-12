@@ -27,6 +27,7 @@ public protocol RootViewModelable: BaseVMable {
 public class RootVM: RootViewModelable {
     
     let userConfigRepository: UserConfigRepository
+    let summariesRepository: SummariesRepository
     
     public weak var coordinator: RootCoordinator?
     
@@ -44,11 +45,13 @@ public class RootVM: RootViewModelable {
     public init(
         coordinator: RootCoordinator,
         authUseCase: AuthUseCase,
-        userConfigRepository: UserConfigRepository
+        userConfigRepository: UserConfigRepository,
+        summariesRepository: SummariesRepository
     ) {
         self.coordinator = coordinator
         self.authUseCase = authUseCase
         self.userConfigRepository = userConfigRepository
+        self.summariesRepository = summariesRepository
         
         // MARK: 토큰 확인 플로우
         let checkExistingMemberResult = viewDidLoad
@@ -98,21 +101,42 @@ public class RootVM: RootViewModelable {
         
         // 카테고리 선택화면으로 이동
         categoryDoentExist
-            .subscribe { [weak coordinator] _ in
+            .subscribe { [weak self] _ in
                 // 카테고리를 선택하는 화면으로 이동
-                coordinator?.clickToStartScreen()
+                self?.coordinator?.clickToStartScreen()
             }
             .disposed(by: disposeBag)
         
         // MARK: 저장된 숏폼이 있는지 확인
+        let checkingSummariesResult = categoryExists
+            .flatMap { [summariesRepository] _ in
+                summariesRepository.getAllVideoList()
+            }
+            .share()
+        
+        let checkingSummariesSuccess = checkingSummariesResult.compactMap { $0.value }
+        let checkingSummariesFailure = checkingSummariesResult.compactMap { $0.error }
+        
+        checkingSummariesSuccess
+            .subscribe(onNext: { [weak self] list in
+                if !list.isEmpty {
+                    self?.coordinator?.executeMainTabBarFlow()
+                } else {
+                    self?.coordinator?.showShortFormHuntingScreen()
+                }
+            })
+            .disposed(by: disposeBag)
         
         
         // 토큰 생성 실패
-        alert = tokenGenerateFailure
-            .map { authError in
+        alert = Observable.merge(
+            checkingSummariesFailure.map { $0.message },
+            tokenGenerateFailure.map { $0.message }
+        )
+            .map { message in
                 return CapAlertVO(
                     title: "시스템 오류",
-                    message: authError.message,
+                    message: message,
                     info: [
                         "닫기": {
                             // 어플리케이션을 강제 종료합니다.
