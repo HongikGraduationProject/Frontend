@@ -1,8 +1,8 @@
 //
-//  AuthAPI.swift
+//  SummariesAPI.swift
 //  DataSource
 //
-//  Created by choijunios on 8/9/24.
+//  Created by choijunios on 8/12/24.
 //
 
 import Foundation
@@ -10,35 +10,35 @@ import Moya
 import Alamofire
 
 /// AuthAPI
-public enum AuthAPI {
+public enum SummariesAPI {
     
-    case issueAccessToken(imei: String)
+    case listAll
 }
 
-extension AuthAPI: BaseAPI {
+extension SummariesAPI: BaseAPI {
 
-    public var apiType: APIType { .auth }
+    public var apiType: APIType { .summaries }
     
     public var method: Moya.Method {
         
         switch self {
-        case .issueAccessToken:
-            .post
+        case .listAll:
+            .get
         }
     }
     
     public var path: String {
         switch self {
-        case .issueAccessToken:
-            ""
+        case .listAll:
+            "/list/all"
         }
     }
     
     var bodyParameters: Parameters? {
         var params: Parameters = [:]
         switch self {
-        case .issueAccessToken(let imei):
-            params["imei"] = imei
+        default:
+            params = [:]
         }
         return params
     }
@@ -52,8 +52,8 @@ extension AuthAPI: BaseAPI {
     
     public var task: Task {
         switch self {
-        case .issueAccessToken:
-            return .requestParameters(parameters: bodyParameters ?? [:], encoding: parameterEncoding)
+        default:
+            .requestPlain
         }
     }
 }
