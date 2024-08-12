@@ -106,6 +106,11 @@ public class ClickToStartVC: UIViewController {
             .rx.tap
             .bind(to: viewModel.nextButtonClicked)
             .disposed(by: disposeBag)
+        
+        rx.viewWillAppear
+            .map { _ in  }
+            .bind(to: viewModel.viewWillAppear)
+            .disposed(by: disposeBag)
     }
 }
 
