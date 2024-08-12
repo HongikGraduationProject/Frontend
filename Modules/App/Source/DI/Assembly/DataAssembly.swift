@@ -30,11 +30,12 @@ public struct DataAssembly: Assembly {
             return DefaultSummariesService()
         }
         
+        // 해당 레포지토리는 같은 인스턴스를 공유합니다.
         container.register(SummariesRepository.self) { resolver in
             let service = resolver.resolve(SummariesService.self)!
             return DefaultSummariesRepository(
                 service: service
             )
-        }
+        }.inObjectScope(.transient)
     }
 }
