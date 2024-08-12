@@ -46,7 +46,4 @@ public class SelectMainCategoryCO: Coordinator {
 // MARK: InitFlow
 extension SelectMainCategoryCO {
     
-    func showHutingShortFormScreen() {
-        
-    }
 }

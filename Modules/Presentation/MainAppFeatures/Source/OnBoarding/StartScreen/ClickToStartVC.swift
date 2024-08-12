@@ -13,6 +13,8 @@ import DSKit
 
 public class ClickToStartVC: UIViewController {
     
+    var viewModel: ClickToStartViewModelable?
+    
     // Init
     
     // View
@@ -42,7 +44,11 @@ public class ClickToStartVC: UIViewController {
         label.text = "Shortcap과 함께, 더 똑똑한 숏폼의 세계로!"
         return label
     }()
-    let nextButton: CapBottomButton = .init(labelText: "여기를 눌러 시작하기")
+    let nextButton: CapBottomButton = {
+        let button = CapBottomButton(labelText: "여기를 눌러 시작하기")
+        button.setState(true)
+        return button
+    }()
     
     // Observable
     private let disposeBag = DisposeBag()
@@ -90,6 +96,16 @@ public class ClickToStartVC: UIViewController {
     
     private func setObservable() {
         
+    }
+    
+    public func bind(viewModel: ClickToStartViewModelable) {
+        
+        self.viewModel = viewModel
+        
+        nextButton
+            .rx.tap
+            .bind(to: viewModel.nextButtonClicked)
+            .disposed(by: disposeBag)
     }
 }
 

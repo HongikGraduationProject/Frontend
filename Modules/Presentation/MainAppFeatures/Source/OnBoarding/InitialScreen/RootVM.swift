@@ -99,7 +99,8 @@ public class RootVM: RootViewModelable {
         // 카테고리 선택화면으로 이동
         categoryDoentExist
             .subscribe { [weak coordinator] _ in
-                coordinator?.showCategorySelectionScreen()
+                // 카테고리를 선택하는 화면으로 이동
+                coordinator?.clickToStartScreen()
             }
             .disposed(by: disposeBag)
         
