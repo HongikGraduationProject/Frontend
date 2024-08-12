@@ -46,4 +46,18 @@ public class SelectMainCategoryCO: Coordinator {
 // MARK: InitFlow
 extension SelectMainCategoryCO {
     
+    func finishOnBoardingFlow() {
+        finishDelegate?.coordinatorDidFinish(childCoordinator: self)
+        finish(true)
+    }
+    
+    func showShortFormHuntingScreen() {
+        let coordinator = HuntingShortFormCO(
+            dependency: .init(
+                navigationController: navigationController
+            )
+        )
+        addChild(coordinator)
+        coordinator.start()
+    }
 }

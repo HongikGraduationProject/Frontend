@@ -10,8 +10,9 @@ import RxCocoa
 import RxSwift
 import Entity
 import DSKit
+import BaseFeature
 
-public class SelectMainCategoryVC: UIViewController {
+public class SelectMainCategoryVC: BaseVC {
     
     typealias Cell = CategorySelectionCell
     
@@ -142,6 +143,13 @@ public class SelectMainCategoryVC: UIViewController {
                     )
                 }
             }
+            .disposed(by: disposeBag)
+        
+        viewModel
+            .alert?
+            .drive(onNext: { [weak self] alertVO in
+                self?.showAlert(alertVO: alertVO)
+            })
             .disposed(by: disposeBag)
     }
 }

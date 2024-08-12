@@ -36,9 +36,9 @@ class DefaultRootCoordinator: RootCoordinator {
         viewController = vc
         
         let vm = RootVM(
-            coordinator: self,
-            authUseCase: injector.resolve(AuthUseCase.self), 
-            userConfigRepository: injector.resolve(UserConfigRepository.self)
+            coordinator: self, 
+            onBoardingUseCase: injector.resolve(OnBoardingCheckUseCase.self),
+            authUseCase: injector.resolve(AuthUseCase.self)
         )
         
         vc.bind(viewModel: vm)
@@ -56,7 +56,8 @@ extension DefaultRootCoordinator {
     func clickToStartScreen() {
         let coordinator = ClickToStartCO(
             dependency: .init(
-                userConfigRepository: injector.resolve(UserConfigRepository.self),
+                userConfigRepository: injector.resolve(UserConfigRepository.self), 
+                onBoardingCheckUseCase: injector.resolve(OnBoardingCheckUseCase.self),
                 navigationController: navigationController
             )
         )
@@ -65,8 +66,13 @@ extension DefaultRootCoordinator {
     }
     
     func showShortFormHuntingScreen() {
-        
-        
+        let coordinator = HuntingShortFormCO(
+            dependency: .init(
+                navigationController: navigationController
+            )
+        )
+        addChild(coordinator)
+        coordinator.start()
     }
 }
 

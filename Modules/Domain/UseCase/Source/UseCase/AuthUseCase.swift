@@ -38,9 +38,7 @@ public class DefaultAuthUseCase: AuthUseCase {
         let imei = authRepository.createImei()
         
         // 생성된 imei값으로 토큰을 생성한다.
-        return convert(task: authRepository.createAccessToken(imei: imei)) { [unowned self] error in
-            toDomainError(error: error)
-        }
+        return convert(task: authRepository.createAccessToken(imei: imei))
     }
     
     public func generateToken() async throws {
