@@ -5,7 +5,8 @@
 //  Created by choijunios on 8/15/24.
 //
 
-import Foundation
+import UIKit
+import DSKit
 
 public enum CAPMainPage {
     
