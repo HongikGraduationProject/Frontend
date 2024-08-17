@@ -16,14 +16,14 @@ public enum CAPMainPage: CaseIterable {
     }
     
     case home
-    case summaryAddtion
+    case inAppSummary
     case categoryAddition
     case environmentalSetting
     
     public init?(index: Int) {
         switch index {
         case 0: self = .home
-        case 1: self = .summaryAddtion
+        case 1: self = .inAppSummary
         case 2: self = .categoryAddition
         case 3: self = .environmentalSetting
         default: return nil
@@ -34,7 +34,7 @@ public enum CAPMainPage: CaseIterable {
         switch self {
         case .home:
             return 0
-        case .summaryAddtion:
+        case .inAppSummary:
             return 1
         case .categoryAddition:
             return 2
@@ -48,7 +48,7 @@ public enum CAPMainPage: CaseIterable {
         switch self {
         case .home:
             return (state == .accent ? Images.tabIconHome1 : Images.tabIconHome0).image
-        case .summaryAddtion:
+        case .inAppSummary:
             return (state == .accent ? Images.tabIconAddSum1 : Images.tabIconAddSum0).image
         case .categoryAddition:
             return (state == .accent ? Images.tabIconAddCat1 : Images.tabIconAddCat0).image
@@ -61,7 +61,7 @@ public enum CAPMainPage: CaseIterable {
         switch self {
         case .home:
             "홈"
-        case .summaryAddtion:
+        case .inAppSummary:
             "숏폼 추가"
         case .categoryAddition:
             "카테고리 추가"
