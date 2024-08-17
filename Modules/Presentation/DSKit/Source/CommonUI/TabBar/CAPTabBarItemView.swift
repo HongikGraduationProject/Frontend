@@ -65,6 +65,9 @@ public class CAPTabBarItemView: TappableUIView {
         
         setAppearance()
         setLayout()
+        
+        // 초기상태
+        setToIdle()
     }
     public required init?(coder: NSCoder) { nil }
     
@@ -78,12 +81,15 @@ public class CAPTabBarItemView: TappableUIView {
         
         self.addSubview(mainStack)
         mainStack.translatesAutoresizingMaskIntoConstraints = false
+        image.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
+            image.widthAnchor.constraint(equalToConstant: 24),
+            image.heightAnchor.constraint(equalTo: image.widthAnchor),
+            
             mainStack.topAnchor.constraint(equalTo: self.topAnchor, constant: 12),
             mainStack.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -16),
-            mainStack.leftAnchor.constraint(greaterThanOrEqualTo: self.leftAnchor, constant: 4),
-            mainStack.rightAnchor.constraint(lessThanOrEqualTo: self.rightAnchor, constant: -4),
+            mainStack.centerXAnchor.constraint(equalTo: self.centerXAnchor)
         ])
     }
     

@@ -29,6 +29,23 @@ let project = Project(
             ]
         ),
         
+        // MARK: ExampleApp
+        .target(
+            name: "ExampleApp",
+            destinations: .iOS,
+            product: .app,
+            productName: DeploymentSettings.productName+"ExampleApp",
+            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).exampleApp",
+            deploymentTargets: DeploymentSettings.deploymentVersion,
+            infoPlist: ShorcapInfoPlist.mainApp,
+            sources: ["Modules/ExampleApp/Source/**"],
+            resources: ["Modules/ExampleApp/Resource/**"],
+            dependencies: [
+                .target(name: "MainAppFeatures"),
+            ]
+        ),
+        
+        // MARK: ExtensionApp
         
         
         // MARK: Presentation

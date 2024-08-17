@@ -120,7 +120,7 @@ public extension CAPTabBarController {
         let pages = childControllers.keys.sorted { $0.pageOrderNumber() < $1.pageOrderNumber() }
         
         let itemViews = pages.map { page in
-            CAPTabBarItemView(
+            let itemView = CAPTabBarItemView(
                 index: page.pageOrderNumber(),
                 labelText: page.tabItemText(),
                 imageSet: .init(
@@ -128,6 +128,10 @@ public extension CAPTabBarController {
                     accentImage: page.tabItemIcon(.accent)
                 )
             )
+            
+            items[page] = itemView
+            
+            return itemView
         }
         
         tabBarItemContainer = CAPTabBarItemContainer(items: itemViews)
@@ -141,7 +145,7 @@ public extension CAPTabBarController {
         let willDisplayVC = childControllers[page]!
         let willDisplayView = willDisplayVC.view!
         
-        view.addSubview(willDisplayView)
+        view.insertSubview(willDisplayView, belowSubview: tabBarItemContainer)
         willDisplayView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([

@@ -49,9 +49,9 @@ public enum CAPMainPage: CaseIterable {
         case .home:
             return (state == .accent ? Images.tabIconHome1 : Images.tabIconHome0).image
         case .inAppSummary:
-            return (state == .accent ? Images.tabIconAddSum1 : Images.tabIconAddSum0).image
+            return (state == .accent ? Images.tabIconAddsum1 : Images.tabIconAddsum0).image
         case .categoryAddition:
-            return (state == .accent ? Images.tabIconAddCat1 : Images.tabIconAddCat0).image
+            return (state == .accent ? Images.tabIconAddcat1 : Images.tabIconAddcat0).image
         case .environmentalSetting:
             return (state == .accent ? Images.tabIconSetting1 : Images.tabIconSetting0).image
         }

@@ -27,6 +27,13 @@ public class SummariesVC: BaseVC {
     
     public required init?(coder: NSCoder) { fatalError() }
     
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        setAppearance()
+        setLayout()
+        setObservable()
+    }
+    
     private func setAppearance() {
         view.backgroundColor = .orange
     }
