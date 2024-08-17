@@ -27,8 +27,15 @@ public class EnvSettingVC: BaseVC {
     
     public required init?(coder: NSCoder) { fatalError() }
     
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        setAppearance()
+        setLayout()
+        setObservable()
+    }
+    
     private func setAppearance() {
-        view.backgroundColor = .yellow
+        view.backgroundColor = .brown
     }
     
     private func setLayout() {
