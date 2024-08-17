@@ -13,20 +13,39 @@ import Entity
 import DSKit
 
 public class CAPTabBarController: BaseVC {
+    public typealias Item = CAPMainPage
+    public struct PageTabItemInfo {
+        let page: Item
+        let navigationController: UINavigationController
+        
+        public init(page: Item, navigationController: UINavigationController) {
+            self.page = page
+            self.navigationController = navigationController
+        }
+    }
     
     // Init
+    let initialPage: Item
+    
+    // 탭바구성
+    private(set) var childControllers: [Item: UINavigationController] = [:]
+    private(set) var items: [Item: CAPTabBarItemView] = [:]
+    
     
     // View
-    private(set) var childControllers: [CAPMainPage: UINavigationController] = [:]
-    
-    private var tabBarItemContainer: UIView!
-    
     private(set) var displayingVC: UIViewController?
+    // - 탭바 아이템 컨테이너
+    private var tabBarItemContainer: CAPTabBarItemContainer!
+    
     
     // Observable
     private let disposeBag = DisposeBag()
     
-    public init(info: [PageTabItemInfo]) {
+    public init(
+        initialPage: Item,
+        info: [PageTabItemInfo]) 
+    {
+        self.initialPage = initialPage
         super.init(nibName: nil, bundle: nil)
         
         setPageControllers(info)
@@ -39,6 +58,10 @@ public class CAPTabBarController: BaseVC {
         setAppearance()
         setLayout()
         setObservable()
+        
+        // 최초화면 보여주기
+        items[initialPage]?.setState(.accent)
+        setPage(page: initialPage)
     }
     
     private func setAppearance() {
@@ -50,26 +73,32 @@ public class CAPTabBarController: BaseVC {
         tabBarItemContainer.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            tabBarItemContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
-            tabBarItemContainer.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10.5),
-            tabBarItemContainer.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10.5),
+            tabBarItemContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tabBarItemContainer.leftAnchor.constraint(equalTo: view.leftAnchor),
+            tabBarItemContainer.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
     }
     
     private func setObservable() {
+        let selectionPublishers = items.map { (page: Item, itemView: CAPTabBarItemView) in
+            itemView.rx.tap.map { _ in page }
+        }
         
-    }
-}
-
-
-// MARK: TabBar Flow
-public struct PageTabItemInfo {
-    let page: CAPMainPage
-    let navigationController: UINavigationController
-    
-    public init(page: CAPMainPage, navigationController: UINavigationController) {
-        self.page = page
-        self.navigationController = navigationController
+        Observable
+            .merge(selectionPublishers)
+            .subscribe(onNext: { [weak self] selectedPage in
+                guard let self else { return }
+                
+                // 선택된 화면 표출
+                setPage(page: selectedPage)
+                
+                // Item들 외향 변경
+                items.forEach { (page: Item, itemView: CAPTabBarItemView) in
+                    itemView.setState(selectedPage == page ? .accent : .idle)
+                }
+            })
+            .disposed(by: disposeBag)
+            
     }
 }
 
@@ -101,15 +130,14 @@ public extension CAPTabBarController {
             )
         }
         
-        tabBarItemContainer = HStack(itemViews, alignment: .fill, distribution: .fillEqually)
+        tabBarItemContainer = CAPTabBarItemContainer(items: itemViews)
     }
     
     /// 해당 함수는 뷰모델에 의해서만 호출됩니다. 특정 페이지를 display합니다.
-    private func setPage(index: Int) {
+    private func setPage(page: Item) {
         
         displayingVC?.view.removeFromSuperview()
         
-        let page = CAPMainPage(index: index)!
         let willDisplayVC = childControllers[page]!
         let willDisplayView = willDisplayVC.view!
         
@@ -120,7 +148,7 @@ public extension CAPTabBarController {
             willDisplayView.topAnchor.constraint(equalTo: view.topAnchor),
             willDisplayView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             willDisplayView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            willDisplayView.bottomAnchor.constraint(equalTo: tabBarItemContainer.topAnchor)
+            willDisplayView.bottomAnchor.constraint(equalTo: tabBarItemContainer.topAnchor, constant: 30)
         ])
         
         displayingVC = willDisplayVC

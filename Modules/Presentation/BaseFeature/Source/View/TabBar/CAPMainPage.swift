@@ -8,7 +8,7 @@
 import UIKit
 import DSKit
 
-public enum CAPMainPage {
+public enum CAPMainPage: CaseIterable {
     
     public enum State {
         case idle
