@@ -12,8 +12,12 @@ import DSKit
 
 public class MainScreenCO: Coordinator {
     
-    struct Dependency {
+    public struct Dependency {
         var navigationController: UINavigationController?
+        
+        public init(navigationController: UINavigationController? = nil) {
+            self.navigationController = navigationController
+        }
     }
     
     public var viewController: UIViewController?
@@ -24,6 +28,10 @@ public class MainScreenCO: Coordinator {
     public var parent: (any BaseFeature.Coordinator)?
     
     public var finishDelegate: (any BaseFeature.CoordinatorFinishDelegate)?
+    
+    public init(dependency: Dependency) {
+        self.navigationController = dependency.navigationController
+    }
     
     public func start() {
         
@@ -60,20 +68,24 @@ public class MainScreenCO: Coordinator {
     // #2. 생성한 컨트롤러를 각 탭별 Coordinator에 전달
     func startTabCoordinator(page: CAPMainPage, navigationController: UINavigationController) {
         
-        var coordinator: Coordinator!
+        var childCoordinator: Coordinator!
         
         switch page {
         case .home:
-            <#code#>
-        case .summaryAddtion:
-            <#code#>
+            let coordinator = SummariesCO(dependency: .init(navigationController: navigationController))
+            childCoordinator = coordinator
+        case .inAppSummary:
+            let coordinator = InAppSummatyCO(dependency: .init(navigationController: navigationController))
+            childCoordinator = coordinator
         case .categoryAddition:
-            <#code#>
+            let coordinator = CategoryAdditionCO(dependency: .init(navigationController: navigationController))
+            childCoordinator = coordinator
         case .environmentalSetting:
-            <#code#>
+            let coordinator = EnvSettingCO(dependency: .init(navigationController: navigationController))
+            childCoordinator = coordinator
         }
-        
+        addChild(childCoordinator)
         // 코디네이터들을 실행
-        coordinator.start()
+        childCoordinator.start()
     }
 }
