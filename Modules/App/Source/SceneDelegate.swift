@@ -7,6 +7,7 @@
 import UIKit
 import Swinject
 import MainAppFeatures
+import DataSource
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -37,7 +38,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 injector: injector
             )
         )
-        
+        let test = injector.resolve(CoreDataService.self)
         // 인위적인 시간
         sleep(1)
 

@@ -37,5 +37,9 @@ public struct DataAssembly: Assembly {
                 service: service
             )
         }.inObjectScope(.transient)
+        
+        container.register(CoreDataService.self) { _ in
+            return DefaultCoreDataService()
+        }.inObjectScope(.transient)
     }
 }
