@@ -7,6 +7,9 @@
 
 import Foundation
 
-public struct SummaryItem {
-    
+public struct SummaryItem: Decodable {
+    public let title: String
+    public let mainCategory: MainCategory
+    public let createdAt: String
+    public let videoSummaryId: Int
 }

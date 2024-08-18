@@ -13,6 +13,8 @@ import Alamofire
 public enum SummariesAPI {
     
     case listAll
+    case checkSummaryStatus(videoCode: String)
+    case fetchSummaryDetail(videoId: Int)
 }
 
 extension SummariesAPI: BaseAPI {
@@ -24,6 +26,10 @@ extension SummariesAPI: BaseAPI {
         switch self {
         case .listAll:
             .get
+        case .checkSummaryStatus:
+            .get
+        case .fetchSummaryDetail:
+            .get
         }
     }
     
@@ -31,6 +37,10 @@ extension SummariesAPI: BaseAPI {
         switch self {
         case .listAll:
             "/list/all"
+        case .checkSummaryStatus(let videoCode):
+            "/status/\(videoCode)"
+        case .fetchSummaryDetail(let videoId):
+            "/\(videoId)"
         }
     }
     
