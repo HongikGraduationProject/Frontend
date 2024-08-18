@@ -7,21 +7,48 @@
 
 import Foundation
 
-public enum MainCategory: Int, CaseIterable {
-    case technology = 0
-    case beauty = 1
-    case cook = 2
-    case living = 3
-    case health = 4
-    case travel = 5
-    case art = 6
-    case news = 7
-    case entertainment = 8
-    case other = 9
-    case all = 10
+public enum MainCategory: String, CaseIterable, Decodable {
+    case all = "ALL"
+    case technology = "TECHNOLOGY"
+    case beauty = "BEAUTY"
+    case cook = "COOK"
+    case living = "LIVING"
+    case health = "HEALTH"
+    case travel = "TRAVEL"
+    case art = "ART"
+    case news = "NEWS"
+    case entertainment = "ENTERTAINMENT"
+    case other = "OTHER"
     
     public static var allCasesExceptAll: [MainCategory] {
         self.allCases.filter { $0 != .all }
+    }
+    
+    public var pageOrderNumber: Int {
+        switch self {
+        case .all:
+            0
+        case .technology:
+            1
+        case .beauty:
+            2
+        case .cook:
+            3
+        case .living:
+            4
+        case .health:
+            5
+        case .travel:
+            6
+        case .art:
+            7
+        case .news:
+            8
+        case .entertainment:
+            9
+        case .other:
+            10
+        }
     }
 
     public var korWordText: String {
