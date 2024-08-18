@@ -21,6 +21,7 @@ let project = Project(
             infoPlist: ShorcapInfoPlist.mainApp,
             sources: ["Modules/App/Source/**"],
             resources: ["Modules/App/Resource/**"],
+            entitlements: .file(path: .relativeToRoot("Entitlements/App.entitlements")),
             dependencies: [
                 .target(name: "MainAppFeatures"),
                 
@@ -152,6 +153,9 @@ let project = Project(
             sources: [
                 "Modules/Data/DataSource/Source/**",
                 .glob(.relativeToRoot("Secrets/DataSource/**"))
+            ],
+            resources: [
+                "Modules/Data/DataSource/Resource/**"
             ],
             dependencies: [
                 .target(name: "Entity"),
