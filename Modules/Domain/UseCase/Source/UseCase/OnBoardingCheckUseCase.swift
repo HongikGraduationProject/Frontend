@@ -21,11 +21,11 @@ public protocol OnBoardingCheckUseCase: UseCaseBase {
 public class DefaultOnBoardingCheckUseCase: OnBoardingCheckUseCase {
     
     let userConfigRepository: UserConfigRepository
-    let summariesRepository: SummariesRepository
+    let summaryRepository: SummaryRepository
     
-    public init(userConfigRepository: UserConfigRepository, summariesRepository: SummariesRepository) {
+    public init(userConfigRepository: UserConfigRepository, summaryRepository: SummaryRepository) {
         self.userConfigRepository = userConfigRepository
-        self.summariesRepository = summariesRepository
+        self.summaryRepository = summaryRepository
     }
     
     public func checkingSelectedCategoriesExists() -> Bool {
@@ -34,7 +34,7 @@ public class DefaultOnBoardingCheckUseCase: OnBoardingCheckUseCase {
     }
     
     public func checkingSummariesExists() -> RxSwift.Single<Result<Bool, Entity.SummariesError>> {
-        convert(task: summariesRepository
+        convert(task: summaryRepository
             .getAllVideoList()
             .map { summaries in
                 return !summaries.isEmpty
