@@ -29,4 +29,10 @@ open class ThreadSafeDictionary<Key: Hashable, Value> {
             self?.dict[key] = value
         }
     }
+    
+    public func remove(_ key: Key) {
+        queue.sync { [weak self] in
+            _ = self?.dict.removeValue(forKey: key)
+        }
+    }
 }

@@ -18,5 +18,5 @@ public protocol VideoCodeRepository {
     func saveVideoCode(_ videoCode: String) -> Single<Void>
     
     /// 비디오 코드를 제거합니다.
-    func removeVideoCode(_ videoCode: String) -> Single<Void>
+    func removeVideoCode(_ videoCode: String)
 }
