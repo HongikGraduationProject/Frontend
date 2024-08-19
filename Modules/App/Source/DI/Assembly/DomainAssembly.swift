@@ -17,10 +17,10 @@ public struct DomainAssembly: Assembly {
         
         container.register(OnBoardingCheckUseCase.self) { resolver in
             let userConfigRepository = resolver.resolve(UserConfigRepository.self)!
-            let summariesRepository = resolver.resolve(SummariesRepository.self)!
+            let summaryRepository = resolver.resolve(SummaryRepository.self)!
             return DefaultOnBoardingCheckUseCase(
                 userConfigRepository: userConfigRepository,
-                summariesRepository: summariesRepository
+                summaryRepository: summaryRepository
             )
         }
     }

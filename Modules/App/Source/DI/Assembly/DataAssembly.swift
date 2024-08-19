@@ -26,15 +26,23 @@ public struct DataAssembly: Assembly {
             return DefaultAuthRepository(authService: service)
         }
         
-        container.register(SummariesService.self) { _ in
-            return DefaultSummariesService()
+        container.register(SummaryService.self) { _ in
+            return DefaultSummaryService()
         }
         
+        container.register(CoreDataService.self) { _ in
+            return DefaultCoreDataService()
+        }.inObjectScope(.transient)
+        
         // 해당 레포지토리는 같은 인스턴스를 공유합니다.
-        container.register(SummariesRepository.self) { resolver in
-            let service = resolver.resolve(SummariesService.self)!
-            return DefaultSummariesRepository(
-                service: service
+        container.register(SummaryRepository.self) { resolver in
+            let summaryService = resolver.resolve(SummaryService.self)!
+            let coreDataService = resolver.resolve(CoreDataService.self)!
+            return DefaultSummaryRepository(
+                dependency: .init(
+                    coreDataService: coreDataService,
+                    summaryService: summaryService
+                )
             )
         }.inObjectScope(.transient)
         

@@ -1,5 +1,5 @@
 //
-//  DefaultSummariesRepository.swift
+//  DefaultSummaryRepository.swift
 //  Repository
 //
 //  Created by choijunios on 8/13/24.
@@ -12,7 +12,7 @@ import DataSource
 import RxSwift
 import Util
 
-public class DefaultSummariesRepository: SummaryRepository {
+public class DefaultSummaryRepository: SummaryRepository {
     
     public struct Dependency {
         let coreDataService: CoreDataService
@@ -35,6 +35,9 @@ public class DefaultSummariesRepository: SummaryRepository {
     ) {
         self.coreDataService = dependency.coreDataService
         self.summaryService = dependency.summaryService
+        
+        // 캐시를 WarnUp합니다.
+        warmUpCache()
     }
     
     public func fetchAllSummaryItems() -> RxSwift.Single<[Entity.SummaryItem]> {
@@ -88,26 +91,33 @@ public class DefaultSummariesRepository: SummaryRepository {
             .asSingle()
     }
     
+    /// 로컬데이터를 Cache매모리로 옮깁니다.
+    private func warmUpCache() {
+        
+        coreDataService.container.performBackgroundTask { [weak self] content in
+            let fetchRequest = SummaryDetailObject.fetchRequest()
+            do {
+                let summaryDetails = try content.fetch(fetchRequest)
+                summaryDetails.forEach { object in
+                    let result = object.toEntity()
+                    let videoId = result.0
+                    let entity = result.1
+                    self?.cacheStorage.write(videoId, value: entity)
+                }
+            }
+            catch {
+                
+                // 캐싱작업 오류발생
+                printIfDebug("‼️ 캐시를 웜업하는 과정에서 오류가 발생했습니다.")
+            }
+        }
+    }
+    
+    /// 요약상세정보를 코어데이터에 저장합니다.
     private func saveSummaryDetail(videoId: Int, _ detail: SummaryDetail) {
         coreDataService.container.performBackgroundTask({ [detail] context in
-            let entity = SummaryDetailObject(context: context)
-            entity.videoId = Int32(videoId)
-            entity.title = detail.title
-            entity.content = detail.description
-            entity.keywords = detail.keywords.joined(separator: ",")
-            entity.url = detail.url.absoluteString
-            entity.summary = detail.summary
-            entity.address = detail.address
-            entity.createdAt = detail.createdAt
-            entity.platform = detail.platform.rawValue
-            entity.mainCategory = detail.mainCategory.rawValue
-            entity.mainCategoryIndex = Int32(detail.mainCategoryIndex)
-            entity.subCategory = detail.subCategory
-            entity.subCategoryId = Int32(detail.subCategoryId)
-            entity.latitude = detail.latitude
-            entity.longitude = detail.longitude
-            entity.videoCode = detail.videoCode
-            
+            let coreDataDTO = SummaryDetailObject(context: context)
+            detail.mapToCoreDataEntity(videoId: videoId, coreDataDTO)
             do {
                 try context.save()
             } catch {
@@ -119,4 +129,52 @@ public class DefaultSummariesRepository: SummaryRepository {
 
 fileprivate struct VideoSummaryList: Decodable {
     let videoSummaryList: [SummaryItem]
+}
+
+// MARK: Summary Detail transformation
+fileprivate extension SummaryDetailObject {
+    
+    func toEntity() -> (Int, SummaryDetail) {
+        let detail = SummaryDetail(
+            title: self.title ?? "",
+            description: self.content ?? "",
+            keywords: self.keywords?.split(separator: ",").map { String($0) } ?? [],
+            url: URL(string: self.url ?? "")!,
+            summary: self.summary ?? "",
+            address: self.address ?? "",
+            createdAt: self.createdAt ?? "",
+            platform: ShortFormPlatform(rawValue: self.platform ?? "") ?? .youtube,
+            mainCategory: MainCategory(rawValue: self.mainCategory ?? "") ?? .art,
+            mainCategoryIndex: Int(self.mainCategoryIndex),
+            subCategory: self.subCategory ?? "",
+            subCategoryId: Int(self.subCategoryId),
+            latitude: self.latitude,
+            longitude: self.longitude,
+            videoCode:self.videoCode ?? ""
+        )
+        
+        return (Int(self.videoId), detail)
+    }
+}
+
+fileprivate extension SummaryDetail {
+    
+    func mapToCoreDataEntity(videoId: Int, _ coreDataDTO: SummaryDetailObject) {
+        coreDataDTO.videoId = Int32(videoId)
+        coreDataDTO.title = self.title
+        coreDataDTO.content = self.description
+        coreDataDTO.keywords = self.keywords.joined(separator: ",")
+        coreDataDTO.url = self.url.absoluteString
+        coreDataDTO.summary = self.summary
+        coreDataDTO.address = self.address
+        coreDataDTO.createdAt = self.createdAt
+        coreDataDTO.platform = self.platform.rawValue
+        coreDataDTO.mainCategory = self.mainCategory.rawValue
+        coreDataDTO.mainCategoryIndex = Int32(self.mainCategoryIndex)
+        coreDataDTO.subCategory = self.subCategory
+        coreDataDTO.subCategoryId = Int32(self.subCategoryId)
+        coreDataDTO.latitude = self.latitude
+        coreDataDTO.longitude = self.longitude
+        coreDataDTO.videoCode = self.videoCode
+    }
 }
