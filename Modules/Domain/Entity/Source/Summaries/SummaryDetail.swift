@@ -21,7 +21,7 @@ public struct SummaryDetail: Decodable {
     public let url: URL
     public let summary: String
     public let address: String
-    public let createdAt: Date
+    public let createdAt: String
     public let platform: ShortFormPlatform
     public let mainCategory: MainCategory
     public let mainCategoryIndex: Int
