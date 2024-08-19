@@ -27,8 +27,8 @@ public struct SummaryDetail: Decodable {
     public let mainCategoryIndex: Int
     public let subCategory: String
     public let subCategoryId: Int
-    public let latitude: Double
-    public let longitude: Double
+    public let latitude: Double?
+    public let longitude: Double?
     public let videoCode: String
     
     public init(
@@ -44,8 +44,8 @@ public struct SummaryDetail: Decodable {
         mainCategoryIndex: Int,
         subCategory: String,
         subCategoryId: Int,
-        latitude: Double,
-        longitude: Double,
+        latitude: Double?,
+        longitude: Double?,
         videoCode: String
     ) {
         self.title = title
@@ -63,5 +63,23 @@ public struct SummaryDetail: Decodable {
         self.latitude = latitude
         self.longitude = longitude
         self.videoCode = videoCode
+    }
+    
+    enum CodingKeys: CodingKey {
+        case title
+        case description
+        case keywords
+        case url
+        case summary
+        case address
+        case createdAt
+        case platform
+        case mainCategory
+        case mainCategoryIndex
+        case subCategory
+        case subCategoryId
+        case latitude
+        case longitude
+        case videoCode
     }
 }

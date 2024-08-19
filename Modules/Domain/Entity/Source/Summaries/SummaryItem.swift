@@ -12,4 +12,16 @@ public struct SummaryItem: Decodable {
     public let mainCategory: MainCategory
     public let createdAt: String
     public let videoSummaryId: Int
+    
+    public init(
+        title: String,
+        mainCategory: MainCategory,
+        createdAt: String,
+        videoSummaryId: Int
+    ) {
+        self.title = title
+        self.mainCategory = mainCategory
+        self.createdAt = createdAt
+        self.videoSummaryId = videoSummaryId
+    }
 }
