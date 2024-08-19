@@ -20,9 +20,8 @@ public class DefaultUserConfigRepository: UserConfigRepository {
             return nil
         }
         
-        return stringData.split(separator: ",").map {
-            let catIndex = Int($0)!
-            let category = MainCategory(rawValue: catIndex)!
+        return stringData.split(separator: ",").map { rawValue in
+            let category = MainCategory(rawValue: String(rawValue))!
             return category
         }
     }

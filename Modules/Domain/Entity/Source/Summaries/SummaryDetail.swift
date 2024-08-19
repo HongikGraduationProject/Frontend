@@ -30,4 +30,38 @@ public struct SummaryDetail: Decodable {
     public let latitude: Double
     public let longitude: Double
     public let videoCode: String
+    
+    public init(
+        title: String,
+        description: String,
+        keywords: [String],
+        url: URL,
+        summary: String,
+        address: String,
+        createdAt: String,
+        platform: ShortFormPlatform,
+        mainCategory: MainCategory,
+        mainCategoryIndex: Int,
+        subCategory: String,
+        subCategoryId: Int,
+        latitude: Double,
+        longitude: Double,
+        videoCode: String
+    ) {
+        self.title = title
+        self.description = description
+        self.keywords = keywords
+        self.url = url
+        self.summary = summary
+        self.address = address
+        self.createdAt = createdAt
+        self.platform = platform
+        self.mainCategory = mainCategory
+        self.mainCategoryIndex = mainCategoryIndex
+        self.subCategory = subCategory
+        self.subCategoryId = subCategoryId
+        self.latitude = latitude
+        self.longitude = longitude
+        self.videoCode = videoCode
+    }
 }

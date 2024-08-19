@@ -35,9 +35,9 @@ public class DefaultOnBoardingCheckUseCase: OnBoardingCheckUseCase {
     
     public func checkingSummariesExists() -> RxSwift.Single<Result<Bool, Entity.SummariesError>> {
         convert(task: summaryRepository
-            .getAllVideoList()
-            .map { summaries in
-                return !summaries.isEmpty
+            .fetchAllSummaryItems()
+            .map { summaryItmes in
+                return !summaryItmes.isEmpty
             })
     }
 }
