@@ -38,9 +38,22 @@ public class DefaultSummaryRequestRepository: SummaryRequestRepository {
             }
     }
     
-    public func initiateSummary(url: String, category: Entity.MainCategory) -> RxSwift.Single<String> {
-        <#code#>
+    public func initiateSummary(url: String, category: Entity.MainCategory?) -> RxSwift.Single<String> {
+        let dto: SummaryInitiateDTO = .init(
+            url: url,
+            categoryId: category?.index
+        )
+        return summaryService
+            .request(api: .initiateSummary(dto: dto), with: .withToken)
+            .map(CAPResponse<VideoCodeDTO>.self)
+            .map { dto in
+                dto.data!.videoCode
+            }
     }
+}
+
+fileprivate struct VideoCodeDTO: Decodable {
+    let videoCode: String
 }
 
 fileprivate struct VideoSummaryList: Decodable {
