@@ -40,24 +40,6 @@ public class DefaultSummaryRepository: SummaryRepository {
         warmUpCache()
     }
     
-    public func fetchAllSummaryItems() -> RxSwift.Single<[Entity.SummaryItem]> {
-        summaryService
-            .request(api: .listAll, with: .withToken)
-            .map(CAPResponse<VideoSummaryList>.self)
-            .map { response in
-                response.data!.videoSummaryList
-            }
-    }
-    
-    public func checkSummaryState(videoCode: String) -> RxSwift.Single<SummaryStatus> {
-        summaryService
-            .request(api: .checkSummaryStatus(videoCode: videoCode), with: .withToken)
-            .map(CAPResponse<SummaryStatus>.self)
-            .map { response in
-                response.data!
-            }
-    }
-    
     public func fetchSummaryDetail(videoId: Int) -> RxSwift.Single<Entity.SummaryDetail> {
         // 캐싱된 정보가 있는지 확인합니다.
         let checkCaching = cacheStorage
