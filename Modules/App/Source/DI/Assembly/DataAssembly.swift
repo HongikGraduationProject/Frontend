@@ -13,17 +13,9 @@ import DataSource
 public struct DataAssembly: Assembly {
     public func assemble(container: Container) {
         
-        container.register(UserConfigRepository.self) { resolver in
-            return DefaultUserConfigRepository()
-        }
-        
+        // MARK: Services
         container.register(AuthService.self) { _ in
             return DefaultAuthService()
-        }
-        
-        container.register(AuthRepository.self) { resolver in
-            let service = resolver.resolve(AuthService.self)!
-            return DefaultAuthRepository(authService: service)
         }
         
         container.register(SummaryService.self) { _ in
@@ -33,6 +25,24 @@ public struct DataAssembly: Assembly {
         container.register(CoreDataService.self) { _ in
             return DefaultCoreDataService()
         }.inObjectScope(.transient)
+        
+        
+        // MARK: Repositories
+        container.register(UserConfigRepository.self) { resolver in
+            return DefaultUserConfigRepository()
+        }
+        
+        container.register(AuthRepository.self) { resolver in
+            let service = resolver.resolve(AuthService.self)!
+            return DefaultAuthRepository(authService: service)
+        }
+        
+        container.register(VideoCodeRepository.self) { resolver in
+            let coreDataService = resolver.resolve(CoreDataService.self)!
+            return DefaultVideoCodeRepository(
+                coreDataService: coreDataService
+            )
+        }
         
         // 해당 레포지토리는 같은 인스턴스를 공유합니다.
         container.register(SummaryRepository.self) { resolver in
@@ -44,10 +54,6 @@ public struct DataAssembly: Assembly {
                     summaryService: summaryService
                 )
             )
-        }.inObjectScope(.transient)
-        
-        container.register(CoreDataService.self) { _ in
-            return DefaultCoreDataService()
         }.inObjectScope(.transient)
     }
 }
