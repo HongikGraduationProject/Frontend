@@ -1,5 +1,5 @@
 //
-//  DefaultSummaryRepository.swift
+//  DefaultSummaryDetailRepository.swift
 //  Repository
 //
 //  Created by choijunios on 8/13/24.
@@ -12,7 +12,7 @@ import DataSource
 import RxSwift
 import Util
 
-public class DefaultSummaryRepository: SummaryRepository {
+public class DefaultSummaryDetailRepository: SummaryDetailRepository {
     
     public struct Dependency {
         let coreDataService: CoreDataService
@@ -107,10 +107,6 @@ public class DefaultSummaryRepository: SummaryRepository {
             }
         })
     }
-}
-
-fileprivate struct VideoSummaryList: Decodable {
-    let videoSummaryList: [SummaryItem]
 }
 
 // MARK: Summary Detail transformation
