@@ -25,5 +25,10 @@
     </entity>
     <entity name="SummaryInfoObject" representedClassName="SummaryInfoObject" syncable="YES" codeGenerationType="class">
         <attribute name="videoCode" optional="YES" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="videoCode"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
 </model>

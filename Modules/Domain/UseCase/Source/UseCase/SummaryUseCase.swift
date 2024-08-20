@@ -115,7 +115,7 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                         
                         // 비디오 코드 삭제요청
                         // 완료응답을 받은 이후임으로, 설령삭제되지 못한다해도 문제되지 않는다.
-                        // 에러상황에 대해 별도의 처리를 하지 않기 때문이다. 추후에 에러로깅에 문작될 수는 있다.
+                        // ‼️ 에러상황에 대해 별도의 처리를 하지 않기 때문이다. 추후에 에러로깅에 문제가될 수는 있다.
                         videoCodeRepository.removeVideoCode(videoCode)
                         
                         // 반복 스트림 종료
