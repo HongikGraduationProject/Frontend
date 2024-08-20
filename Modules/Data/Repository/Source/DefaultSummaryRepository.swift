@@ -148,8 +148,8 @@ fileprivate extension SummaryDetailObject {
             mainCategoryIndex: Int(self.mainCategoryIndex),
             subCategory: self.subCategory ?? "",
             subCategoryId: Int(self.subCategoryId),
-            latitude: self.latitude,
-            longitude: self.longitude,
+            latitude: self.latitude == 0 ? nil : self.latitude,
+            longitude: self.longitude == 0 ? nil : self.longitude,
             videoCode:self.videoCode ?? ""
         )
         
@@ -173,8 +173,10 @@ fileprivate extension SummaryDetail {
         coreDataDTO.mainCategoryIndex = Int32(self.mainCategoryIndex)
         coreDataDTO.subCategory = self.subCategory
         coreDataDTO.subCategoryId = Int32(self.subCategoryId)
-        coreDataDTO.latitude = self.latitude
-        coreDataDTO.longitude = self.longitude
+        if let latitude = self.latitude, let longitude = self.longitude {
+            coreDataDTO.latitude = latitude
+            coreDataDTO.longitude = longitude
+        }
         coreDataDTO.videoCode = self.videoCode
     }
 }

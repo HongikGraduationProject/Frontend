@@ -23,6 +23,7 @@ let project = Project(
             resources: ["Modules/App/Resource/**"],
             entitlements: .file(path: .relativeToRoot("Entitlements/App.entitlements")),
             dependencies: [
+                .target(name: "ActionExtension"),
                 .target(name: "MainAppFeatures"),
                 
                 // ThirdParty : Service locator
@@ -46,7 +47,25 @@ let project = Project(
             ]
         ),
         
-        // MARK: ExtensionApp
+        // MARK: ActionExtension
+        .target(
+            name: "ActionExtension",
+            destinations: .iOS,
+            product: .appExtension,
+            productName: DeploymentSettings.productName+"ActionExt",
+            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).actionExt",
+            deploymentTargets: DeploymentSettings.deploymentVersion,
+            infoPlist: ShorcapInfoPlist.actionExtension,
+            sources: ["Modules/ActionExtension/Source/**"],
+            resources: ["Modules/ActionExtension/Resource/**"],
+            entitlements: .file(path: .relativeToRoot("Entitlements/AppExtension.entitlements")),
+            dependencies: [
+                .target(name: "MainAppFeatures"),
+                
+                // ThirdParty : Service locator
+                .external(name: "Swinject"),
+            ]
+        ),
         
         
         // MARK: Presentation

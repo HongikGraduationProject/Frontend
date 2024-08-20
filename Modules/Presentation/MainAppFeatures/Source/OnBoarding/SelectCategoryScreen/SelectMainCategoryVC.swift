@@ -19,6 +19,12 @@ public class SelectMainCategoryVC: BaseVC {
     // Init
     let viewModel: SelectMainCategoryViewModelable
     
+    private let mainCategories: [MainCategory] = {
+        let items = MainCategory.allCases.filter { $0 != .all }
+        let sorted = items.sorted { $0.pageOrderNumber < $1.pageOrderNumber }
+        return sorted
+    }()
+    
     // View
     let titleLabel: CapLabel = {
         let label = CapLabel()
@@ -166,7 +172,7 @@ extension SelectMainCategoryVC: UICollectionViewDataSource, UICollectionViewDele
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cell.identifier, for: indexPath) as! Cell
         
         cell.bind(
-            category: MainCategory(rawValue: indexPath.item)!,
+            category: mainCategories[indexPath.item],
             viewModel: viewModel
         )
         
