@@ -60,7 +60,7 @@ let project = Project(
             resources: ["Modules/ActionExtension/Resource/**"],
             entitlements: .file(path: .relativeToRoot("Entitlements/AppExtension.entitlements")),
             dependencies: [
-                .target(name: "MainAppFeatures"),
+                .target(name: "AppExtensionFeatures"),
                 
                 // ThirdParty : Service locator
                 .external(name: "Swinject"),
