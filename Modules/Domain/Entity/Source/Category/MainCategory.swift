@@ -50,6 +50,33 @@ public enum MainCategory: String, CaseIterable, Decodable {
             10
         }
     }
+    
+    public var index: Int {
+        switch self {
+        case .all:
+            10
+        case .technology:
+            0
+        case .beauty:
+            1
+        case .cook:
+            2
+        case .living:
+            3
+        case .health:
+            4
+        case .travel:
+            5
+        case .art:
+            6
+        case .news:
+            7
+        case .entertainment:
+            8
+        case .other:
+            9
+        }
+    }
 
     public var korWordText: String {
         switch self {

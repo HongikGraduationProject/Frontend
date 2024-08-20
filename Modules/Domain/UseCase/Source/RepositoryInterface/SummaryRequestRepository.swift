@@ -18,5 +18,5 @@ public protocol SummaryRequestRepository {
     func checkSummaryState(videoCode: String) -> Single<SummaryStatus>
     
     /// 특정비디오의 요약을 요청합니다.
-    func initiateSummary(url: String, category: MainCategory) -> Single<String>
+    func initiateSummary(url: String, category: MainCategory?) -> Single<String>
 }

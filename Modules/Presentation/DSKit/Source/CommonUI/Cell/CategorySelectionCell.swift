@@ -197,7 +197,7 @@ public class CategorySelectionView: TappableUIView {
 }
 
 // MARK: 카테고리 이미지를 반환
-extension MainCategory {
+public extension MainCategory {
     
     var image: UIImage {
         switch self {

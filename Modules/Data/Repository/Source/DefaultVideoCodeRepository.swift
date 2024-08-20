@@ -38,6 +38,7 @@ public class DefaultVideoCodeRepository: VideoCodeRepository {
                 object.videoCode = videoCode
                 do {
                     try context.save()
+                    printIfDebug("✅ 비디오코드 저장됨 \(videoCode)")
                     single(.success(()))
                 } catch {
                     single(.failure(error))
