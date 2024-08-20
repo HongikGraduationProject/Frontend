@@ -44,11 +44,18 @@ public struct DataAssembly: Assembly {
             )
         }
         
-        // 해당 레포지토리는 같은 인스턴스를 공유합니다.
-        container.register(SummaryRepository.self) { resolver in
+        container.register(SummaryRequestRepository.self) { resolver in
+            let summaryService = resolver.resolve(SummaryService.self)!
+            return DefaultSummaryRequestRepository(
+                summaryService: summaryService
+            )
+        }
+        
+        // ⭐️ 해당 레포지토리는 같은 인스턴스를 공유합니다.
+        container.register(SummaryDetailRepository.self) { resolver in
             let summaryService = resolver.resolve(SummaryService.self)!
             let coreDataService = resolver.resolve(CoreDataService.self)!
-            return DefaultSummaryRepository(
+            return DefaultSummaryDetailRepository(
                 dependency: .init(
                     coreDataService: coreDataService,
                     summaryService: summaryService

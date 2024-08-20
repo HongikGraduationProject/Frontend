@@ -25,10 +25,12 @@ public protocol SummaryUseCase: UseCaseBase {
 public class DefaultSummaryUseCase: SummaryUseCase {
     
     public struct Dependency {
-        let summaryRepository: SummaryRepository
+        let summaryRequestRepository: SummaryRequestRepository
+        let summaryDetailRepository: SummaryDetailRepository
         let videoCodeRepository: VideoCodeRepository
-        public init(summaryRepository: SummaryRepository, videoCodeRepository: VideoCodeRepository) {
-            self.summaryRepository = summaryRepository
+        public init(summaryRequestRepository: SummaryRequestRepository, summaryDetailRepository: SummaryDetailRepository, videoCodeRepository: VideoCodeRepository) {
+            self.summaryRequestRepository = summaryRequestRepository
+            self.summaryDetailRepository = summaryDetailRepository
             self.videoCodeRepository = videoCodeRepository
         }
     }
@@ -44,13 +46,16 @@ public class DefaultSummaryUseCase: SummaryUseCase {
     private let summariesHotStream: RxSwift.PublishSubject<SummaryItem>
     
     // Repository
-    private let summaryRepository: SummaryRepository
+    private let summaryRequestRepository: SummaryRequestRepository
+    private let summaryDetailRepository: SummaryDetailRepository
     private let videoCodeRepository: VideoCodeRepository
     
     private let disposeBag = DisposeBag()
     
     public init(dependency: Dependency) {
-        self.summaryRepository = dependency.summaryRepository
+        
+        self.summaryRequestRepository = dependency.summaryRequestRepository
+        self.summaryDetailRepository = dependency.summaryDetailRepository
         self.videoCodeRepository = dependency.videoCodeRepository
         
         summariesStream = .init(value: [])
@@ -77,7 +82,7 @@ public class DefaultSummaryUseCase: SummaryUseCase {
     }
     
     public func fetchAllSummaryItems() -> Single<Result<[SummaryItem], SummariesError>> {
-        convert(task: summaryRepository
+        convert(task: summaryRequestRepository
             .fetchAllSummaryItems())
     }
     
@@ -101,8 +106,8 @@ public class DefaultSummaryUseCase: SummaryUseCase {
             // 최초 요청과 이후 요청을 merge
             let statusCheckResult = Observable
                 .merge(initialStatusCheckSubject, delayedStream)
-                .flatMap { [summaryRepository] videoCode in
-                    summaryRepository
+                .flatMap { [summaryRequestRepository] videoCode in
+                    summaryRequestRepository
                         .checkSummaryState(videoCode: videoCode)
                 }
                 .share()
@@ -121,7 +126,7 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                         // 반복 스트림 종료
                         statusCheckStreamDict.remove(videoCode)
                         
-                        let getDetailResult = summaryRepository.fetchSummaryDetail(videoId: status.videoSummaryId)
+                        let getDetailResult = summaryDetailRepository.fetchSummaryDetail(videoId: status.videoSummaryId)
                         getDetailResult
                             .subscribe(onSuccess: { [weak self] detail in
                                 

@@ -20,12 +20,22 @@ public protocol OnBoardingCheckUseCase: UseCaseBase {
 
 public class DefaultOnBoardingCheckUseCase: OnBoardingCheckUseCase {
     
-    let userConfigRepository: UserConfigRepository
-    let summaryRepository: SummaryRepository
+    public struct Dependency {
+        let userConfigRepository: UserConfigRepository
+        let summaryRequestRepository: SummaryRequestRepository
+        
+        public init(userConfigRepository: UserConfigRepository, summaryRequestRepository: SummaryRequestRepository) {
+            self.userConfigRepository = userConfigRepository
+            self.summaryRequestRepository = summaryRequestRepository
+        }
+    }
     
-    public init(userConfigRepository: UserConfigRepository, summaryRepository: SummaryRepository) {
-        self.userConfigRepository = userConfigRepository
-        self.summaryRepository = summaryRepository
+    let userConfigRepository: UserConfigRepository
+    let summaryRequestRepository: SummaryRequestRepository
+    
+    public init(dependency: Dependency) {
+        self.userConfigRepository = dependency.userConfigRepository
+        self.summaryRequestRepository = dependency.summaryRequestRepository
     }
     
     public func checkingSelectedCategoriesExists() -> Bool {
@@ -34,7 +44,7 @@ public class DefaultOnBoardingCheckUseCase: OnBoardingCheckUseCase {
     }
     
     public func checkingSummariesExists() -> RxSwift.Single<Result<Bool, Entity.SummariesError>> {
-        convert(task: summaryRepository
+        convert(task: summaryRequestRepository
             .fetchAllSummaryItems()
             .map { summaryItmes in
                 return !summaryItmes.isEmpty
