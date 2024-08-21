@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import Swinject
 import MainAppFeatures
 import BaseFeature
 
@@ -27,7 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         testCoordinator?.start()
         
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = rootNavigationController
+        window?.rootViewController = SummariesVC()
         window?.makeKeyAndVisible()
     }
 
