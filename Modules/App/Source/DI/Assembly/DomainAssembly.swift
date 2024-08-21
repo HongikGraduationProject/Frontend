@@ -38,5 +38,6 @@ public struct DomainAssembly: Assembly {
                 )
             )
         }
+        .inObjectScope(.transient)
     }
 }
