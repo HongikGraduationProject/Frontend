@@ -10,7 +10,7 @@ import Entity
 import RxSwift
 import RxCocoa
 
-public class MainCategoryTabButton: TappableUIView {
+public class MainCategoryTabButton: VStack {
     
     enum State {
         case idle
@@ -22,9 +22,21 @@ public class MainCategoryTabButton: TappableUIView {
     let mainCategory: MainCategory
     
     // View
+    lazy var touchArea: TappableUIView = {
+        let view = TappableUIView()
+        view.backgroundColor = DSColors.gray0.color
+        return view
+    }()
+    
     let label: CapLabel = {
         let label = CapLabel()
         return label
+    }()
+    
+    private let selectedBar: UIView = {
+        let bar = UIView()
+        bar.backgroundColor = DSColors.primary80.color
+        return bar
     }()
     
     private let touchEffectView: UIView = {
@@ -36,7 +48,10 @@ public class MainCategoryTabButton: TappableUIView {
     }()
     
     public override var intrinsicContentSize: CGSize {
-        .init(width: itemWidth, height: 28)
+        .init(
+            width: itemWidth,
+            height: super.intrinsicContentSize.height
+        )
     }
     
     let disposeBag = DisposeBag()
@@ -44,7 +59,7 @@ public class MainCategoryTabButton: TappableUIView {
     public init(mainCategory: MainCategory, itemWidth: CGFloat) {
         self.itemWidth = itemWidth
         self.mainCategory = mainCategory
-        super.init()
+        super.init([], spacing: 0, alignment: .fill)
         
         setAppearance()
         setLayout()
@@ -53,37 +68,53 @@ public class MainCategoryTabButton: TappableUIView {
         // 기본상태: idle
         toIdle()
     }
-    public required init?(coder: NSCoder) { return nil }
+    public required init(coder: NSCoder) { fatalError() }
     
     private func setAppearance() {
-        self.backgroundColor = DSColors.gray0.color
-        label.text = mainCategory.korWordText
+        self.backgroundColor = DSColors.gray10.color
+        label.text = mainCategory.twoLetterKorWordText
     }
     
     private func setLayout() {
+        
+        setTouchAreaLayout()
+        
+        [
+            touchArea,
+            selectedBar
+        ].forEach {
+            self.addArrangedSubview($0)
+        }
+        
+        NSLayoutConstraint.activate([
+            selectedBar.heightAnchor.constraint(equalToConstant: 2)
+        ])
+    }
+    
+    private func setTouchAreaLayout() {
         [
             label,
             touchEffectView
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
-            self.addSubview($0)
+            touchArea.addSubview($0)
         }
         label.layer.zPosition = 0
         touchEffectView.layer.zPosition = 1
         
         NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -4),
+            label.centerXAnchor.constraint(equalTo: touchArea.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: touchArea.centerYAnchor, constant: -4),
             
-            touchEffectView.topAnchor.constraint(equalTo: self.topAnchor),
-            touchEffectView.leftAnchor.constraint(equalTo: self.leftAnchor),
-            touchEffectView.rightAnchor.constraint(equalTo: self.rightAnchor),
-            touchEffectView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            touchEffectView.topAnchor.constraint(equalTo: touchArea.topAnchor),
+            touchEffectView.leftAnchor.constraint(equalTo: touchArea.leftAnchor),
+            touchEffectView.rightAnchor.constraint(equalTo: touchArea.rightAnchor),
+            touchEffectView.bottomAnchor.constraint(equalTo: touchArea.bottomAnchor),
         ])
     }
     
     private func setObservable() {
-        rx.tap
+        touchArea.rx.tap
             .observe(on: MainScheduler.asyncInstance)
             .subscribe(onNext: { [weak self] _ in
                 guard let self else { return }
@@ -100,16 +131,23 @@ public class MainCategoryTabButton: TappableUIView {
     func toIdle() {
         label.typographyStyle = .baseRegular
         label.attrTextColor = DSColors.gray40.color
+        selectedBar.alpha = 0
     }
     
     func toAccent() {
         label.typographyStyle = .baseSemiBold
         label.attrTextColor = DSColors.primary80.color
+        selectedBar.alpha = 1
     }
 }
 
 @available(iOS 17.0, *)
 #Preview("Preview", traits: .defaultLayout) {
     
-    MainCategoryTabButton(mainCategory: .all, itemWidth: 54)
+    let b1 = MainCategoryTabButton(mainCategory: .all, itemWidth: 54)
+    let b2 = MainCategoryTabButton(mainCategory: .all, itemWidth: 54)
+    
+    return HStack([
+        b1, b2
+    ], alignment: .fill)
 }

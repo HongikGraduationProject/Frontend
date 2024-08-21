@@ -104,4 +104,31 @@ public enum MainCategory: String, CaseIterable, Decodable {
             return "전체"
         }
     }
+    
+    public var twoLetterKorWordText: String {
+        switch self {
+        case .technology:
+            return "기술"
+        case .beauty:
+            return "뷰티"
+        case .cook:
+            return "요리"
+        case .living:
+            return "리빙"
+        case .health:
+            return "건강"
+        case .travel:
+            return "여행"
+        case .art:
+            return "예술"
+        case .news:
+            return "뉴스"
+        case .entertainment:
+            return "엔터"
+        case .other:
+            return "기타"
+        case .all:
+            return "전체"
+        }
+    }
 }
