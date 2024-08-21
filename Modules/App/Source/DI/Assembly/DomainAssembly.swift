@@ -18,10 +18,12 @@ public struct DomainAssembly: Assembly {
         container.register(OnBoardingCheckUseCase.self) { resolver in
             let userConfigRepository = resolver.resolve(UserConfigRepository.self)!
             let summaryRequestRepository = resolver.resolve(SummaryRequestRepository.self)!
+            let videoCodeRepository = resolver.resolve(VideoCodeRepository.self)!
             return DefaultOnBoardingCheckUseCase(
                 dependency: .init(
                     userConfigRepository: userConfigRepository,
-                    summaryRequestRepository: summaryRequestRepository
+                    summaryRequestRepository: summaryRequestRepository,
+                    videoCodeRepository: videoCodeRepository
                 )
             )
         }
