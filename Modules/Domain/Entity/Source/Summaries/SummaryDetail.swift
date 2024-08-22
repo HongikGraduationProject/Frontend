@@ -65,7 +65,7 @@ public struct SummaryDetail: Decodable {
         self.videoCode = videoCode
     }
     
-    enum CodingKeys: CodingKey {
+    enum CodingKeys: String, CodingKey {
         case title
         case description
         case keywords
@@ -80,6 +80,6 @@ public struct SummaryDetail: Decodable {
         case subCategoryId
         case latitude
         case longitude
-        case videoCode
+        case videoCode="video_code"
     }
 }

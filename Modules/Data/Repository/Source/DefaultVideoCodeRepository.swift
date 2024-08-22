@@ -24,6 +24,9 @@ public class DefaultVideoCodeRepository: VideoCodeRepository {
         let fetchRequest = SummaryInfoObject.fetchRequest()
         do {
             let fetchedObjects = try coreDataService.container.viewContext.fetch(fetchRequest)
+            
+            printIfDebug("✅ 로컬에 저장된 비디오코드수: \(fetchedObjects.count)")
+            
             return fetchedObjects.map { object in object.videoCode! }
         } catch {
             printIfDebug("‼️ 비디오 코드를 가져오는 과정에서 문제발생")

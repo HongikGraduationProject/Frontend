@@ -50,6 +50,8 @@ public class SummariesCO: Coordinator {
                 summaryDetailRepository: summaryDetailRepository
             )
         )
+        vc.bind(viewModel: vm)
+        viewController = vc
         navigationController?.pushViewController(vc, animated: false)
     }
 
