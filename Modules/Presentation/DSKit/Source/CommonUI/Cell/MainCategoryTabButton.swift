@@ -104,7 +104,7 @@ public class MainCategoryTabButton: VStack {
         
         NSLayoutConstraint.activate([
             label.centerXAnchor.constraint(equalTo: touchArea.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: touchArea.centerYAnchor, constant: -4),
+            label.centerYAnchor.constraint(equalTo: touchArea.centerYAnchor, constant: -2),
             
             touchEffectView.topAnchor.constraint(equalTo: touchArea.topAnchor),
             touchEffectView.leftAnchor.constraint(equalTo: touchArea.leftAnchor),
