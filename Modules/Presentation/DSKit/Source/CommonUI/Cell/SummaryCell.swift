@@ -29,11 +29,12 @@ public protocol SummaryCellVMable {
 
 public class SummaryCell: UITableViewCell {
     
+    public static let identifier = String(describing: SummaryCell.self)
+    
     // View
     let cellContentView = SummaryCellContentView()
     
     let loadingIndicatorView: CAPLoadingIndicatorView = .init()
-    
     
     // Observable
     var viewModel: SummaryCellVMable?
@@ -59,6 +60,19 @@ public class SummaryCell: UITableViewCell {
         // UI관련
         cellContentView.prepareForeReuse()
         loadingIndicatorView.turnOn(withAnimation: false)
+    }
+    
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        contentView.frame.inset(
+            by: .init(
+                top: 0,
+                left: 20,
+                bottom: 14,
+                right: 20
+            )
+        )
     }
     
     private func setAppearance() { }
