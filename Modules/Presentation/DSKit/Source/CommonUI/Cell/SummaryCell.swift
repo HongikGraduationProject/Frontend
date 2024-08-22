@@ -173,6 +173,10 @@ class SummaryCellContentView: TappableUIView {
         return label
     }()
     
+    override var intrinsicContentSize: CGSize {
+        .init(width: super.intrinsicContentSize.width, height: 160)
+    }
+    
     override init() {
         super.init()
         
@@ -215,11 +219,11 @@ class SummaryCellContentView: TappableUIView {
         
         self.addSubview(mainStack)
         mainStack.translatesAutoresizingMaskIntoConstraints = false
+        videoImageView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             
             videoImageView.widthAnchor.constraint(equalToConstant: 120),
-            videoImageView.heightAnchor.constraint(equalToConstant: 160),
             
             mainStack.topAnchor.constraint(equalTo: self.topAnchor),
             mainStack.leftAnchor.constraint(equalTo: self.leftAnchor),

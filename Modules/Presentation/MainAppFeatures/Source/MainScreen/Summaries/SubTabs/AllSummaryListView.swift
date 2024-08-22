@@ -23,8 +23,6 @@ public class AllSummaryListView: UIView {
     // View
     let tableView: UITableView = {
         let view = UITableView()
-        view.rowHeight = UITableView.automaticDimension
-        view.register(Cell.self, forCellReuseIdentifier: Cell.identifier)
         return view
     }()
     
@@ -57,8 +55,10 @@ public class AllSummaryListView: UIView {
     private func setTableView() {
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.register(Cell.self, forCellReuseIdentifier: Cell.identifier)
         tableView.separatorStyle = .none
         tableView.delaysContentTouches = false
+        tableView.rowHeight = UITableView.automaticDimension
     }
     
     private func setAppearance() {
