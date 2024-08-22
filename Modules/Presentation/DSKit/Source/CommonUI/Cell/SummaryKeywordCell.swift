@@ -10,6 +10,95 @@ import Entity
 import RxSwift
 import RxCocoa
 
+// MARK: CollectionView
+public class SummaryKeywordCollectionView: UIView {
+    typealias Cell = SummaryKeywordCell
+    
+    let flowLayout: UICollectionViewFlowLayout = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 6
+        layout.minimumInteritemSpacing = 6
+        return layout
+    }()
+    lazy var collectionView: UICollectionView = {
+        let view = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+        view.register(Cell.self, forCellWithReuseIdentifier: Cell.identifier)
+        view.dataSource = self
+        view.delegate = self
+        view.isScrollEnabled = false
+        return view
+    }()
+    
+    var keywords: [String] = []
+    
+    public init() {
+        super.init(frame: .zero)
+        setLayout()
+    }
+    public required init?(coder: NSCoder) { return nil }
+    
+    func setLayout() {
+        [
+            collectionView
+        ].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            self.addSubview($0)
+        }
+        
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: self.topAnchor),
+            collectionView.leftAnchor.constraint(equalTo: self.leftAnchor),
+            collectionView.rightAnchor.constraint(equalTo: self.rightAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+        ])
+    }
+    
+    public func setKeywords(keywords: [String]) {
+        self.keywords = keywords
+        collectionView.reloadData()
+    }
+}
+
+extension SummaryKeywordCollectionView: UICollectionViewDataSource {
+    
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return keywords.count
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cell.identifier, for: indexPath) as! Cell
+        cell.bind(keywordText: keywords[indexPath.item])
+        return cell
+    }
+}
+
+extension SummaryKeywordCollectionView: UICollectionViewDelegateFlowLayout {
+    
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let keyword = keywords[indexPath.item]
+        let text = "#\(keyword)"
+        let font = TypographyStyle.baseRegular.typography.font
+
+        // 최대 허용 크기 (너비는 무한대, 높이는 제약 조건이 있을 수 있음)
+        let maxSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+
+        // 텍스트 속성 설정
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font
+        ]
+
+        // boundingRect 메서드를 사용하여 텍스트가 차지할 크기 계산
+        let boundingBox = text.boundingRect(with: maxSize, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
+        
+        return .init(
+            width: boundingBox.width+18,
+            height: boundingBox.height+10
+        )
+    }
+}
+
+// MARK: Cell
 public class SummaryKeywordCell: UICollectionViewCell {
     
     static let identifier = String(describing: SummaryKeywordCell.self)
@@ -19,12 +108,13 @@ public class SummaryKeywordCell: UICollectionViewCell {
         let label = CapLabel()
         label.typographyStyle = .baseRegular
         label.attrTextColor = DSColors.primary60.color
+        label.textAlignment = .center
         return label
     }()
     
-    public init() {
-
-        super.init(frame: .zero)
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        
         setAppearance()
         setLayout()
     }

@@ -16,18 +16,7 @@ class ViewController: UIViewController {
         
         view.backgroundColor = .white
         
-        let label = CapLabel()
-        
-        label.text = "안녕하세요 반갑습니다~!"
-        label.typographyStyle = .largeRegular
-        label.attrTextColor = .blue
-        
-        view.addSubview(label)
-        
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        label.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        label.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+    
     }
 }
 

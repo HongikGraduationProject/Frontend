@@ -19,10 +19,11 @@ public class Spacer: UIView {
         )
     }
     
-    public init(width: CGFloat? = nil, height: CGFloat? = nil) {
+    public init(width: CGFloat? = nil, height: CGFloat? = nil, color: UIColor = .clear) {
         self.width = width
         self.height = height
         super.init(frame: .zero)
+        self.backgroundColor = color
     }
     required init?(coder: NSCoder) { fatalError() }
 }

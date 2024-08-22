@@ -46,6 +46,7 @@ public class SummariesCO: Coordinator {
         let vc = SummariesVC()
         let vm = SummariesVM(
             dependency: .init(
+                coordinator: self,
                 summaryUseCase: summaryUseCase,
                 summaryDetailRepository: summaryDetailRepository
             )
@@ -54,5 +55,13 @@ public class SummariesCO: Coordinator {
         viewController = vc
         navigationController?.pushViewController(vc, animated: false)
     }
-
+    
+    public func showDetail(videoId: Int) {
+        // 추후 Coordinator생성
+        let vc = SummaryDetailVC()
+        let vm = SummaryDetailVM(videoId: videoId, repo: summaryDetailRepository)
+        
+        vc.bind(viewModel: vm)
+        navigationController?.pushViewController(vc, animated: true)
+    }
 }
