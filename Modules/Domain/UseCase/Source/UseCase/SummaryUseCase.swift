@@ -16,7 +16,7 @@ public protocol SummaryUseCase: UseCaseBase {
     var summariesStream: BehaviorSubject<[SummaryItem]> { get }
     
     /// 요약이 완료됬었던 비디오리스트를 서버로 부터 가져옵니다.
-    func fetchAllSummaryItems() -> Single<Result<[SummaryItem], SummariesError>>
+    func fetchAllSummaryItems() -> Single<Result<Void, SummariesError>>
     
     /// 로컬로부터 비디오 코드를 가져오고 해당 코드로부터 상세정보를 가져옵니다, 가져온 정보는 핫스트림으로 방출됩니다.
     func updateSummaryStream()
@@ -81,9 +81,20 @@ public class DefaultSummaryUseCase: SummaryUseCase {
             .disposed(by: disposeBag)
     }
     
-    public func fetchAllSummaryItems() -> Single<Result<[SummaryItem], SummariesError>> {
-        convert(task: summaryRequestRepository
-            .fetchAllSummaryItems())
+    public func fetchAllSummaryItems() -> Single<Result<Void, SummariesError>> {
+        
+        let task = summaryRequestRepository
+            .fetchAllSummaryItems()
+            .map { [weak self] items in
+                
+                // 가져온 데이터를 스트림위에 올립니다.
+                self?.summariesStream.onNext(items)
+                self?.summariesColdStream.onNext(items)
+                
+                return ()
+            }
+        
+        return convert(task: task)
     }
     
     private let statusCheckStreamDict: ThreadSafeDictionary<String, Disposable> = .init()
