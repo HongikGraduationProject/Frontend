@@ -17,6 +17,11 @@ public class SummaryDetailVC: BaseVC {
     // Init
     
     // View
+    let navigationBar: CAPSummaryDetailNavigationBar = {
+        let bar = CAPSummaryDetailNavigationBar(titleText: "")
+        return bar
+    }()
+    
     let originalVideoWebView: UIView = {
         let view = UIView()
         view.backgroundColor = DSColors.gray10.color
