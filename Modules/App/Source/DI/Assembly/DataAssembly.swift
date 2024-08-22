@@ -24,7 +24,7 @@ public struct DataAssembly: Assembly {
         
         container.register(CoreDataService.self) { _ in
             return DefaultCoreDataService()
-        }.inObjectScope(.transient)
+        }.inObjectScope(.container)
         
         
         // MARK: Repositories
@@ -61,6 +61,6 @@ public struct DataAssembly: Assembly {
                     summaryService: summaryService
                 )
             )
-        }.inObjectScope(.transient)
+        }.inObjectScope(.container)
     }
 }

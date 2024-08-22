@@ -64,15 +64,7 @@ public class SummaryCell: UITableViewCell {
     
     public override func layoutSubviews() {
         super.layoutSubviews()
-        
-        contentView.frame.inset(
-            by: .init(
-                top: 0,
-                left: 20,
-                bottom: 14,
-                right: 20
-            )
-        )
+        contentView.frame = contentView.frame.inset(by: .init(top: 0, left: 20, bottom: 14, right: 20))
     }
     
     private func setAppearance() { }

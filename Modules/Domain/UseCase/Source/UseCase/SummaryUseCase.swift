@@ -68,6 +68,7 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                 count: 3,
                 scheduler: ConcurrentDispatchQueueScheduler(qos: .default)
             )
+            .filter { !$0.isEmpty }
         
         Observable
             .zip(summariesColdStream, hotFlow)
@@ -86,6 +87,8 @@ public class DefaultSummaryUseCase: SummaryUseCase {
         let task = summaryRequestRepository
             .fetchAllSummaryItems()
             .map { [weak self] items in
+                
+                printIfDebug("✅ 서버로 부터 가져온 숏폼수: \(items.count)")
                 
                 // 가져온 데이터를 스트림위에 올립니다.
                 self?.summariesStream.onNext(items)

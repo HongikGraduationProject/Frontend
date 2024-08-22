@@ -85,6 +85,9 @@ public class SummariesVM: SummariesVMable {
             }
             .asDriver(onErrorDriveWith: .never())
             
+        
+        // MARK: 최초로딩
+        requestAllSummaryItems.onNext(())
     }
     
     public func createAllListVM() -> AllSummaryListVMable {
