@@ -50,7 +50,8 @@ class DefaultRootCoordinator: RootCoordinator {
 extension DefaultRootCoordinator {
     
     func executeMainTabBarFlow() {
-        let coordinator = MainScreenCO(dependency: .init(
+        let coordinator = MainScreenCoordinator(dependency: .init(
+            inejector: injector,
             navigationController: navigationController)
         )
         addChild(coordinator)

@@ -1,6 +1,6 @@
 //
 //  MainScreenCO.swift
-//  MainAppFeatures
+//  App
 //
 //  Created by choijunios on 8/17/24.
 //
@@ -8,14 +8,18 @@
 import UIKit
 import Entity
 import BaseFeature
+import MainAppFeatures
+import UseCase
 import DSKit
 
-public class MainScreenCO: Coordinator {
+public class MainScreenCoordinator: Coordinator {
     
     public struct Dependency {
+        var inejector: Injector
         var navigationController: UINavigationController?
         
-        public init(navigationController: UINavigationController? = nil) {
+        public init(inejector: Injector, navigationController: UINavigationController? = nil) {
+            self.inejector = inejector
             self.navigationController = navigationController
         }
     }
@@ -29,7 +33,10 @@ public class MainScreenCO: Coordinator {
     
     public var finishDelegate: (any BaseFeature.CoordinatorFinishDelegate)?
     
+    let injector: Injector
+    
     public init(dependency: Dependency) {
+        self.injector = dependency.inejector
         self.navigationController = dependency.navigationController
     }
     
@@ -72,7 +79,13 @@ public class MainScreenCO: Coordinator {
         
         switch page {
         case .home:
-            let coordinator = SummariesCO(dependency: .init(navigationController: navigationController))
+            let coordinator = SummariesCO(
+                dependency: .init(
+                    summaryUseCase: injector.resolve(SummaryUseCase.self),
+                    summaryDetailRepository: injector.resolve(SummaryDetailRepository.self),
+                    navigationController: navigationController
+                )
+            )
             childCoordinator = coordinator
         case .inAppSummary:
             let coordinator = InAppSummatyCO(dependency: .init(navigationController: navigationController))

@@ -13,6 +13,9 @@ public class CategoryAdditionCO: Coordinator {
     
     public struct Dependency {
         var navigationController: UINavigationController?
+        public init(navigationController: UINavigationController? = nil) {
+            self.navigationController = navigationController
+        }
     }
     
     public var viewController: UIViewController?
