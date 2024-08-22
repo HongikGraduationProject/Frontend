@@ -78,19 +78,7 @@ open class SummaryRequestVC: UIViewController {
         return button
     }()
     
-    let indicator = UIActivityIndicatorView(style: .medium)
-    lazy var loadingView: UIView = {
-        let view = UIView()
-        view.backgroundColor = DSColors.gray10.color.withAlphaComponent(0.5)
-        view.addSubview(indicator)
-        indicator.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            indicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            indicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-        ])
-        view.alpha = 0
-        return view
-    }()
+    let loadingIndicatorView: CAPLoadingIndicatorView = .init()
     
     // Observable
     let tokenRequestFinishedSuccessFully: PublishRelay<Void> = .init()
@@ -142,7 +130,7 @@ open class SummaryRequestVC: UIViewController {
             titleLabel,
             buttonStack,
             closeButton,
-            loadingView
+            loadingIndicatorView
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
@@ -160,10 +148,10 @@ open class SummaryRequestVC: UIViewController {
             closeButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             closeButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
-            loadingView.topAnchor.constraint(equalTo: view.topAnchor),
-            loadingView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            loadingView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            loadingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            loadingIndicatorView.topAnchor.constraint(equalTo: view.topAnchor),
+            loadingIndicatorView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            loadingIndicatorView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            loadingIndicatorView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
     
@@ -207,12 +195,12 @@ open class SummaryRequestVC: UIViewController {
                 
                 self.autoArrangeButton.setState(false)
                 self.selfArrangeButton.setState(false)
-                self.indicator.startAnimating()
+                
+                self.loadingIndicatorView.turnOn(duration: 0.35)
                 
                 UIView.animate(withDuration: 0.35) {
                     self.autoArrangeButton.alpha = 0
                     self.selfArrangeButton.alpha = 0
-                    self.loadingView.alpha = 1
                 }
                 
                 return summaryRequestRepo
@@ -231,13 +219,13 @@ open class SummaryRequestVC: UIViewController {
             .subscribe(onNext: { [weak self] _ in
                 guard let self else { return }
                 // 비디오 코드 저장 성공
-                offLoadingScreen()
+                loadingIndicatorView.turnOff(duration: 0.35)
                 onSuccess()
                 
             }, onError: { [weak self] _ in
                 guard let self else { return }
                 // 비디오 코드 저장 실패
-                offLoadingScreen()
+                loadingIndicatorView.turnOff(duration: 0.35)
                 onFailure()
             })
             .disposed(by: disposeBag)
@@ -267,14 +255,6 @@ open class SummaryRequestVC: UIViewController {
         UIView.animate(withDuration: 0.35) {
             self.autoArrangeButton.alpha = 1
             self.selfArrangeButton.alpha = 1
-        }
-    }
-    
-    func offLoadingScreen() {
-        UIView.animate(withDuration: 0.2) {
-            self.loadingView.alpha = 0.0
-        } completion: { _ in
-            self.indicator.stopAnimating()
         }
     }
     
