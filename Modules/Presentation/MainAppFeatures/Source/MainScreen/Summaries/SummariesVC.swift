@@ -20,6 +20,9 @@ public class SummariesVC: BaseVC {
     
     // Init
     
+    // Not init
+    var viewModel: SummariesVMable?
+    
     // View
     let shortcapLogoView: UIView = {
         let imageView = UIImageView(
@@ -66,6 +69,9 @@ public class SummariesVC: BaseVC {
     }()
     let mainCategoryIndicator: UIView = .init()
     
+    // MARK: 요약 전체 조회 화면
+    let allSummaryListView = AllSummaryListView()
+    
     
     // Observable
     private let disposeBag = DisposeBag()
@@ -83,6 +89,15 @@ public class SummariesVC: BaseVC {
         setObservable()
     }
     
+    public func bind(viewModel: SummariesVMable) {
+        self.viewModel = viewModel
+        
+        // MARK: 전체화면 조회 바인딩
+        let allSummaryListVM = viewModel.createAllListVM()
+        allSummaryListView.bind(viewModel: allSummaryListVM)
+    }
+    
+    /// 탭바의 순서를 변경합니다.
     func reConfigureTabOrder(preferredCategory: [MainCategory]) {
         
         let sortedCategories = preferredCategory.sorted(by: { cat1, cat2 in cat1.pageOrderNumber < cat2.pageOrderNumber })
@@ -103,13 +118,12 @@ public class SummariesVC: BaseVC {
         
         // MARK: 상단 메인카테고리 탭
         setMainCategoryTabScrollView()
-        
-        
 
         // MARK: view
         [
             shortcapLogoView,
-            mainCategoryTabScrollView
+            mainCategoryTabScrollView,
+            allSummaryListView,
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
@@ -124,8 +138,14 @@ public class SummariesVC: BaseVC {
             mainCategoryTabScrollView.topAnchor.constraint(equalTo: shortcapLogoView.bottomAnchor, constant: 12.87),
             mainCategoryTabScrollView.leftAnchor.constraint(equalTo: shortcapLogoView.safeAreaLayoutGuide.leftAnchor),
             mainCategoryTabScrollView.rightAnchor.constraint(equalTo: shortcapLogoView.safeAreaLayoutGuide.rightAnchor),
+            
             mainCategoryTabScrollView.heightAnchor.constraint(equalToConstant: 29),
-            mainCategoryTabContainer.heightAnchor.constraint(equalTo: mainCategoryTabScrollView.heightAnchor)
+            mainCategoryTabContainer.heightAnchor.constraint(equalTo: mainCategoryTabScrollView.heightAnchor),
+            
+            allSummaryListView.topAnchor.constraint(equalTo: mainCategoryTabScrollView.bottomAnchor, constant: 12),
+            allSummaryListView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
+            allSummaryListView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
+            allSummaryListView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
     
