@@ -15,6 +15,7 @@ import RxCocoa
 public class SummaryCellVM: SummaryCellVMable {
     
     public let videoId: Int
+    weak var coordinator: SummariesCO?
     
     public var cellClicked: RxRelay.PublishRelay<Void> = .init()
     public var summaryDetail: RxCocoa.Driver<Entity.SummaryDetail>?
@@ -25,12 +26,23 @@ public class SummaryCellVM: SummaryCellVMable {
     private let summaryDetailRelay: PublishRelay<SummaryDetail> = .init()
     private let disposeBag = DisposeBag()
     
-    public init(videoId: Int, summaryDetailRepository: SummaryDetailRepository) {
+    public init(
+        videoId: Int,
+        coordinator: SummariesCO?,
+        summaryDetailRepository: SummaryDetailRepository
+    ) {
         self.videoId = videoId
+        self.coordinator = coordinator
         self.summaryDetailRepository = summaryDetailRepository
         
         summaryDetail = summaryDetailRelay
             .asDriver(onErrorDriveWith: .empty())
+        
+        cellClicked
+            .subscribe(onNext: { [weak self] in
+                self?.coordinator?.showDetail(videoId: videoId)
+            })
+            .disposed(by: disposeBag)
     }
     
     public func requestDetail() {

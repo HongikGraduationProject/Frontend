@@ -20,13 +20,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let rootNavigationController = UINavigationController()
         rootNavigationController.setNavigationBarHidden(true, animated: false)
         
-        self.testCoordinator = MainScreenCO(dependency: .init(
-            navigationController: rootNavigationController
-        ))
-        testCoordinator?.start()
+//        self.testCoordinator = MainScreenCoor(dependency: .init(
+//            navigationController: rootNavigationController
+//        ))
+//        testCoordinator?.start()
         
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = SummariesVC()
+        window?.rootViewController = SummaryDetailVC()
         window?.makeKeyAndVisible()
     }
 

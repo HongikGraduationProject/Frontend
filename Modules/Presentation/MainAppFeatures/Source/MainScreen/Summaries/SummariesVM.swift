@@ -24,10 +24,12 @@ public protocol SummariesVMable {
 public class SummariesVM: SummariesVMable {
     
     public struct Dependency {
+        let coordinator: SummariesCO
         let summaryUseCase: SummaryUseCase
         let summaryDetailRepository: SummaryDetailRepository
     }
     
+    weak var coordinator: SummariesCO?
     let summaryUseCase: SummaryUseCase
     let summaryDetailRepository: SummaryDetailRepository
     
@@ -39,6 +41,7 @@ public class SummariesVM: SummariesVMable {
     let disposeBag = DisposeBag()
     
     public init(dependency: Dependency) {
+        coordinator = dependency.coordinator
         summaryUseCase = dependency.summaryUseCase
         summaryDetailRepository = dependency.summaryDetailRepository
         
@@ -92,6 +95,7 @@ public class SummariesVM: SummariesVMable {
     
     public func createAllListVM() -> AllSummaryListVMable {
         AllSummaryListVM(
+            coordinator: coordinator,
             summaryUseCase: summaryUseCase,
             summaryDetailRepository: summaryDetailRepository
         )

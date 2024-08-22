@@ -26,10 +26,16 @@ public class AllSummaryListVM: AllSummaryListVMable {
     public var startSummaryItemStream: RxRelay.PublishRelay<Void> = .init()
     public var summaryItems: RxCocoa.Driver<[Entity.SummaryItem]>?
     
+    weak var coordinator: SummariesCO?
     let summaryUseCase: SummaryUseCase
     let summaryDetailRepository: SummaryDetailRepository
     
-    public init(summaryUseCase: SummaryUseCase, summaryDetailRepository: SummaryDetailRepository) {
+    public init(
+        coordinator: SummariesCO?,
+        summaryUseCase: SummaryUseCase,
+        summaryDetailRepository: SummaryDetailRepository
+    ) {
+        self.coordinator = coordinator
         self.summaryUseCase = summaryUseCase
         self.summaryDetailRepository = summaryDetailRepository
         
@@ -42,6 +48,7 @@ public class AllSummaryListVM: AllSummaryListVMable {
     public func createCellVM(videoId: Int) -> SummaryCellVMable {
         SummaryCellVM(
             videoId: videoId,
+            coordinator: coordinator,
             summaryDetailRepository: summaryDetailRepository
         )
     }
