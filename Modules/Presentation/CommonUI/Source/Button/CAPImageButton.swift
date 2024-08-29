@@ -1,21 +1,33 @@
 //
-//  CapBottomButton.swift
-//  DSKit
+//  CAPImageButton.swift
+//  CommonUI
 //
-//  Created by choijunios on 8/6/24.
+//  Created by choijunios on 8/10/24.
 //
 
 import UIKit
 import RxSwift
+import DSKit
 
 /// 설명: 바텀 넓은 영역을 차지하는 버튼으 버튼중간에 라벨이 표시됩니다.
+///      + 버튼의 라벨앞에 이미지가 배치됩니다.
+///      + 버튼의 벡그라운드 뷰를 지정할 수 있습니다.
 /// IntrinsicContentSize정보
 ///     - width: flexible
 ///     - height: 50
-public class CapBottomButton: TappableUIView {
+public class CAPImageButton: TappableUIView {
+    
+    // init
+    let backgroundView: UIView
     
     // Views
-    let label: CapLabel = {
+    public let imageView: UIImageView = {
+        let view: UIImageView = .init()
+        view.contentMode = .scaleAspectFit
+        return view
+    }()
+    
+    public let label: CapLabel = {
         let label = CapLabel()
         label.numberOfLines = 2
         label.typographyStyle = .baseSemiBold
@@ -38,7 +50,11 @@ public class CapBottomButton: TappableUIView {
     
     private let disposeBag = DisposeBag()
     
-    public init(labelText: String) {
+    public init(
+        backgroundView: UIView = .init(),
+        labelText: String
+    ) {
+        self.backgroundView = backgroundView
         super.init()
         
         // 라벨 설정
@@ -47,28 +63,39 @@ public class CapBottomButton: TappableUIView {
         setAppearance()
         setLayout()
         setObservable()
-        
-        // 초기상태는 클릭불가 상태를 기본으로 합니다.
-        setState(false)
     }
     public required init?(coder: NSCoder) { fatalError() }
     
     private func setAppearance() {
-        self.backgroundColor = DSKitAsset.Colors.primary90.color
+        self.backgroundColor = .white
         self.layer.cornerRadius = 12
+        clipsToBounds = true
     }
     
     private func setLayout() {
+        
+        let contentStack = HStack([imageView, label], spacing: 8, alignment: .center)
+        
         [
-            label
+            contentStack,
+            backgroundView
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             self.addSubview($0)
         }
         
+        contentStack.layer.zPosition = 1
+        backgroundView.layer.zPosition = 0
+        
         NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            
+            backgroundView.topAnchor.constraint(equalTo: self.topAnchor),
+            backgroundView.leftAnchor.constraint(equalTo: self.leftAnchor),
+            backgroundView.rightAnchor.constraint(equalTo: self.rightAnchor),
+            backgroundView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            
+            contentStack.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            contentStack.centerYAnchor.constraint(equalTo: self.centerYAnchor),
         ])
     }
     
@@ -77,7 +104,7 @@ public class CapBottomButton: TappableUIView {
             .subscribe(onNext: { [weak self] _ in
                 guard let self else { return }
                 setAppearanceToAccent()
-                UIView.animate(withDuration: 0.5) { [weak self] in
+                UIView.animate(withDuration: 0.45) { [weak self] in
                     self?.setAppearanceToIdle()
                 }
             })
@@ -85,36 +112,26 @@ public class CapBottomButton: TappableUIView {
     }
     
     private func setAppearanceToIdle() {
-        label.attrTextColor = idleTextColor
-        self.backgroundColor = idleBackgroundColor
+        backgroundView.alpha = 1.0
     }
     
     private func setAppearanceToAccent() {
-        label.attrTextColor = accentTextColor
-        self.backgroundColor = accentBackgroundColor
-    }
-    
-    private func setAppearanceToDisabled() {
-        self.backgroundColor = DSKitAsset.Colors.gray10.color
-        label.attrTextColor = DSKitAsset.Colors.gray40.color
-    }
-    
-    @MainActor
-    public func setState(_ isEnabled: Bool) {
-        
-        self.isUserInteractionEnabled = isEnabled
-        
-        if isEnabled {
-            setAppearanceToIdle()
-        } else {
-            setAppearanceToDisabled()
-        }
+        backgroundView.alpha = 0.5
     }
 }
 
 #Preview("CapBottomButton", traits: .defaultLayout) {
     
-    CapBottomButton(labelText: "여기룰 눌러 시작하기")
+    let backgroundView = UIView()
+    backgroundView.backgroundColor = .red
+    
+    let imageButton = CAPImageButton(
+        backgroundView: backgroundView,
+        labelText: "여기룰 눌러 시작하기"
+    )
+    
+    imageButton.imageView.image = DSKitAsset.Images.youtubeBadge.image
+    
+    return imageButton
 }
     
-

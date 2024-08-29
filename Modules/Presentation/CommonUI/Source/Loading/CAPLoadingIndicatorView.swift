@@ -1,11 +1,12 @@
 //
 //  CAPLoadingIndicatorView.swift
-//  DSKit
+//  CommonUI
 //
 //  Created by choijunios on 8/22/24.
 //
 
 import UIKit
+import DSKit
 
 public class CAPLoadingIndicatorView: UIView {
     

@@ -1,12 +1,11 @@
 //
 //  CAPMainPage.swift
-//  BaseFeature
+//  CommonFeature
 //
 //  Created by choijunios on 8/15/24.
 //
 
 import UIKit
-import DSKit
 
 public enum CAPMainPage: CaseIterable {
     

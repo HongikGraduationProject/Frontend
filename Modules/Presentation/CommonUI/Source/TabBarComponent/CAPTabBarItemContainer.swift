@@ -1,6 +1,6 @@
 //
 //  CAPTabBarItemContainer.swift
-//  DSKit
+//  CommonUI
 //
 //  Created by choijunios on 8/17/24.
 //
@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import DSKit
 
 public class CAPTabBarItemContainer: UIView {
     

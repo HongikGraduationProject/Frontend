@@ -12,6 +12,7 @@ import RxSwift
 import Entity
 import DSKit
 import BaseFeature
+import CommonUI
 
 public protocol HuntingShortFormViewModelable: BaseVMable {
     func openYoutubeApp()

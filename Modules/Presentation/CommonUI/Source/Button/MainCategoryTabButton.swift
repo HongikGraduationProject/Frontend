@@ -1,6 +1,6 @@
 //
 //  MainCategoryTabButton.swift
-//  DSKit
+//  CommonUI
 //
 //  Created by choijunios on 8/21/24.
 //
@@ -9,6 +9,7 @@ import UIKit
 import Entity
 import RxSwift
 import RxCocoa
+import DSKit
 
 public class MainCategoryTabButton: VStack {
     

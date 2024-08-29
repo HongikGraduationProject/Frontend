@@ -78,7 +78,7 @@ let project = Project(
             sources: ["Modules/Presentation/MainAppFeatures/Source/**"],
             resources: ["Modules/Presentation/MainAppFeatures/Resource/**"],
             dependencies: [
-                .target(name: "BaseFeature"),
+                .target(name: "PresentationUtil"),
             ]
         ),
         .target(
@@ -90,25 +90,28 @@ let project = Project(
             sources: ["Modules/Presentation/AppExtensionFeatures/Source/**"],
             resources: ["Modules/Presentation/AppExtensionFeatures/Resource/**"],
             dependencies: [
-                .target(name: "BaseFeature"),
+                .target(name: "PresentationUtil"),
             ]
         ),
         .target(
-            name: "BaseFeature",
+            name: "PresentationUtil",
             destinations: .iOS,
             product: .framework,
-            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).baseFeature",
+            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).presentationUtil",
             deploymentTargets: DeploymentSettings.deploymentVersion,
-            sources: ["Modules/Presentation/BaseFeature/Source/**"],
-            resources: ["Modules/Presentation/BaseFeature/Resource/**"],
+            sources: ["Modules/Presentation/PresentationUtil/Source/**"],
+            resources: ["Modules/Presentation/PresentationUtil/Resource/**"],
             dependencies: [
                 
+                // Domain
                 .target(name: "UseCase"),
                 .target(name: "Entity"),
                 
+                // Data
                 .target(name: "Repository"),
                 
-                .target(name: "DSKit"),
+                // Presentation
+                .target(name: "CommonUI"),
                 
                 
                 // ThirdParty
@@ -116,6 +119,23 @@ let project = Project(
                 .external(name: "RxCocoa"),
             ]
         ),
+        
+        
+        // MARK: CommonUI
+        .target(
+            name: "CommonUI",
+            destinations: .iOS,
+            product: .framework,
+            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).commonUI",
+            deploymentTargets: DeploymentSettings.deploymentVersion,
+            sources: ["Modules/Presentation/CommonUI/Source/**"],
+            dependencies: [
+                .target(name: "DSKit"),
+            ]
+        ),
+        
+        
+        // MARK: DSKit
         .target(
             name: "DSKit",
             destinations: .iOS,
@@ -125,10 +145,11 @@ let project = Project(
             sources: ["Modules/Presentation/DSKit/Source/**"],
             resources: ["Modules/Presentation/DSKit/Resource/**"],
             dependencies: [
+                // Util
                 .target(name: "Entity"),
+                .target(name: "Util"),
                 
                 // ThirdParty
-                .external(name: "RxSwift"),
                 .external(name: "RxCocoa"),
             ]
         ),

@@ -1,6 +1,6 @@
 //
 //  CategorySelectionCell.swift
-//  DSKit
+//  CommonUI
 //
 //  Created by choijunios on 8/6/24.
 //
@@ -9,6 +9,7 @@ import UIKit
 import Entity
 import RxSwift
 import RxCocoa
+import DSKit
 
 /// 카테고리의 선택상태를 나타내는 타입입니다.
 public typealias CategoryState = (category: MainCategory, isActive: Bool)
