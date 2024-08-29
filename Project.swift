@@ -12,16 +12,16 @@ let project = Project(
     targets: [
         // MARK: App
         .target(
-            name: "App",
+            name: "MainApp",
             destinations: .iOS,
             product: .app,
             productName: DeploymentSettings.productName,
             bundleId: DeploymentSettings.bundleIdentifierPrefix,
             deploymentTargets: DeploymentSettings.deploymentVersion,
             infoPlist: ShorcapInfoPlist.mainApp,
-            sources: ["Modules/App/Source/**"],
-            resources: ["Modules/App/Resource/**"],
-            entitlements: .file(path: .relativeToRoot("Entitlements/App.entitlements")),
+            sources: ["Modules/App/MainApp/Source/**"],
+            resources: ["Modules/App/MainApp/Resource/**"],
+            entitlements: .file(path: .relativeToRoot("Entitlements/MainApp.entitlements")),
             dependencies: [
                 .target(name: "ActionExtension"),
                 .target(name: "MainAppFeatures"),
@@ -40,8 +40,8 @@ let project = Project(
             bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).exampleApp",
             deploymentTargets: DeploymentSettings.deploymentVersion,
             infoPlist: ShorcapInfoPlist.mainApp,
-            sources: ["Modules/ExampleApp/Source/**"],
-            resources: ["Modules/ExampleApp/Resource/**"],
+            sources: ["Modules/App/ExampleApp/Source/**"],
+            resources: ["Modules/App/ExampleApp/Resource/**"],
             dependencies: [
                 .target(name: "MainAppFeatures"),
             ]
@@ -56,8 +56,8 @@ let project = Project(
             bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).actionExt",
             deploymentTargets: DeploymentSettings.deploymentVersion,
             infoPlist: ShorcapInfoPlist.actionExtension,
-            sources: ["Modules/ActionExtension/Source/**"],
-            resources: ["Modules/ActionExtension/Resource/**"],
+            sources: ["Modules/App/ActionExtension/Source/**"],
+            resources: ["Modules/App/ActionExtension/Resource/**"],
             entitlements: .file(path: .relativeToRoot("Entitlements/AppExtension.entitlements")),
             dependencies: [
                 .target(name: "AppExtensionFeatures"),
