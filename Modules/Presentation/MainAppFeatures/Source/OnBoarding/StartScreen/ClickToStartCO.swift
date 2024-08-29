@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import BaseFeature
+import PresentationUtil
 import UseCase
 
 public class ClickToStartCO: Coordinator {
@@ -33,9 +33,9 @@ public class ClickToStartCO: Coordinator {
     public var viewController: UIViewController?
     public var navigationController: UINavigationController?
     
-    public var children: [any BaseFeature.Coordinator] = []
-    public var parent: (any BaseFeature.Coordinator)?
-    public var finishDelegate: (any BaseFeature.CoordinatorFinishDelegate)?
+    public var children: [Coordinator] = []
+    public var parent: (Coordinator)?
+    public var finishDelegate: (CoordinatorFinishDelegate)?
     
     let userConfigRepository: UserConfigRepository
     let videoCodeRepository: VideoCodeRepository

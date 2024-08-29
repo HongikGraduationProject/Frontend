@@ -8,7 +8,7 @@
 import UIKit
 import UseCase
 import MainAppFeatures
-import BaseFeature
+import PresentationUtil
 
 class DefaultRootCoordinator: RootCoordinator {
     
@@ -19,7 +19,7 @@ class DefaultRootCoordinator: RootCoordinator {
     
     var viewController: UIViewController?
     var navigationController: UINavigationController?
-    var finishDelegate: (any BaseFeature.CoordinatorFinishDelegate)?
+    var finishDelegate: CoordinatorFinishDelegate?
     
     let injector: Injector
     

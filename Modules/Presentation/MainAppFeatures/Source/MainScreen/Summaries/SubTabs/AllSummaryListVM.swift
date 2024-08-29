@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import BaseFeature
+import CommonFeature
 import RxCocoa
 import RxSwift
 import Entity

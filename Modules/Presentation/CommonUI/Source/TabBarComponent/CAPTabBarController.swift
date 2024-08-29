@@ -1,6 +1,6 @@
 //
 //  CAPTabBarController.swift
-//  BaseFeature
+//  CommonUI
 //
 //  Created by choijunios on 8/15/24.
 //
@@ -11,7 +11,7 @@ import RxCocoa
 import RxSwift
 import Entity
 import DSKit
-import CommonUI
+import PresentationUtil
 
 public class CAPTabBarController: BaseVC {
     public typealias Item = CAPMainPage

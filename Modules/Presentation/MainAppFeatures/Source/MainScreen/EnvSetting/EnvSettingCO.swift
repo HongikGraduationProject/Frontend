@@ -7,7 +7,7 @@
 
 import UIKit
 import Entity
-import BaseFeature
+import PresentationUtil
 
 public class EnvSettingCO: Coordinator {
     
@@ -21,10 +21,10 @@ public class EnvSettingCO: Coordinator {
     public var viewController: UIViewController?
     public var navigationController: UINavigationController?
     
-    public var children: [any BaseFeature.Coordinator] = []
-    public var parent: (any BaseFeature.Coordinator)?
+    public var children: [Coordinator] = []
+    public var parent: (Coordinator)?
     
-    public var finishDelegate: (any BaseFeature.CoordinatorFinishDelegate)?
+    public var finishDelegate: (CoordinatorFinishDelegate)?
     
     public init(dependency: Dependency) {
         self.navigationController = dependency.navigationController

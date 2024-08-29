@@ -6,13 +6,13 @@
 //
 
 import UIKit
-import BaseFeature
 import RxCocoa
 import RxSwift
 import Entity
 import DSKit
 import UseCase
 import CommonUI
+import PresentationUtil
 
 public class SummaryDetailVC: BaseVC {
     

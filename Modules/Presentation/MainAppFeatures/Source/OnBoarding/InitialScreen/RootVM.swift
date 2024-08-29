@@ -10,7 +10,7 @@ import Entity
 import RxSwift
 import RxCocoa
 import UseCase
-import BaseFeature
+import PresentationUtil
 import Util
 
 public protocol RootViewModelable: BaseVMable {

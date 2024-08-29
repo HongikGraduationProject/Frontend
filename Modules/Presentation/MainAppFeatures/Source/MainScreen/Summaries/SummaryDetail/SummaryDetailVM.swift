@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import BaseFeature
 import RxCocoa
 import RxSwift
 import Entity
