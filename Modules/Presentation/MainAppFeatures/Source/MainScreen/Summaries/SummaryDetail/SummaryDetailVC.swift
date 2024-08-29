@@ -13,26 +13,6 @@ import Entity
 import DSKit
 import UseCase
 
-public class SummaryDetailVM {
-    
-    let videoId: Int
-    let repo: SummaryDetailRepository
-    
-    let viewDidLoad: PublishRelay<Void> = .init()
-    var summaryDetail: Driver<SummaryDetail>?
-    
-    public init(videoId: Int, repo: SummaryDetailRepository) {
-        self.videoId = videoId
-        self.repo = repo
-        
-        summaryDetail = viewDidLoad
-            .flatMap { [repo] _ in
-                repo.fetchSummaryDetail(videoId: videoId)
-            }
-            .asDriver(onErrorDriveWith: .never())
-    }
-}
-
 public class SummaryDetailVC: BaseVC {
     
     // Init
@@ -130,6 +110,7 @@ public class SummaryDetailVC: BaseVC {
         let scrollView = UIScrollView()
         scrollView.contentInset.left = 20
         scrollView.contentInset.right = 20
+        scrollView.delaysContentTouches = false
         let contentGuide = scrollView.contentLayoutGuide
         let frameGuide = scrollView.frameLayoutGuide
         scrollView.addSubview(contentView)
