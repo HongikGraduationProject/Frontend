@@ -61,7 +61,8 @@ extension DefaultRootCoordinator {
     func clickToStartScreen() {
         let coordinator = ClickToStartCO(
             dependency: .init(
-                userConfigRepository: injector.resolve(UserConfigRepository.self), 
+                userConfigRepository: injector.resolve(UserConfigRepository.self),
+                videoCodeRepository: injector.resolve(VideoCodeRepository.self),
                 onBoardingCheckUseCase: injector.resolve(OnBoardingCheckUseCase.self),
                 navigationController: navigationController
             )
@@ -73,7 +74,8 @@ extension DefaultRootCoordinator {
     func showShortFormHuntingScreen() {
         let coordinator = HuntingShortFormCO(
             dependency: .init(
-                navigationController: navigationController
+                navigationController: navigationController,
+                videoCodeRepository: injector.resolve(VideoCodeRepository.self)
             )
         )
         addChild(coordinator)

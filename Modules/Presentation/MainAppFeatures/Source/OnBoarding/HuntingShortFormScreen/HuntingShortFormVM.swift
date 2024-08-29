@@ -6,10 +6,16 @@
 //
 
 import UIKit
+import RxSwift
 import RxCocoa
 import Entity
+import UseCase
 
 public class HuntingShortFormVM: HuntingShortFormViewModelable {
+    
+    // Init
+    weak var coordinator: HuntingShortFormCO?
+    let videoCodeRepository: VideoCodeRepository
     
     // Output
     public var alert: Driver<CapAlertVO>?
@@ -17,7 +23,11 @@ public class HuntingShortFormVM: HuntingShortFormViewModelable {
     // ViewModel native
     private let deepLinkError: PublishRelay<String> = .init()
     
-    public init() {
+    var checkingVideoCodeDisposable: Disposable?
+    
+    init(coordinator: HuntingShortFormCO?, videoCodeRepository: VideoCodeRepository) {
+        self.coordinator = coordinator
+        self.videoCodeRepository = videoCodeRepository
         
         // Output
         alert = deepLinkError
@@ -25,6 +35,20 @@ public class HuntingShortFormVM: HuntingShortFormViewModelable {
                 CapAlertVO(title: "숏폼 찾으로 가기 오류", message: message)
             }
             .asDriver(onErrorJustReturn: .default)
+        
+        
+        // MARK: 앱이 다시 엑티비 되는 경우, 로컬에 저장된 요약목록을 확인합니다.
+        checkingVideoCodeDisposable = NotificationCenter.default.rx
+            .notification(UIApplication.willEnterForegroundNotification)
+            .subscribe(onNext: { [weak self] notification in
+                guard let self else { return }
+                if videoCodeRepository.getVideoCodes().count > 0 {
+                    coordinator?.showMainTapBarFlow()
+                    
+                    // 요약내역이 있을 경우 구독을 종료하고 메인화면으로 이동한다.
+                    checkingVideoCodeDisposable?.dispose()
+                }
+            })
     }
     
     private let youtubeDeepLink: String = "youtube://www.youtube.com/shorts"

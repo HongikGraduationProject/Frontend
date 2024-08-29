@@ -13,15 +13,18 @@ public class ClickToStartCO: Coordinator {
     
     public struct Dependency {
         let userConfigRepository: UserConfigRepository
+        let videoCodeRepository: VideoCodeRepository
         let onBoardingCheckUseCase: OnBoardingCheckUseCase
         let navigationController: UINavigationController?
         
         public init(
             userConfigRepository: UserConfigRepository,
+            videoCodeRepository: VideoCodeRepository,
             onBoardingCheckUseCase: OnBoardingCheckUseCase,
             navigationController: UINavigationController?
         ) {
             self.userConfigRepository = userConfigRepository
+            self.videoCodeRepository = videoCodeRepository
             self.onBoardingCheckUseCase = onBoardingCheckUseCase
             self.navigationController = navigationController
         }
@@ -35,11 +38,13 @@ public class ClickToStartCO: Coordinator {
     public var finishDelegate: (any BaseFeature.CoordinatorFinishDelegate)?
     
     let userConfigRepository: UserConfigRepository
+    let videoCodeRepository: VideoCodeRepository
     let onBoardingCheckUseCase: OnBoardingCheckUseCase
     
     public init(dependency: Dependency) {
         self.navigationController = dependency.navigationController
         self.userConfigRepository = dependency.userConfigRepository
+        self.videoCodeRepository = dependency.videoCodeRepository
         self.onBoardingCheckUseCase = dependency.onBoardingCheckUseCase
     }
     
@@ -61,6 +66,7 @@ extension ClickToStartCO {
                     onBoardingUseCase: onBoardingCheckUseCase,
                     userConfigRepository: userConfigRepository
                 ),
+                videoCodeRepository: videoCodeRepository,
                 navigationController: navigationController
             )
         )

@@ -7,14 +7,17 @@
 
 import UIKit
 import BaseFeature
+import UseCase
 
 public class HuntingShortFormCO: Coordinator {
     
     public struct Dependency {
         var navigationController: UINavigationController?
+        let videoCodeRepository: VideoCodeRepository
         
-        public init(navigationController: UINavigationController? = nil) {
+        public init(navigationController: UINavigationController? = nil, videoCodeRepository: VideoCodeRepository) {
             self.navigationController = navigationController
+            self.videoCodeRepository = videoCodeRepository
         }
     }
     
@@ -23,16 +26,34 @@ public class HuntingShortFormCO: Coordinator {
     public var children: [any BaseFeature.Coordinator] = []
     public var parent: (any BaseFeature.Coordinator)?
     
+    let videoCodeRepository: VideoCodeRepository
+    
     public var finishDelegate: (any BaseFeature.CoordinatorFinishDelegate)?
     
     public init(dependency: Dependency) {
         self.navigationController = dependency.navigationController
+        self.videoCodeRepository = dependency.videoCodeRepository
     }
     
     public func start() {
         let vc = HuntingShortFormVC()
-        let vm = HuntingShortFormVM()
+        let vm = HuntingShortFormVM(
+            coordinator: self,
+            videoCodeRepository: videoCodeRepository
+        )
         vc.bind(viewModel: vm)
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    public func showMainTapBarFlow() {
+        if let rootCoordinator = parent as? RootCoordinator {
+            rootCoordinator.executeMainTabBarFlow()
+        }
+        else if let rootCoordinator = parent as? ClickToStartCO {
+            (rootCoordinator.parent as? RootCoordinator)?.executeMainTabBarFlow()
+        }
+        else if let rootCoordinator = parent as? SelectMainCategoryCO {
+            (rootCoordinator.parent?.parent as? RootCoordinator)?.executeMainTabBarFlow()
+        }
     }
 }

@@ -87,7 +87,6 @@ open class SummaryRequestVC: UIViewController {
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-
         setMenuView()
         setAppearance()
         setLayout()
