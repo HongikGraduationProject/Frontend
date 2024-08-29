@@ -76,24 +76,17 @@ extension SummaryKeywordCollectionView: UICollectionViewDataSource {
 extension SummaryKeywordCollectionView: UICollectionViewDelegateFlowLayout {
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let keyword = keywords[indexPath.item]
-        let text = "#\(keyword)"
-        let font = TypographyStyle.baseRegular.typography.font
-
-        // 최대 허용 크기 (너비는 무한대, 높이는 제약 조건이 있을 수 있음)
-        let maxSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-
-        // 텍스트 속성 설정
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: font
-        ]
-
-        // boundingRect 메서드를 사용하여 텍스트가 차지할 크기 계산
-        let boundingBox = text.boundingRect(with: maxSize, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
+        
+        let label = CapLabel()
+        label.typographyStyle = .baseRegular
+        label.textAlignment = .center
+        label.text = "#\(keywords[indexPath.item])"
+        
+        print(label.intrinsicContentSize)
         
         return .init(
-            width: boundingBox.width+18,
-            height: boundingBox.height+10
+            width: label.intrinsicContentSize.width + 26,
+            height: label.intrinsicContentSize.height + 10
         )
     }
 }
@@ -135,7 +128,7 @@ public class SummaryKeywordCell: UICollectionViewCell {
     }
     
     private func setLayout() {
-        self.layoutMargins = .init(top: 5, left: 13, bottom: 5, right: 13)
+        contentView.layoutMargins = .init(top: 5, left: 13, bottom: 5, right: 13)
         
         [
             label

@@ -7,15 +7,18 @@
 
 import UIKit
 import BaseFeature
+import UseCase
 
 public class SelectMainCategoryCO: Coordinator {
     
     public struct Dependency {
         var viewModel: SelectMainCategoryViewModelable?
+        let videoCodeRepository: VideoCodeRepository
         var navigationController: UINavigationController?
         
-        public init(viewModel: SelectMainCategoryViewModelable? = nil, navigationController: UINavigationController?) {
+        public init(viewModel: SelectMainCategoryViewModelable? = nil, videoCodeRepository: VideoCodeRepository, navigationController: UINavigationController? = nil) {
             self.viewModel = viewModel
+            self.videoCodeRepository = videoCodeRepository
             self.navigationController = navigationController
         }
     }
@@ -29,9 +32,11 @@ public class SelectMainCategoryCO: Coordinator {
     public var finishDelegate: (any BaseFeature.CoordinatorFinishDelegate)?
     
     let viewModel: SelectMainCategoryViewModelable!
+    let videoCodeRepository: VideoCodeRepository
     
     public init(dependency: Dependency) {
         self.navigationController = dependency.navigationController
+        self.videoCodeRepository = dependency.videoCodeRepository
         self.viewModel = dependency.viewModel
     }
     
@@ -54,7 +59,8 @@ extension SelectMainCategoryCO {
     func showShortFormHuntingScreen() {
         let coordinator = HuntingShortFormCO(
             dependency: .init(
-                navigationController: navigationController
+                navigationController: navigationController,
+                videoCodeRepository: videoCodeRepository
             )
         )
         addChild(coordinator)

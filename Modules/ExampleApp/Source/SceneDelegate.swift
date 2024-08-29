@@ -26,7 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        testCoordinator?.start()
         
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = SummaryDetailVC()
+        window?.rootViewController = ViewController()
         window?.makeKeyAndVisible()
     }
 

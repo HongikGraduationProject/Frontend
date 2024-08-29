@@ -55,7 +55,7 @@ public class MainScreenCoordinator: Coordinator {
             info: pageInfo
         )
         
-        navigationController?.pushViewController(tabBarController, animated: false)
+        navigationController?.pushViewController(tabBarController, animated: true)
     }
     
     // #1. Tab별 네비게이션 컨트롤러 생성

@@ -16,7 +16,19 @@ class ViewController: UIViewController {
         
         view.backgroundColor = .white
         
-    
+        let label = SummaryKeywordCollectionView()
+        label.setKeywords(keywords: ["안녕하세요","안녕하세요","안녕하세요","123","안녕하세요","안녕하세요","안녕하세요","123",])
+        
+        view.addSubview(label)
+        
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            label.leftAnchor.constraint(equalTo: view.leftAnchor),
+            label.rightAnchor.constraint(equalTo: view.rightAnchor),
+            label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            label.heightAnchor.constraint(equalToConstant: 300),
+        ])
     }
 }
 
