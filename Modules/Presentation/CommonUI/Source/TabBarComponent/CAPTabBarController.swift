@@ -11,6 +11,7 @@ import RxCocoa
 import RxSwift
 import Entity
 import DSKit
+import CommonUI
 
 public class CAPTabBarController: BaseVC {
     public typealias Item = CAPMainPage

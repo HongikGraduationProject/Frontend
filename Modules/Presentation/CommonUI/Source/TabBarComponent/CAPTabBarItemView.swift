@@ -1,6 +1,6 @@
 //
 //  CAPTabBarItemView.swift
-//  DSKit
+//  CommonUI
 //
 //  Created by choijunios on 8/15/24.
 //
@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import DSKit
 
 /// 메인 화면의 탭바 아이템으로 사용됩니다.
 public class CAPTabBarItemView: TappableUIView {

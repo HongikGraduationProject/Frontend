@@ -12,6 +12,7 @@ import RxSwift
 import Entity
 import DSKit
 import UseCase
+import CommonUI
 
 public class SummaryDetailVC: BaseVC {
     

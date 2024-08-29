@@ -1,12 +1,13 @@
 //
 //  CAPSummaryDetailNavigationBar.swift
-//  DSKit
+//  CommonUI
 //
 //  Created by choijunios on 8/22/24.
 //
 
 import UIKit
 import RxSwift
+import DSKit
 
 
 public class CAPSummaryDetailNavigationBar: UIView {

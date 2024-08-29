@@ -11,6 +11,7 @@ import RxCocoa
 import RxSwift
 import Entity
 import DSKit
+import CommonUI
 
 fileprivate enum SummariesVCConfig {
     static let tabItemWidth: CGFloat = 54

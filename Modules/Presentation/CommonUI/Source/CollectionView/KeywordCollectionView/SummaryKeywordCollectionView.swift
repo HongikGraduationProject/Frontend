@@ -6,7 +6,9 @@
 //
 
 import UIKit
+import CommonUI
 import DSKit
+
 
 // MARK: CollectionView
 public class SummaryKeywordCollectionView: UIView {

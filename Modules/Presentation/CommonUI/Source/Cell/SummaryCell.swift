@@ -1,6 +1,6 @@
 //
 //  SummaryCell.swift
-//  DSKit
+//  CommonUI
 //
 //  Created by choijunios on 8/22/24.
 //
@@ -9,6 +9,7 @@ import UIKit
 import Entity
 import RxSwift
 import RxCocoa
+import DSKit
 
 /// 요약된 비디오를 나타내는 Cell입니다.
 

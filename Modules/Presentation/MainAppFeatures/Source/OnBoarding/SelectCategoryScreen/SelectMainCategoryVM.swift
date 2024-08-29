@@ -13,6 +13,7 @@ import Entity
 import DSKit
 import UseCase
 import Util
+import CommonUI
 
 public protocol SelectMainCategoryViewModelable: AnyObject, BaseVMable, CategorySelectionCellViewModelable {
     

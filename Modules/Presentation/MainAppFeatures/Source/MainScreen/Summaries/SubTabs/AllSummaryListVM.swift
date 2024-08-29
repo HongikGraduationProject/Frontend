@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  AllSummaryListVM.swift
 //  MainAppFeatures
 //
 //  Created by choijunios on 8/22/24.
@@ -12,6 +12,7 @@ import RxSwift
 import Entity
 import UseCase
 import DSKit
+import CommonUI
 
 public protocol AllSummaryListVMable {
     

@@ -11,6 +11,7 @@ import UseCase
 import DSKit
 import RxSwift
 import RxCocoa
+import CommonUI
 
 public class SummaryCellVM: SummaryCellVMable {
     

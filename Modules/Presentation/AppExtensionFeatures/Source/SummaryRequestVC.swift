@@ -16,6 +16,7 @@ import RxCocoa
 import RxSwift
 import DSKit
 import BaseFeature
+import CommonUI
 import Util
 
 enum FetchingResourceType: String, CaseIterable {
