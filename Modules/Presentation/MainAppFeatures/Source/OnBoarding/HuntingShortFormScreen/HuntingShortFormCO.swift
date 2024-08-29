@@ -6,8 +6,8 @@
 //
 
 import UIKit
-import BaseFeature
 import UseCase
+import PresentationUtil
 
 public class HuntingShortFormCO: Coordinator {
     
@@ -23,12 +23,12 @@ public class HuntingShortFormCO: Coordinator {
     
     public var viewController: UIViewController?
     public var navigationController: UINavigationController?
-    public var children: [any BaseFeature.Coordinator] = []
-    public var parent: (any BaseFeature.Coordinator)?
+    public var children: [Coordinator] = []
+    public var parent: (Coordinator)?
     
     let videoCodeRepository: VideoCodeRepository
     
-    public var finishDelegate: (any BaseFeature.CoordinatorFinishDelegate)?
+    public var finishDelegate: (CoordinatorFinishDelegate)?
     
     public init(dependency: Dependency) {
         self.navigationController = dependency.navigationController

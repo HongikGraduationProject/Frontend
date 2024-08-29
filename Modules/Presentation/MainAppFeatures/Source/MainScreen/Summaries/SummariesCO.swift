@@ -7,8 +7,8 @@
 
 import UIKit
 import Entity
-import BaseFeature
 import UseCase
+import PresentationUtil
 
 public class SummariesCO: Coordinator {
     
@@ -27,10 +27,10 @@ public class SummariesCO: Coordinator {
     public var viewController: UIViewController?
     public var navigationController: UINavigationController?
     
-    public var children: [any BaseFeature.Coordinator] = []
-    public var parent: (any BaseFeature.Coordinator)?
+    public var children: [any Coordinator] = []
+    public var parent: (any Coordinator)?
     
-    public var finishDelegate: (any BaseFeature.CoordinatorFinishDelegate)?
+    public var finishDelegate: (any CoordinatorFinishDelegate)?
     
     let summaryUseCase: SummaryUseCase
     let summaryDetailRepository: SummaryDetailRepository

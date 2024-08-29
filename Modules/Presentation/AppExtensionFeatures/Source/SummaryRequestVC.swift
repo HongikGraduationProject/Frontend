@@ -15,7 +15,7 @@ import DataSource
 import RxCocoa
 import RxSwift
 import DSKit
-import BaseFeature
+import CommonFeature
 import CommonUI
 import Util
 

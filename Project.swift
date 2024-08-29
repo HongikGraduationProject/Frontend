@@ -78,7 +78,7 @@ let project = Project(
             sources: ["Modules/Presentation/MainAppFeatures/Source/**"],
             resources: ["Modules/Presentation/MainAppFeatures/Resource/**"],
             dependencies: [
-                .target(name: "PresentationUtil"),
+                .target(name: "CommonFeature"),
             ]
         ),
         .target(
@@ -90,36 +90,30 @@ let project = Project(
             sources: ["Modules/Presentation/AppExtensionFeatures/Source/**"],
             resources: ["Modules/Presentation/AppExtensionFeatures/Resource/**"],
             dependencies: [
-                .target(name: "PresentationUtil"),
+                .target(name: "CommonFeature"),
             ]
         ),
+        
         .target(
-            name: "PresentationUtil",
+            name: "CommonFeature",
             destinations: .iOS,
             product: .framework,
-            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).presentationUtil",
+            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).commonFeature",
             deploymentTargets: DeploymentSettings.deploymentVersion,
-            sources: ["Modules/Presentation/PresentationUtil/Source/**"],
-            resources: ["Modules/Presentation/PresentationUtil/Resource/**"],
+            sources: ["Modules/Presentation/CommonFeature/Source/**"],
+            resources: ["Modules/Presentation/CommonFeature/Resource/**"],
             dependencies: [
                 
                 // Domain
                 .target(name: "UseCase"),
-                .target(name: "Entity"),
                 
                 // Data
                 .target(name: "Repository"),
                 
                 // Presentation
                 .target(name: "CommonUI"),
-                
-                
-                // ThirdParty
-                .external(name: "RxSwift"),
-                .external(name: "RxCocoa"),
             ]
         ),
-        
         
         // MARK: CommonUI
         .target(
@@ -145,16 +139,33 @@ let project = Project(
             sources: ["Modules/Presentation/DSKit/Source/**"],
             resources: ["Modules/Presentation/DSKit/Resource/**"],
             dependencies: [
-                // Util
+                
+                // Domain
                 .target(name: "Entity"),
+                
+                // Util
+                .target(name: "PresentationUtil"),
+            ]
+        ),
+        
+        // MARK: PresentationUtil
+        .target(
+            name: "PresentationUtil",
+            destinations: .iOS,
+            product: .framework,
+            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).presentationUtil",
+            deploymentTargets: DeploymentSettings.deploymentVersion,
+            sources: ["Modules/Presentation/PresentationUtil/Source/**"],
+            resources: ["Modules/Presentation/PresentationUtil/Resource/**"],
+            dependencies: [
+                
+                // Util
                 .target(name: "Util"),
                 
                 // ThirdParty
                 .external(name: "RxCocoa"),
             ]
         ),
-        
-        
         
         // MARK: Domain
         .target(
@@ -223,18 +234,18 @@ let project = Project(
         
         // MARK: Util
         /// Util은 모든 레이어에서 사용할 수 있는 언어수준의 유틸리티를 제공합니다. 다만, 플렛폼에 의존적인 패키지는 사용하지 않습니다.
-        .target(
-            name: "Util",
-            destinations: .iOS,
-            product: .framework,
-            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).util",
-            deploymentTargets: DeploymentSettings.deploymentVersion,
-            sources: ["Modules/Util/Source/**"],
-            dependencies: [
-                // ThirdParty
-                .external(name: "RxSwift")
-            ]
-        ),
+            .target(
+                name: "Util",
+                destinations: .iOS,
+                product: .framework,
+                bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).util",
+                deploymentTargets: DeploymentSettings.deploymentVersion,
+                sources: ["Modules/Util/Source/**"],
+                dependencies: [
+                    // ThirdParty
+                    .external(name: "RxSwift")
+                ]
+            ),
         
         
         

@@ -1,14 +1,13 @@
 //
 //  SummaryKeywordCollectionView.swift
-//  BaseFeature
+//  CommonUI
 //
 //  Created by choijunios on 8/29/24.
 //
 
 import UIKit
-import CommonUI
 import DSKit
-
+import PresentationUtil
 
 // MARK: CollectionView
 public class SummaryKeywordCollectionView: UIView {

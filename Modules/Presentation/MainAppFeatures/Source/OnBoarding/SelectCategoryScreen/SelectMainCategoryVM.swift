@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import BaseFeature
 import RxCocoa
 import RxSwift
 import Entity
@@ -14,6 +13,7 @@ import DSKit
 import UseCase
 import Util
 import CommonUI
+import PresentationUtil
 
 public protocol SelectMainCategoryViewModelable: AnyObject, BaseVMable, CategorySelectionCellViewModelable {
     
