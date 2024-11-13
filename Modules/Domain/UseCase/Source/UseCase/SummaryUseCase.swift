@@ -114,8 +114,8 @@ public class DefaultSummaryUseCase: SummaryUseCase {
             // processing중일 경우 사용하는 Subject
             let delayedStatusSubject = PublishSubject<String>()
                 
-            // 두번째 호출부터는 1초의 지연이 발생합니다.
-            let delayedStream = delayedStatusSubject.delay(.milliseconds(1000), scheduler: ConcurrentDispatchQueueScheduler(qos: .default))
+            // 두번째 호출부터는 3초의 지연이 발생합니다.
+            let delayedStream = delayedStatusSubject.delay(.milliseconds(3000), scheduler: ConcurrentDispatchQueueScheduler(qos: .default))
             
             // 최초 요청과 이후 요청을 merge
             let statusCheckResult = Observable
@@ -127,7 +127,7 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                 .share()
                 
             let disposable = statusCheckResult
-                .subscribe(onNext: { [videoCode, weak self] status in
+                .subscribe(onNext: { [weak self] status in
                     switch status.status {
                     case .complete:
                         guard let self else { return }
