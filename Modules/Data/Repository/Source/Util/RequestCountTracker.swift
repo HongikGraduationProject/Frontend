@@ -8,16 +8,10 @@
 import Foundation
 
 import Entity
+import UseCase
 
 
 import RxSwift
-
-protocol RequestCountTracker {
-    
-    func requestRequestCount(videoCode: String) -> Single<Int>
-    
-    func countUpRequestCount(videoCode: String)
-}
 
 class DefaultRequestCountTracker: RequestCountTracker {
     
