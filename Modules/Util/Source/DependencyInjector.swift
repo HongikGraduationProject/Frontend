@@ -43,6 +43,10 @@ public final class DependencyInjector: Injector {
         container.register(serviceType) { _ in object }
     }
     
+    func resolve<T>() -> T {
+        container.resolve(T.self)!
+    }
+    
     public func resolve<T>(_ serviceType: T.Type) -> T {
         container.resolve(serviceType)!
     }

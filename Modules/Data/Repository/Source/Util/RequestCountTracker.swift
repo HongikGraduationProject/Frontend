@@ -13,7 +13,7 @@ import UseCase
 
 import RxSwift
 
-class DefaultRequestCountTracker: RequestCountTracker {
+public class DefaultRequestCountTracker: RequestCountTracker {
     
     private let managementQueue: DispatchQueue = .init(
         label: "com.RequestCountTracker",
@@ -22,7 +22,9 @@ class DefaultRequestCountTracker: RequestCountTracker {
     
     private var requestCountState: [String: Int] = [:]
     
-    func requestRequestCount(videoCode: String) -> Single<Int> {
+    public init() { }
+    
+    public func requestRequestCount(videoCode: String) -> Single<Int> {
         
         Single.create { [weak self] single in
             
@@ -35,6 +37,8 @@ class DefaultRequestCountTracker: RequestCountTracker {
                     
                 } else {
                     
+                    requestCountState[videoCode] = 0
+                    
                     single(.success(0))
                 }
             }
@@ -43,21 +47,13 @@ class DefaultRequestCountTracker: RequestCountTracker {
         }
     }
     
-    func countUpRequestCount(videoCode: String) {
+    public func countUpRequestCount(videoCode: String) {
         
         managementQueue.async(flags: .barrier) { [weak self] in
             
             guard let self else { return }
             
-            if requestCountState.keys.contains(videoCode) {
-                
-                requestCountState[videoCode]! += 1
-                
-            } else {
-                
-                requestCountState[videoCode] = 1
-                
-            }
+            requestCountState[videoCode]? += 1
         }
     }
 }

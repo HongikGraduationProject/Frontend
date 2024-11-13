@@ -35,6 +35,8 @@ public class DefaultSummaryUseCase: SummaryUseCase {
         }
     }
     
+    @Injected var requestCounter: RequestCountTracker
+    
     // Stream
     /// 최신 요약상세정보를 재공하는 콜드스트림입니다.
     public let summariesStream: RxSwift.BehaviorSubject<[Entity.SummaryItem]>
@@ -126,11 +128,26 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                 }
                 .share()
                 
-            let disposable = statusCheckResult
-                .subscribe(onNext: { [weak self] status in
+            let requestCount = statusCheckResult
+                .withUnretained(self)
+                .flatMap { (useCase, _) in
+                    
+                    // 요청횟수 증가
+                    useCase.requestCounter
+                        .countUpRequestCount(videoCode: videoCode)
+                    
+                    return useCase.requestCounter
+                        .requestRequestCount(videoCode: videoCode)
+                }
+            
+            let disposable = Observable
+                .zip(statusCheckResult, requestCount)
+                .subscribe(onNext: { [weak self] (status, rc) in
+                    
+                    guard let self else { return }
+                    
                     switch status.status {
                     case .complete:
-                        guard let self else { return }
                         
                         // 비디오 코드 삭제요청
                         // 완료응답을 받은 이후임으로, 설령삭제되지 못한다해도 문제되지 않는다.
@@ -157,7 +174,19 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                             .disposed(by: disposeBag)
                         
                     case .processing:
-                        delayedStatusSubject.onNext(videoCode)
+                        
+                        if rc >= 10 {
+                            
+                            // 10회이상인 경우 비디오 코드를 삭제한다.
+                            
+                            videoCodeRepository.removeVideoCode(videoCode)
+                            
+                            // 반복 스트림 종료
+                            statusCheckStreamDict.remove(videoCode)
+                            
+                        } else {
+                            delayedStatusSubject.onNext(videoCode)
+                        }
                     }
                 })
             

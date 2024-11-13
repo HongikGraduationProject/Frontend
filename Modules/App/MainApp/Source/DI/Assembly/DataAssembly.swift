@@ -26,6 +26,11 @@ public struct DataAssembly: Assembly {
             return DefaultCoreDataService()
         }.inObjectScope(.container)
         
+        container.register(RequestCountTracker.self) { _ in
+            
+            DefaultRequestCountTracker()
+        }
+        
         
         // MARK: Repositories
         container.register(UserConfigRepository.self) { resolver in
