@@ -24,6 +24,9 @@ public typealias Injector = DependencyAssemblable & DependencyResolvable
 
 /// 의존성 주입을 담당하는 인젝터
 public final class DependencyInjector: Injector {
+    
+    public static let shared: DependencyInjector = .init(container: Container())
+    
     private let container: Container
     
     public init(container: Container) {

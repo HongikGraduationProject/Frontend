@@ -8,11 +8,12 @@ import UIKit
 import Swinject
 import MainAppFeatures
 import DataSource
+import Util
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    private let injector: Injector = DependencyInjector(container: Container())
+    
     private var rootCoordinator: DefaultRootCoordinator?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -25,7 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = rootNavigationController
         window?.makeKeyAndVisible()
         
-        injector
+        DependencyInjector.shared
             .assemble([
                 DataAssembly(),
                 DomainAssembly(),
@@ -35,12 +36,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.rootCoordinator = .init(
             dependency: .init(
                 navigationController: rootNavigationController,
-                injector: injector
+                injector: DependencyInjector.shared
             )
         )
-        let test = injector.resolve(CoreDataService.self)
-        // 인위적인 시간
-        sleep(1)
 
         rootCoordinator?.start()
     }

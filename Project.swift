@@ -25,9 +25,6 @@ let project = Project(
             dependencies: [
                 .target(name: "ActionExtension"),
                 .target(name: "MainAppFeatures"),
-                
-                // ThirdParty : Service locator
-                .external(name: "Swinject"),
             ]
         ),
         
@@ -243,7 +240,8 @@ let project = Project(
                 sources: ["Modules/Util/Source/**"],
                 dependencies: [
                     // ThirdParty
-                    .external(name: "RxSwift")
+                    .external(name: "RxSwift"),
+                    .external(name: "Swinject"),
                 ]
             ),
         
