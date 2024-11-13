@@ -175,9 +175,9 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                         
                     case .processing:
                         
-                        if rc >= 10 {
+                        if rc >= 20 {
                             
-                            // 10회이상인 경우 비디오 코드를 삭제한다.
+                            // 20회이상인 경우 비디오 코드를 삭제한다.
                             
                             videoCodeRepository.removeVideoCode(videoCode)
                             

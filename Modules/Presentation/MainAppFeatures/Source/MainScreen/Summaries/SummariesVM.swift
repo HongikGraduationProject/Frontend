@@ -45,7 +45,7 @@ public class SummariesVM: SummariesVMable {
         summaryDetailRepository = dependency.summaryDetailRepository
         
         let requestAllSummaryItemsResult = requestAllSummaryItems
-            .flatMap { [summaryUseCase ]_ in
+            .flatMap { [summaryUseCase]_ in
                 summaryUseCase
                     .fetchAllSummaryItems()
             }
