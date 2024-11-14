@@ -67,8 +67,9 @@ class SummaryMapView: UIView {
             mapView.topAnchor.constraint(equalTo: self.topAnchor),
             mapView.leftAnchor.constraint(equalTo: self.leftAnchor),
             mapView.rightAnchor.constraint(equalTo: self.rightAnchor),
+            mapView.heightAnchor.constraint(equalToConstant: 220),
             
-            labelStack.topAnchor.constraint(equalTo: mapView.bottomAnchor, constant: -15),
+            labelStack.topAnchor.constraint(equalTo: mapView.bottomAnchor, constant: 15),
             labelStack.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 15),
         ])
     }
@@ -96,14 +97,10 @@ class SummaryMapView: UIView {
         
         let mapView = self.mapView.mapView
         
-        
-        // 마커 아이콘 사이즈
-        let markerSize: CGSize = .init(width: 33, height: 44)
-        
         // 마커 설정
         let locationPos: NMGLatLng = .init(lat: lat, lng: lon)
         
-        var workerMarker: NMFMarker = .init(position: locationPos)
+        let workerMarker: NMFMarker = .init(position: locationPos)
         workerMarker.width = 33
         workerMarker.height = 44
         
@@ -113,7 +110,7 @@ class SummaryMapView: UIView {
         
         
         // 카메라 이동
-        let camerUpdate = NMFCameraUpdate(position: .init(locationPos, zoom: 10))
+        let camerUpdate = NMFCameraUpdate(position: .init(locationPos, zoom: 14))
         mapView.moveCamera(camerUpdate)
         
         

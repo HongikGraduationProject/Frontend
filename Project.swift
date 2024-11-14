@@ -25,7 +25,11 @@ let project = Project(
             dependencies: [
                 .target(name: "ActionExtension"),
                 .target(name: "MainAppFeatures"),
-            ]
+            ],
+            settings: .settings(configurations: [
+                .debug(name: "debug", xcconfig: .relativeToRoot("Secrets/XCConfig/app.xcconfig")),
+                .debug(name: "release", xcconfig: .relativeToRoot("Secrets/XCConfig/app.xcconfig")),
+            ])
         ),
         
         // MARK: ExampleApp

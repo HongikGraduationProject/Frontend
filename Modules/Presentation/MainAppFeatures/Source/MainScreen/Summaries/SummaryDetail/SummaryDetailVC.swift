@@ -78,6 +78,9 @@ public class SummaryDetailVC: BaseVC {
     }()
     
     
+    // MARK: 맵뷰
+    let mapView: SummaryMapView = .init()
+    
     
     // Observable
     private let disposeBag = DisposeBag()
@@ -119,6 +122,9 @@ public class SummaryDetailVC: BaseVC {
             HStack([scriptLabel, Spacer()], alignment: .fill),
             Spacer(height: 28),
             scriptContentLabel,
+            Spacer(height: 23),
+            Spacer(height: 1, color: .gray),
+            Spacer(height: 28),
         ]
         let contentView = VStack(viewList, alignment: .fill)
         
@@ -129,7 +135,9 @@ public class SummaryDetailVC: BaseVC {
         let contentGuide = scrollView.contentLayoutGuide
         let frameGuide = scrollView.frameLayoutGuide
         scrollView.addSubview(contentView)
+        scrollView.addSubview(mapView)
         contentView.translatesAutoresizingMaskIntoConstraints = false
+        mapView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             
@@ -143,7 +151,11 @@ public class SummaryDetailVC: BaseVC {
             contentView.topAnchor.constraint(equalTo: contentGuide.topAnchor),
             contentView.leftAnchor.constraint(equalTo: contentGuide.leftAnchor),
             contentView.rightAnchor.constraint(equalTo: contentGuide.rightAnchor),
-            contentView.bottomAnchor.constraint(equalTo: contentGuide.bottomAnchor),
+            
+            mapView.leftAnchor.constraint(equalTo: frameGuide.leftAnchor),
+            mapView.rightAnchor.constraint(equalTo: frameGuide.rightAnchor),
+            mapView.topAnchor.constraint(equalTo: contentView.bottomAnchor),
+            mapView.bottomAnchor.constraint(equalTo: contentGuide.bottomAnchor, constant: -350),
             
             contentView.widthAnchor.constraint(equalTo: frameGuide.widthAnchor, constant: -40),
         ])
@@ -186,28 +198,47 @@ public class SummaryDetailVC: BaseVC {
         // MARK: Output
         viewModel
             .summaryDetail?
-            .drive(onNext: { [weak self] detail in
-                
-                guard let self else { return }
-                
-                // 썸네일
-                if let rawCode = detail.rawVideoCode, let thumbNailUrl = URL(string: "https://img.youtube.com/vi/\(rawCode)/maxresdefault.jpg") {
+            .drive(
+                onNext: { [weak self] detail in
                     
-                    let processor = DownsamplingImageProcessor(size: videoThumbNailView.bounds.size)
+                    guard let self else { return }
                     
-                    videoThumbNailView.kf.setImage(
-                        with: thumbNailUrl,
-                        options: [
+                    // 썸네일
+                    if let rawCode = detail.rawVideoCode,
+                       let thumbNailUrl = URL(string: "https://img.youtube.com/vi/\(rawCode)/maxresdefault.jpg") {
+                        
+                        let processor = DownsamplingImageProcessor(size: videoThumbNailView.bounds.size)
+                        
+                        videoThumbNailView.kf.setImage(
+                            with: thumbNailUrl,
+                            options: [
                                 .processor(processor),
                                 .scaleFactor(UIScreen.main.scale),
                                 .transition(.fade(0.25)),
                                 .cacheOriginalImage
-                        ])
-                }
-                
-                titleLabel.text = detail.title
-                keywordCollectionView.setKeywords(keywords: detail.keywords)
-                scriptContentLabel.text = detail.summary
+                            ])
+                    }
+                    
+                    titleLabel.text = detail.title
+                    keywordCollectionView.setKeywords(keywords: detail.keywords)
+                    scriptContentLabel.text = detail.summary
+                    
+                    
+                    // 맵뷰
+                    if let lat = detail.latitude, let lon = detail.longitude {
+                        
+                        mapView
+                            .setMap(
+                                name: detail.description,
+                                address: detail.address,
+                                lat: lat,
+                                lon: lon
+                            )
+                        
+                    } else {
+                        
+                        mapView.isHidden = true
+                    }
             })
             .disposed(by: disposeBag)
         
