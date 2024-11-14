@@ -22,6 +22,8 @@ let package = Package(
         // Moya
         .package(url: "https://github.com/Moya/Moya.git", from: "15.0.3"),
         // KingFisher
-        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "7.12.0")
+        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "7.12.0"),
+        // Naver map
+        .package(url: "https://github.com/J0onYEong/NaverMapSDKForSPM.git", from: "1.0.0"),
     ]
 )

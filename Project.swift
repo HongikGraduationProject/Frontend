@@ -78,6 +78,7 @@ let project = Project(
                 .target(name: "CommonFeature"),
                 
                 .external(name: "Kingfisher"),
+                .external(name: "Junios.NMapSDKForSPM"),
             ]
         ),
         .target(

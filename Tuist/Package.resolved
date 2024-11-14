@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "navermapsdkforspm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/J0onYEong/NaverMapSDKForSPM.git",
+      "state" : {
+        "revision" : "d644944b2ba8fdef2f0b51cdf1c136ae63012907",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "reactiveswift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ReactiveCocoa/ReactiveSwift.git",
