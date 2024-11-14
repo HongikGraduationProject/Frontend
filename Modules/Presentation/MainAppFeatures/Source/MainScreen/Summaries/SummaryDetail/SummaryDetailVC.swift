@@ -6,13 +6,16 @@
 //
 
 import UIKit
-import RxCocoa
-import RxSwift
+
 import Entity
 import DSKit
 import UseCase
 import CommonUI
 import PresentationUtil
+
+import Kingfisher
+import RxCocoa
+import RxSwift
 
 public class SummaryDetailVC: BaseVC {
     
@@ -33,10 +36,18 @@ public class SummaryDetailVC: BaseVC {
         return label
     }()
     
-    let originalVideoWebView: UIView = {
-        let view = UIView()
+    let videoThumbNailView: UIImageView = {
+        let view = UIImageView()
         view.backgroundColor = DSColors.gray10.color
+        view.contentMode = .scaleAspectFit
+        view.isUserInteractionEnabled = true
         return view
+    }()
+    
+    let playButton: PlayButton = {
+        let button = PlayButton()
+        button.isUserInteractionEnabled = true
+        return button
     }()
     
     // MARK: 키워드
@@ -90,11 +101,14 @@ public class SummaryDetailVC: BaseVC {
     
     private func setLayout() {
         
+        videoThumbNailView.addSubview(playButton)
+        playButton.translatesAutoresizingMaskIntoConstraints = false
+        
         let viewList = [
             Spacer(height: 20),
             titleLabel,
             Spacer(height: 22),
-            originalVideoWebView,
+            videoThumbNailView,
             Spacer(height: 35),
             HStack([keywordLabel, Spacer()], alignment: .fill),
             Spacer(height: 16),
@@ -119,7 +133,10 @@ public class SummaryDetailVC: BaseVC {
         
         NSLayoutConstraint.activate([
             
-            originalVideoWebView.heightAnchor.constraint(equalToConstant: 210),
+            videoThumbNailView.heightAnchor.constraint(equalToConstant: 210),
+            
+            playButton.centerXAnchor.constraint(equalTo: videoThumbNailView.centerXAnchor),
+            playButton.centerYAnchor.constraint(equalTo: videoThumbNailView.centerYAnchor),
             
             keywordCollectionView.heightAnchor.constraint(equalToConstant: 66),
             
@@ -166,17 +183,42 @@ public class SummaryDetailVC: BaseVC {
         
         self.viewModel = viewModel
         
-        rx.viewDidLoad.bind(to: viewModel.viewDidLoad).disposed(by: disposeBag)
-        
+        // MARK: Output
         viewModel
             .summaryDetail?
             .drive(onNext: { [weak self] detail in
+                
                 guard let self else { return }
+                
+                // 썸네일
+                if let rawCode = detail.rawVideoCode, let thumbNailUrl = URL(string: "https://img.youtube.com/vi/\(rawCode)/maxresdefault.jpg") {
+                    
+                    let processor = DownsamplingImageProcessor(size: videoThumbNailView.bounds.size)
+                    
+                    videoThumbNailView.kf.setImage(
+                        with: thumbNailUrl,
+                        options: [
+                                .processor(processor),
+                                .scaleFactor(UIScreen.main.scale),
+                                .transition(.fade(0.25)),
+                                .cacheOriginalImage
+                        ])
+                }
+                
                 titleLabel.text = detail.title
                 keywordCollectionView.setKeywords(keywords: detail.keywords)
                 scriptContentLabel.text = detail.summary
             })
             .disposed(by: disposeBag)
+        
+        
+        // MARK: Input
+        rx.viewDidLoad
+            .bind(to: viewModel.viewDidLoad)
+            .disposed(by: disposeBag)
+        
+        playButton.tap
+            .bind(to: viewModel.playSourceVideoButtonClicked)
+            .disposed(by: disposeBag)
     }
 }
-

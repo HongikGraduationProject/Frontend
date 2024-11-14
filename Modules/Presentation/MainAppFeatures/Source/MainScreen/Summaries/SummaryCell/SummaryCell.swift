@@ -103,8 +103,22 @@ class SummaryCell: UITableViewCell {
                     
                     if let rawCode = detail.rawVideoCode, let thumbNailUrl = URL(string: "https://img.youtube.com/vi/\(rawCode)/mqdefault.jpg") {
                         
+                        let thumbNailView = cellContentView.videoImageView
+                        
+                        let processor = DownsamplingImageProcessor(size: thumbNailView.bounds.size)
+                        
+                        thumbNailView.kf.setImage(
+                            with: thumbNailUrl,
+                            options: [
+                                    .processor(processor),
+                                    .scaleFactor(UIScreen.main.scale),
+                                    .transition(.fade(0.25)),
+                                    .cacheOriginalImage
+                            ])
+                        
                         cellContentView.videoImageView.kf.setImage(with: thumbNailUrl)
                     }
+                    
                     
                     // 메인 타이틀 정보
                     cellContentView.titleLabel.text = detail.title
