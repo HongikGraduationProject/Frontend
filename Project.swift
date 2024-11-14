@@ -76,6 +76,8 @@ let project = Project(
             resources: ["Modules/Presentation/MainAppFeatures/Resource/**"],
             dependencies: [
                 .target(name: "CommonFeature"),
+                
+                .external(name: "Kingfisher"),
             ]
         ),
         .target(

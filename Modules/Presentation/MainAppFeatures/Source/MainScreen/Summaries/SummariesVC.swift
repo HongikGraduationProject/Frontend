@@ -6,12 +6,15 @@
 //
 
 import UIKit
-import RxCocoa
-import RxSwift
+
 import Entity
 import DSKit
 import CommonUI
 import PresentationUtil
+
+
+import RxCocoa
+import RxSwift
 
 fileprivate enum SummariesVCConfig {
     static let tabItemWidth: CGFloat = 54
@@ -232,7 +235,7 @@ class SummariesVC: BaseVC {
             summariesTableView.topAnchor.constraint(equalTo: mainCategoryTabScrollView.bottomAnchor, constant: 12),
             summariesTableView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
             summariesTableView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
-            summariesTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            summariesTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30),
         ])
     }
     

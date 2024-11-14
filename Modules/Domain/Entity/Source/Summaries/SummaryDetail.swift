@@ -64,23 +64,17 @@ public struct SummaryDetail {
         self.longitude = longitude
         self.videoCode = videoCode
     }
-    
-    enum CodingKeys: String, CodingKey {
-        case title
-        case description
-        case keywords
-        case url
-        case summary
-        case address
-        case createdAt
-        case platform
-        case mainCategory
-        case mainCategoryIndex
-        case subCategory
-        case subCategoryId
-        case latitude
-        case longitude
-        case videoCode="video_code"
+
+    public var rawVideoCode: String? {
+        
+        switch platform {
+        case .youtube:
+            
+            return videoCode.split(separator: "_").map(String.init).last
+        default:
+            
+            return nil
+        }
     }
 }
 
