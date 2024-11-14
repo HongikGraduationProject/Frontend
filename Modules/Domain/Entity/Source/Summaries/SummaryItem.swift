@@ -7,16 +7,16 @@
 
 import Foundation
 
-public struct SummaryItem: Decodable {
+public struct SummaryItem {
     public let title: String
     public let mainCategory: MainCategory
-    public let createdAt: String
+    public let createdAt: Date
     public let videoSummaryId: Int
     
     public init(
         title: String,
         mainCategory: MainCategory,
-        createdAt: String,
+        createdAt: Date,
         videoSummaryId: Int
     ) {
         self.title = title

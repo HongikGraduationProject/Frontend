@@ -13,7 +13,7 @@ public enum ShortFormPlatform: String, Decodable {
     case tiktok="TIKTOK"
 }
     
-public struct SummaryDetail: Decodable {
+public struct SummaryDetail {
     
     public let title: String
     public let description: String
@@ -21,7 +21,7 @@ public struct SummaryDetail: Decodable {
     public let url: URL
     public let summary: String
     public let address: String
-    public let createdAt: String
+    public let createdAt: Date
     public let platform: ShortFormPlatform
     public let mainCategory: MainCategory
     public let mainCategoryIndex: Int
@@ -38,7 +38,7 @@ public struct SummaryDetail: Decodable {
         url: URL,
         summary: String,
         address: String,
-        createdAt: String,
+        createdAt: Date,
         platform: ShortFormPlatform,
         mainCategory: MainCategory,
         mainCategoryIndex: Int,
@@ -83,3 +83,5 @@ public struct SummaryDetail: Decodable {
         case videoCode="video_code"
     }
 }
+
+

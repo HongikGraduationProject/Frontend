@@ -19,6 +19,7 @@ import RxSwift
 protocol SummariesVMable {
     
     // Output
+    var alert: Driver<CapAlertVO> { get }
     var summaryItems: Driver<[SummaryItem]> { get }
     
     func createCellVM(videoId: Int) -> SummaryCellVM

@@ -146,7 +146,15 @@ class SummariesVC: BaseVC {
                 let itemIds = summaries.map { $0.videoSummaryId }
                 snapShot.appendItems(itemIds, toSection: 0)
                 
-                tableViewDataSource.apply(snapShot, animatingDifferences: false)
+                tableViewDataSource.apply(snapShot, animatingDifferences: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel
+            .alert
+            .drive(onNext: { [weak self] alertVO in
+
+                self?.showAlert(alertVO: alertVO)
             })
             .disposed(by: disposeBag)
     }

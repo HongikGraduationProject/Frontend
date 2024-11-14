@@ -52,10 +52,9 @@ public class DefaultSummaryDetailRepository: SummaryDetailRepository {
             .flatMap { [summaryService] _ in
                 summaryService
                     .request(api: .fetchSummaryDetail(videoId: videoId), with: .withToken)
-                    .map(CAPResponse<SummaryDetail>.self)
-                    .map { response in
-                        response.data!
-                    }
+                    .map(CAPResponse<SummaryDetailDTO>.self)
+                    .compactMap({ $0.data })
+                    .map { $0.toEntity() }
             }
             .map { [weak self] fetchedDetail in
                 
@@ -113,6 +112,11 @@ public class DefaultSummaryDetailRepository: SummaryDetailRepository {
 fileprivate extension SummaryDetailObject {
     
     func toEntity() -> (Int, SummaryDetail) {
+        
+        let dateFomatter = DateFormatter()
+        dateFomatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+        let createAtDate = dateFomatter.date(from: createdAt!)!
+        
         let detail = SummaryDetail(
             title: self.title ?? "",
             description: self.content ?? "",
@@ -120,7 +124,7 @@ fileprivate extension SummaryDetailObject {
             url: URL(string: self.url ?? "")!,
             summary: self.summary ?? "",
             address: self.address ?? "",
-            createdAt: self.createdAt ?? "",
+            createdAt: createAtDate,
             platform: ShortFormPlatform(rawValue: self.platform ?? "") ?? .youtube,
             mainCategory: MainCategory(rawValue: self.mainCategory ?? "") ?? .art,
             mainCategoryIndex: Int(self.mainCategoryIndex),
@@ -138,6 +142,11 @@ fileprivate extension SummaryDetailObject {
 fileprivate extension SummaryDetail {
     
     func mapToCoreDataEntity(videoId: Int, _ coreDataDTO: SummaryDetailObject) {
+        
+        let dateFomatter = DateFormatter()
+        dateFomatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+        let createAtDate = dateFomatter.string(from: self.createdAt)
+        
         coreDataDTO.videoId = Int32(videoId)
         coreDataDTO.title = self.title
         coreDataDTO.content = self.description
@@ -145,7 +154,7 @@ fileprivate extension SummaryDetail {
         coreDataDTO.url = self.url.absoluteString
         coreDataDTO.summary = self.summary
         coreDataDTO.address = self.address
-        coreDataDTO.createdAt = self.createdAt
+        coreDataDTO.createdAt = createAtDate
         coreDataDTO.platform = self.platform.rawValue
         coreDataDTO.mainCategory = self.mainCategory.rawValue
         coreDataDTO.mainCategoryIndex = Int32(self.mainCategoryIndex)
@@ -156,5 +165,35 @@ fileprivate extension SummaryDetail {
             coreDataDTO.longitude = longitude
         }
         coreDataDTO.videoCode = self.videoCode
+    }
+}
+
+extension SummaryDetailDTO {
+    func toEntity() -> SummaryDetail {
+        
+        let platformEnum = ShortFormPlatform(rawValue: platform)!
+        let mainCategoryEnum = MainCategory(rawValue: mainCategory)!
+        
+        let dateFomatter = DateFormatter()
+        dateFomatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+        let createAtDate = dateFomatter.date(from: createdAt)!
+        
+        return SummaryDetail(
+            title: title,
+            description: description,
+            keywords: keywords,
+            url: URL(string: url)!,
+            summary: summary,
+            address: address,
+            createdAt: createAtDate,
+            platform: platformEnum,
+            mainCategory: mainCategoryEnum,
+            mainCategoryIndex: mainCategoryIndex,
+            subCategory: subCategory,
+            subCategoryId: subCategoryId,
+            latitude: latitude,
+            longitude: longitude,
+            videoCode: video_code
+        )
     }
 }

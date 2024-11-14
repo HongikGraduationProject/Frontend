@@ -137,7 +137,7 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                 self?.summariesListManagementQueue.async(flags: .barrier) { [weak self] in
                     guard let self else { return }
                     
-                    summariesList.append(item)
+                    summariesList.insert(item, at: 0)
                     
                     publishSummaryList()
                 }
