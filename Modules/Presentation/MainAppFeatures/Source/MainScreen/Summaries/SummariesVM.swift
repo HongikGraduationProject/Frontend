@@ -18,6 +18,10 @@ import RxSwift
 
 protocol SummariesVMable {
     
+    // Input
+    var currentSelectedCategoryForFilter: PublishSubject<MainCategory> { get }
+    
+    
     // Output
     var alert: Driver<CapAlertVO> { get }
     var summaryItems: Driver<[SummaryItem]> { get }
@@ -33,6 +37,7 @@ class SummariesVM: SummariesVMable {
     @Injected private var summaryDetailRepository: SummaryDetailRepository
     
     private let requestAllSummaryItems: BehaviorSubject<Void> = .init(value: ())
+    let currentSelectedCategoryForFilter: PublishSubject<MainCategory> = .init()
     
     // Output
     private(set) var summaryItems: Driver<[SummaryItem]> = .empty()
@@ -44,9 +49,22 @@ class SummariesVM: SummariesVMable {
         self.coordinator = coordinator
         
         // MARK: 스트림 연결
-        summaryItems = summaryUseCase
+        let summaryItemList = summaryUseCase
             .summariesStream
-            .observe(on: MainScheduler())
+
+        
+        // MARK: 필터적용
+        self.summaryItems = Observable
+            .combineLatest(summaryItemList, currentSelectedCategoryForFilter)
+            .map { (items, category) in
+                
+                if category == .all {
+                    
+                    return items
+                }
+                
+                return items.filter({ $0.mainCategory == category })
+            }
             .asDriver(onErrorJustReturn: [])
         
         

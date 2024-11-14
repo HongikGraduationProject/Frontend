@@ -51,20 +51,11 @@ class SummariesVC: BaseVC {
     }()
     
     // MARK: 상단 메인카테고리 탭바
-    lazy var mainCategoryTabContainer: HStack = {
-        let itemViews = MainCategory.allCases.map { cat in
-            let itemVew = MainCategoryTabButton(
-                mainCategory: cat,
-                itemWidth: SummariesVCConfig.tabItemWidth
-            )
-            mainCategoryTabItems[cat] = itemVew
-            return itemVew
-        }
-        let stack = HStack(itemViews, spacing: 0, alignment: .fill)
+    let mainCategoryTabContainer: HStack = {
+        let stack = HStack([], spacing: 0, alignment: .fill)
         return stack
     }()
-    
-    var mainCategoryTabItems: [MainCategory: MainCategoryTabButton] = [:]
+    private var mainCategoryTabItems: [MainCategory: MainCategoryTabButton] = [:]
     
     let mainCategoryTabScrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -93,6 +84,7 @@ class SummariesVC: BaseVC {
         
         super.init(nibName: nil, bundle: nil)
         
+        setCategoryTabBar()
         setTableView()
         
         bindViewModel()
@@ -100,6 +92,21 @@ class SummariesVC: BaseVC {
     
     required init?(coder: NSCoder) { fatalError() }
     
+    private func setCategoryTabBar() {
+        
+        let itemViews = MainCategory.allCases.map { cat in
+            let itemVew = MainCategoryTabButton(
+                mainCategory: cat,
+                itemWidth: SummariesVCConfig.tabItemWidth
+            )
+            mainCategoryTabItems[cat] = itemVew
+            return itemVew
+        }
+        
+        for itemView in itemViews {
+            mainCategoryTabContainer.addArrangedSubview(itemView)
+        }
+    }
     
     private func setTableView() {
         // MARK: DataSource
@@ -133,6 +140,7 @@ class SummariesVC: BaseVC {
     
     func bindViewModel() {
         
+        // Output
         viewModel
             .summaryItems
             .drive(onNext: { [weak self] summaries in
@@ -156,6 +164,23 @@ class SummariesVC: BaseVC {
 
                 self?.showAlert(alertVO: alertVO)
             })
+            .disposed(by: disposeBag)
+        
+        
+        // Input
+        let initialEvent = Single.just((MainCategory.all))
+        
+        var categorySelectionEvent = mainCategoryTabItems
+            .map { (key, button) in
+                button.tap
+                    .map { _ in key }
+            }
+        
+        categorySelectionEvent.append(initialEvent.asObservable())
+        
+        Observable
+            .merge(categorySelectionEvent)
+            .bind(to: viewModel.currentSelectedCategoryForFilter)
             .disposed(by: disposeBag)
     }
     
@@ -229,6 +254,30 @@ class SummariesVC: BaseVC {
     
     private func setObservable() {
         
+        // MARK: 라디오 버튼 세팅
+        let categorySelectionEvent = mainCategoryTabItems
+            .map { (key, button) in
+                button.tap
+                    .map { _ in key }
+            }
+        
+        Observable
+            .merge(categorySelectionEvent)
+            .withUnretained(self)
+            .subscribe { (vc, category) in
+                
+                // 상태변경
+                vc.mainCategoryTabItems.forEach { (key, button) in
+                    
+                    if key != category {
+                        button.toIdle()
+                    }
+                }
+            }
+            .disposed(by: disposeBag)
+        
+        // 첫번째 버튼은 all
+        mainCategoryTabItems[.all]?.toAccent()
     }
 }
 

@@ -22,6 +22,8 @@ public class MainCategoryTabButton: VStack {
     let itemWidth: CGFloat
     let mainCategory: MainCategory
     
+    public private(set) lazy var tap = touchArea.rx.tap
+    
     // View
     lazy var touchArea: TappableUIView = {
         let view = TappableUIView()
@@ -129,13 +131,13 @@ public class MainCategoryTabButton: VStack {
             .disposed(by: disposeBag)
     }
     
-    func toIdle() {
+    public func toIdle() {
         label.typographyStyle = .baseRegular
         label.attrTextColor = DSColors.gray40.color
         selectedBar.alpha = 0
     }
     
-    func toAccent() {
+    public func toAccent() {
         label.typographyStyle = .baseSemiBold
         label.attrTextColor = DSColors.primary80.color
         selectedBar.alpha = 1
