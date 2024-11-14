@@ -1,36 +1,22 @@
 //
 //  SummaryCell.swift
-//  CommonUI
+//  Shortcap
 //
-//  Created by choijunios on 8/22/24.
+//  Created by choijunios on 11/14/24.
 //
 
 import UIKit
+
 import Entity
+import DSKit
+import CommonUI
+
 import RxSwift
 import RxCocoa
-import DSKit
 
-/// 요약된 비디오를 나타내는 Cell입니다.
-
-public protocol SummaryCellVMable {
+class SummaryCell: UITableViewCell {
     
-    /// 비디오 아이디
-    var videoId: Int { get }
-    
-    /// 상세정보를 요청합니다.
-    func requestDetail()
-    
-    /// Input: 셀이 클릭됨
-    var cellClicked: PublishRelay<Void> { get }
-    
-    /// Ouptut: 요약 상세정보를 가져옵니다.
-    var summaryDetail: Driver<SummaryDetail>? { get }
-}
-
-public class SummaryCell: UITableViewCell {
-    
-    public static let identifier = String(describing: SummaryCell.self)
+    static let identifier = String(describing: SummaryCell.self)
     
     // View
     let cellContentView = SummaryCellContentView()
@@ -41,15 +27,15 @@ public class SummaryCell: UITableViewCell {
     var viewModel: SummaryCellVMable?
     var disposables: [Disposable] = []
     
-    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setAppearance()
         setLayout()
         setObservable()
     }
-    public required init?(coder: NSCoder) { return nil }
+    required init?(coder: NSCoder) { return nil }
     
-    public override func prepareForReuse() {
+    override func prepareForReuse() {
         super.prepareForReuse()
         
         viewModel = nil
@@ -63,7 +49,7 @@ public class SummaryCell: UITableViewCell {
         loadingIndicatorView.turnOn(withAnimation: false)
     }
     
-    public override func layoutSubviews() {
+    override func layoutSubviews() {
         super.layoutSubviews()
         contentView.frame = contentView.frame.inset(by: .init(top: 0, left: 20, bottom: 14, right: 20))
     }
@@ -98,7 +84,7 @@ public class SummaryCell: UITableViewCell {
         // 내부 옵저버블
     }
     
-    public func bind(viewModel: SummaryCellVMable) {
+    func bind(viewModel: SummaryCellVMable) {
         
         self.viewModel = viewModel
         
@@ -233,7 +219,7 @@ class SummaryCellContentView: TappableUIView {
         ])
     }
     
-    public func prepareForeReuse() {
+    func prepareForeReuse() {
         videoImageView.image = nil
         titleLabel.text = ""
         categoryLabel.text = ""

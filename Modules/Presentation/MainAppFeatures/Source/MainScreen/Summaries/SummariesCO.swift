@@ -42,16 +42,8 @@ public class SummariesCO: Coordinator {
     }
     
     public func start() {
-        
-        let vc = SummariesVC()
-        let vm = SummariesVM(
-            dependency: .init(
-                coordinator: self,
-                summaryUseCase: summaryUseCase,
-                summaryDetailRepository: summaryDetailRepository
-            )
-        )
-        vc.bind(viewModel: vm)
+        let vm = SummariesVM(coordinator: self)
+        let vc = SummariesVC(viewModel: vm)
         viewController = vc
         navigationController?.pushViewController(vc, animated: false)
     }

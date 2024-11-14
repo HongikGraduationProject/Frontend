@@ -17,12 +17,14 @@ fileprivate enum SummariesVCConfig {
     static let tabItemWidth: CGFloat = 54
 }
 
-public class SummariesVC: BaseVC {
+class SummariesVC: BaseVC {
     
     // Init
+    let viewModel: SummariesVM
+    
     
     // Not init
-    var viewModel: SummariesVMable?
+    
     
     // View
     let shortcapLogoView: UIView = {
@@ -61,7 +63,9 @@ public class SummariesVC: BaseVC {
         let stack = HStack(itemViews, spacing: 0, alignment: .fill)
         return stack
     }()
+    
     var mainCategoryTabItems: [MainCategory: MainCategoryTabButton] = [:]
+    
     let mainCategoryTabScrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.delaysContentTouches = false
@@ -69,33 +73,82 @@ public class SummariesVC: BaseVC {
         return scrollView
     }()
     let mainCategoryIndicator: UIView = .init()
+        
     
-    // MARK: 요약 전체 조회 화면
-    let allSummaryListView = AllSummaryListView()
+    // MARK: TableView
+    typealias Cell = SummaryCell
+    var tableViewDataSource: UITableViewDiffableDataSource<Int, Int>!
+    let summariesTableView: UITableView = {
+        let tableView = UITableView()
+        return tableView
+    }()
     
     
     // Observable
     private let disposeBag = DisposeBag()
     
-    public init() {
+    init(viewModel: SummariesVM) {
+        
+        self.viewModel = viewModel
+        
         super.init(nibName: nil, bundle: nil)
+        
+        setTableView()
+        
+        bindViewModel()
     }
     
-    public required init?(coder: NSCoder) { fatalError() }
+    required init?(coder: NSCoder) { fatalError() }
     
-    public override func viewDidLoad() {
+    
+    private func setTableView() {
+        // MARK: DataSource
+        tableViewDataSource = .init(tableView: summariesTableView, cellProvider: { [weak self] tableView, indexPath, itemIdentifier in
+            
+            guard let self else { return Cell() }
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: Cell.identifier) as! Cell
+            
+            let cellViewModel = viewModel.createCellVM(videoId: itemIdentifier)
+            
+            cell.selectionStyle = .none
+            cell.bind(viewModel: cellViewModel)
+            
+            return cell
+        })
+        summariesTableView.dataSource = tableViewDataSource
+        summariesTableView.delegate = self
+        summariesTableView.register(Cell.self, forCellReuseIdentifier: Cell.identifier)
+        summariesTableView.separatorStyle = .none
+        summariesTableView.delaysContentTouches = false
+        summariesTableView.rowHeight = UITableView.automaticDimension
+    }
+    
+    override func viewDidLoad() {
         super.viewDidLoad()
         setAppearance()
         setLayout()
         setObservable()
     }
     
-    public func bind(viewModel: SummariesVMable) {
-        self.viewModel = viewModel
+    func bindViewModel() {
         
-        // MARK: 전체화면 조회 바인딩
-        let allSummaryListVM = viewModel.createAllListVM()
-        allSummaryListView.bind(viewModel: allSummaryListVM)
+        viewModel
+            .summaryItems
+            .drive(onNext: { [weak self] summaries in
+                
+                guard let self else { return }
+            
+                var snapShot: NSDiffableDataSourceSnapshot<Int, Int> = .init()
+                
+                snapShot.appendSections([0])
+                
+                let itemIds = summaries.map { $0.videoSummaryId }
+                snapShot.appendItems(itemIds, toSection: 0)
+                
+                tableViewDataSource.apply(snapShot, animatingDifferences: false)
+            })
+            .disposed(by: disposeBag)
     }
     
     /// 탭바의 순서를 변경합니다.
@@ -124,7 +177,7 @@ public class SummariesVC: BaseVC {
         [
             shortcapLogoView,
             mainCategoryTabScrollView,
-            allSummaryListView,
+            summariesTableView,
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
@@ -143,10 +196,10 @@ public class SummariesVC: BaseVC {
             mainCategoryTabScrollView.heightAnchor.constraint(equalToConstant: 29),
             mainCategoryTabContainer.heightAnchor.constraint(equalTo: mainCategoryTabScrollView.heightAnchor),
             
-            allSummaryListView.topAnchor.constraint(equalTo: mainCategoryTabScrollView.bottomAnchor, constant: 12),
-            allSummaryListView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
-            allSummaryListView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
-            allSummaryListView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            summariesTableView.topAnchor.constraint(equalTo: mainCategoryTabScrollView.bottomAnchor, constant: 12),
+            summariesTableView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
+            summariesTableView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
+            summariesTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
     
@@ -171,8 +224,5 @@ public class SummariesVC: BaseVC {
     }
 }
 
-@available(iOS 17.0, *)
-#Preview("Preview", traits: .defaultLayout) {
-    
-    SummariesVC()
-}
+extension SummariesVC: UITableViewDelegate { }
+

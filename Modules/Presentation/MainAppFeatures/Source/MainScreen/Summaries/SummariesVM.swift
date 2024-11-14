@@ -6,44 +6,48 @@
 //
 
 import UIKit
+
 import Entity
 import UseCase
+import CommonUI
+import Util
+
+
 import RxCocoa
 import RxSwift
 
-public protocol SummariesVMable {
+protocol SummariesVMable {
     
-    var alert: Driver<CapAlertVO>? { get }
+    // Output
+    var summaryItems: Driver<[SummaryItem]> { get }
     
-    /// 요약학 숏폼 전체조회 화면에 사용되는 VM을 생성합니다.
-    func createAllListVM() -> AllSummaryListVMable
+    func createCellVM(videoId: Int) -> SummaryCellVM
 }
 
 /// 요약화면 전체를 담당하는 VM입니다.
-public class SummariesVM: SummariesVMable {
+class SummariesVM: SummariesVMable {
     
-    public struct Dependency {
-        let coordinator: SummariesCO
-        let summaryUseCase: SummaryUseCase
-        let summaryDetailRepository: SummaryDetailRepository
-    }
+    private weak var coordinator: SummariesCO?
+    @Injected private var summaryUseCase: SummaryUseCase
+    @Injected private var summaryDetailRepository: SummaryDetailRepository
     
-    weak var coordinator: SummariesCO?
-    let summaryUseCase: SummaryUseCase
-    let summaryDetailRepository: SummaryDetailRepository
+    private let requestAllSummaryItems: BehaviorSubject<Void> = .init(value: ())
     
     // Output
-    public var alert: Driver<CapAlertVO>?
+    private(set) var summaryItems: Driver<[SummaryItem]> = .empty()
+    var alert: Driver<CapAlertVO> = .empty()
     
-    // Input
-    let requestAllSummaryItems: BehaviorSubject<Void> = .init(value: ())
+    private let disposeBag = DisposeBag()
     
-    let disposeBag = DisposeBag()
-    
-    public init(dependency: Dependency) {
-        coordinator = dependency.coordinator
-        summaryUseCase = dependency.summaryUseCase
-        summaryDetailRepository = dependency.summaryDetailRepository
+    init(coordinator: SummariesCO) {
+        self.coordinator = coordinator
+        
+        // MARK: 스트림 연결
+        summaryItems = summaryUseCase
+            .summariesStream
+            .observe(on: MainScheduler())
+            .asDriver(onErrorJustReturn: [])
+        
         
         let requestAllSummaryItemsResult = requestAllSummaryItems
             .withUnretained(self)
@@ -90,12 +94,16 @@ public class SummariesVM: SummariesVMable {
             }
             .asDriver(onErrorDriveWith: .never())
     }
-    
-    public func createAllListVM() -> AllSummaryListVMable {
-        AllSummaryListVM(
-            coordinator: coordinator,
-            summaryUseCase: summaryUseCase,
-            summaryDetailRepository: summaryDetailRepository
-        )
+
+    func createCellVM(videoId: Int) -> SummaryCellVM {
+        
+        let cellVM = SummaryCellVM(videoId: videoId)
+        
+        cellVM.presentDetailPage = { [weak self] videoId in
+            
+            self?.coordinator?.showDetail(videoId: videoId)
+        }
+        
+        return cellVM
     }
 }
