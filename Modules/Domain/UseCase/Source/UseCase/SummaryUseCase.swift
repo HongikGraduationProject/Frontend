@@ -17,7 +17,7 @@ public protocol SummaryUseCase: UseCaseBase {
     
     
     /// 요약이 완료됬었던 비디오 리스트를 요청합니다.
-    func requestFetchSummarriedItems()
+    func requestFetchSummarriedItems() -> Single<Result<Void, SummariesError>>
     
     
     /// 새로운 요약사항이 있는지 확인할 것을 요청합니다.
@@ -46,18 +46,24 @@ public class DefaultSummaryUseCase: SummaryUseCase {
     
     public init() { }
     
-    public func requestFetchSummarriedItems() {
+    public func requestFetchSummarriedItems() -> Single<Result<Void, SummariesError>> {
         
-        summaryRequestRepository
+        let task = summaryRequestRepository
             .fetchAllSummaryItems()
-            .subscribe { [weak self] items in
+            .map { [weak self] items in
+                
+                guard let self else { return }
                 
                 printIfDebug("✅ 요약완료된 숏폼개수: \(items.count)")
                 
-                // 가져온 데이터를 스트림에 전송합니다.
-                self?.summariesStream.onNext(items)
+                summariesList = items
+                
+                publishSummaryList()
+                
+                return ()
             }
-            .disposed(by: disposeBag)
+        
+        return convert(task: task)
     }
     
     public func requestCheckNewSummary() {

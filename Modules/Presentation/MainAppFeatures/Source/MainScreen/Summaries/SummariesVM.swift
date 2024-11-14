@@ -35,8 +35,9 @@ public class SummariesVM: SummariesVMable {
     // Output
     public var alert: Driver<CapAlertVO>?
     
-    // Observable
-    let requestAllSummaryItems: PublishSubject<Void> = .init()
+    // Input
+    let requestAllSummaryItems: BehaviorSubject<Void> = .init(value: ())
+    
     let disposeBag = DisposeBag()
     
     public init(dependency: Dependency) {
@@ -45,38 +46,40 @@ public class SummariesVM: SummariesVMable {
         summaryDetailRepository = dependency.summaryDetailRepository
         
         let requestAllSummaryItemsResult = requestAllSummaryItems
-            .flatMap { [summaryUseCase]_ in
-                summaryUseCase
-                    .fetchAllSummaryItems()
+            .withUnretained(self)
+            .flatMap { (vm, _) in
+                vm.summaryUseCase
+                    .requestFetchSummarriedItems()
             }
             .share()
         
-        let success = requestAllSummaryItemsResult.compactMap { $0.value }
-        let failure = requestAllSummaryItemsResult.compactMap { $0.error }
-        
-        // MARK: 최초 불러오기에 성공한 경우, 로컬에 저장된 요약목록을 확인합니다.
-        success
-            .subscribe { [summaryUseCase] _ in
-                summaryUseCase.updateSummaryStream()
-            }
-            .disposed(by: disposeBag)
+        let initialRequestSuccess = requestAllSummaryItemsResult.compactMap { $0.value }
+        let initialRequestFailure = requestAllSummaryItemsResult.compactMap { $0.error }
         
         
-        // MARK: 앱이 다시 엑티비 되는 경우, 로컬에 저장된 요약목록을 확인합니다.
-        NotificationCenter.default.rx
+        // 앱이 다시 엑티비 되는 경우, 로컬에 저장된 요약목록을 확인합니다.
+        // 최초 불러오기에 성공한 경우, 로컬에 저장된 요약목록을 확인합니다.
+        
+        let activeNotification = NotificationCenter.default.rx
             .notification(UIApplication.didBecomeActiveNotification)
-            .subscribe { [summaryUseCase] _ in
-                summaryUseCase.updateSummaryStream()
+            .map({ _ in })
+            .asObservable()
+        
+        Observable
+            .merge(initialRequestSuccess, activeNotification)
+            .withUnretained(self)
+            .subscribe { (vm, _) in
+                
+                vm.summaryUseCase
+                    .requestCheckNewSummary()
             }
             .disposed(by: disposeBag)
         
         
         // MARK: Alert, 최초로 리스트를 불러오는 요청이 실패할 경우
-        alert = failure
+        alert = initialRequestFailure
             .map { error in
-                CapAlertVO(
-                    title: "요약 불러오기 오류",
-                    message: error.message,
+                CapAlertVO(title: "요약 불러오기 오류", message: error.message,
                     info: [
                         "닫기": { exit(0) },
                         "재시도하기": { [weak self] in
@@ -86,10 +89,6 @@ public class SummariesVM: SummariesVMable {
                 )
             }
             .asDriver(onErrorDriveWith: .never())
-            
-        
-        // MARK: 최초로딩
-        requestAllSummaryItems.onNext(())
     }
     
     public func createAllListVM() -> AllSummaryListVMable {

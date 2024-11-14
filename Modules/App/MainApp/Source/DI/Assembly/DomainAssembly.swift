@@ -29,17 +29,9 @@ public struct DomainAssembly: Assembly {
             )
         }
         
-        container.register(SummaryUseCase.self) { resolver in
-            let videoCodeRepository = resolver.resolve(VideoCodeRepository.self)!
-            let summaryRequestRepository = resolver.resolve(SummaryRequestRepository.self)!
-            let summaryDetailRepository = resolver.resolve(SummaryDetailRepository.self)!
-            return DefaultSummaryUseCase(
-                dependency: .init(
-                    summaryRequestRepository: summaryRequestRepository,
-                    summaryDetailRepository: summaryDetailRepository,
-                    videoCodeRepository: videoCodeRepository
-                )
-            )
+        container.register(SummaryUseCase.self) { _ in
+            
+            DefaultSummaryUseCase()
         }
         .inObjectScope(.transient)
     }
