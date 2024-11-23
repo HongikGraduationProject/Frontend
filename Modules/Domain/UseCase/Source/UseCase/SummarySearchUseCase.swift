@@ -28,7 +28,14 @@ public class DefaultSummarySearchUseCase: SummarySearchUseCase {
             .requestSearchedItems(searchWord: searchWord)
             .flatMap { [detailRepository] items in
                 
-                let detailObservables = items[0..<10].map { videoId in
+                var willRequestItems = items
+                
+                if willRequestItems.count > 15 {
+                    
+                    willRequestItems = Array(willRequestItems[0..<15])
+                }
+                
+                let detailObservables = willRequestItems.map { videoId in
                     
                     detailRepository
                         .fetchSummaryDetail(videoId: videoId)
