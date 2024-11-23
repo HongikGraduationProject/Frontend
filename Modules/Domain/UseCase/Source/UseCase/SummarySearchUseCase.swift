@@ -9,12 +9,12 @@ import Entity
 
 import RxSwift
 
-public protocol SearchUseCase {
+public protocol SummarySearchUseCase {
     
     func requestSearchItem(searchWord: String) -> Single<[SummaryItem]>
 }
 
-public class DefaultSearchUseCase: SearchUseCase {
+public class DefaultSummarySearchUseCase: SummarySearchUseCase {
     
     
     public func requestSearchItem(searchWord: String) -> Single<[SummaryItem]> {
