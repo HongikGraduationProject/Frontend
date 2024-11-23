@@ -26,7 +26,7 @@ class SummaryListPageViewController: BaseVC {
     
     
     // View
-    let shortcapLogoView: UIView = {
+    private let shortcapLogoView: UIView = {
         let imageView = UIImageView(
             image: DSKitAsset.Images.shortcapTitle.image
         )
@@ -48,27 +48,28 @@ class SummaryListPageViewController: BaseVC {
         view.layer.shadowRadius = 5
         return view
     }()
+    private let searchButton: SearchButton = .init()
     
     // MARK: 상단 메인카테고리 탭바
-    let mainCategoryTabContainer: HStack = {
+    private let mainCategoryTabContainer: HStack = {
         let stack = HStack([], spacing: 0, alignment: .fill)
         return stack
     }()
     private var mainCategoryTabItems: [MainCategory: MainCategoryTabButton] = [:]
     
-    let mainCategoryTabScrollView: UIScrollView = {
+    private let mainCategoryTabScrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.delaysContentTouches = false
         scrollView.showsHorizontalScrollIndicator = false
         return scrollView
     }()
-    let mainCategoryIndicator: UIView = .init()
+    private let mainCategoryIndicator: UIView = .init()
         
     
     // MARK: TableView
     typealias Cell = SummaryCell
-    var tableViewDataSource: UITableViewDiffableDataSource<Int, Int>!
-    let summariesTableView: UITableView = {
+    private var tableViewDataSource: UITableViewDiffableDataSource<Int, Int>!
+    private let summariesTableView: UITableView = {
         let tableView = UITableView()
         return tableView
     }()
@@ -221,6 +222,7 @@ class SummaryListPageViewController: BaseVC {
         [
             shortcapLogoView,
             mainCategoryTabScrollView,
+            searchButton,
             summariesTableView,
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -228,11 +230,15 @@ class SummaryListPageViewController: BaseVC {
         }
        
         NSLayoutConstraint.activate([
+            
+            // MARK: Logo
             shortcapLogoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 3),
             shortcapLogoView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
             shortcapLogoView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             shortcapLogoView.heightAnchor.constraint(equalToConstant: 47.13),
             
+            
+            // MARK: 카테고리 선택
             mainCategoryTabScrollView.topAnchor.constraint(equalTo: shortcapLogoView.bottomAnchor, constant: 12.87),
             mainCategoryTabScrollView.leftAnchor.constraint(equalTo: shortcapLogoView.safeAreaLayoutGuide.leftAnchor),
             mainCategoryTabScrollView.rightAnchor.constraint(equalTo: shortcapLogoView.safeAreaLayoutGuide.rightAnchor),
@@ -240,7 +246,15 @@ class SummaryListPageViewController: BaseVC {
             mainCategoryTabScrollView.heightAnchor.constraint(equalToConstant: 29),
             mainCategoryTabContainer.heightAnchor.constraint(equalTo: mainCategoryTabScrollView.heightAnchor),
             
-            summariesTableView.topAnchor.constraint(equalTo: mainCategoryTabScrollView.bottomAnchor, constant: 12),
+            
+            // MARK: SEARCH
+            searchButton.topAnchor.constraint(equalTo: mainCategoryTabScrollView.bottomAnchor, constant: 12),
+            searchButton.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 20),
+            searchButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20),
+            
+            
+            // MARK: 테이블뷰
+            summariesTableView.topAnchor.constraint(equalTo: searchButton.bottomAnchor, constant: 20),
             summariesTableView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
             summariesTableView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             summariesTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30),
