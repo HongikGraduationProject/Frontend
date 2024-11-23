@@ -12,9 +12,9 @@ import Entity
 import DSKit
 import PresentationUtil
 
-public class RootVC: BaseVC {
+public class RootViewController: BaseVC {
     
-    var viewModel: RootViewModelable?
+    private var viewModel: RootViewModelable?
     
     // Init
     

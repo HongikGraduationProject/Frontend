@@ -17,12 +17,12 @@ import Kingfisher
 import RxCocoa
 import RxSwift
 
-public class SummaryDetailVC: BaseVC {
+public class SummaryDetailViewController: BaseVC {
     
     // Init
     
     // Not init
-    var viewModel: SummaryDetailVM?
+    private var viewModel: SummaryDetailViewModel?
     
     // View
     let navigationBar: CAPSummaryDetailNavigationBar = {
@@ -191,7 +191,7 @@ public class SummaryDetailVC: BaseVC {
             .disposed(by: disposeBag)
     }
     
-    public func bind(viewModel: SummaryDetailVM) {
+    public func bind(viewModel: SummaryDetailViewModel) {
         
         self.viewModel = viewModel
         

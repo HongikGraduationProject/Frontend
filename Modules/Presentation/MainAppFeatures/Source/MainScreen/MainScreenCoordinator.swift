@@ -1,46 +1,31 @@
 //
-//  MainScreenCO.swift
-//  App
+//  MainScreenCoordinator.swift
+//  Shortcap
 //
-//  Created by choijunios on 8/17/24.
+//  Created by choijunios on 11/23/24.
 //
 
 import UIKit
-import Entity
+
 import PresentationUtil
-import MainAppFeatures
-import UseCase
-import DSKit
 import CommonUI
-import Util
+
 
 public class MainScreenCoordinator: Coordinator {
     
-    public struct Dependency {
-        var inejector: Injector
-        var navigationController: UINavigationController?
-        
-        public init(inejector: Injector, navigationController: UINavigationController? = nil) {
-            self.inejector = inejector
-            self.navigationController = navigationController
-        }
-    }
+    public let navigationController: UINavigationController
     
     public var viewController: UIViewController?
-    public var navigationController: UINavigationController?
-    
     public var children: [Coordinator] = []
-    
     public var parent: (Coordinator)?
-    
     public var finishDelegate: (CoordinatorFinishDelegate)?
     
-    let injector: Injector
     
-    public init(dependency: Dependency) {
-        self.injector = dependency.inejector
-        self.navigationController = dependency.navigationController
+    public init(navigationController: UINavigationController) {
+        
+        self.navigationController = navigationController
     }
+    
     
     public func start() {
         
@@ -57,7 +42,7 @@ public class MainScreenCoordinator: Coordinator {
             info: pageInfo
         )
         
-        navigationController?.pushViewController(tabBarController, animated: true)
+        navigationController.pushViewController(tabBarController, animated: true)
     }
     
     // #1. Tab별 네비게이션 컨트롤러 생성
@@ -81,24 +66,44 @@ public class MainScreenCoordinator: Coordinator {
         
         switch page {
         case .home:
-            let coordinator = SummariesCO(
-                dependency: .init(
-                    summaryUseCase: injector.resolve(SummaryUseCase.self),
-                    summaryDetailRepository: injector.resolve(SummaryDetailRepository.self),
-                    navigationController: navigationController
-                )
+            
+            
+            let coordinator = SummaryListPageCoordinator(
+                navigationController: navigationController
             )
             childCoordinator = coordinator
+            
+            
         case .inAppSummary:
-            let coordinator = InAppSummatyCO(dependency: .init(navigationController: navigationController))
+            
+            
+            let coordinator = InAppSummaryPageCoordinator(
+                navigationController: navigationController
+            )
             childCoordinator = coordinator
+            
+            
         case .categoryAddition:
-            let coordinator = CategoryAdditionCO(dependency: .init(navigationController: navigationController))
+            
+            
+            let coordinator = CategoryAdditionPageCoordinator(
+                navigationController: navigationController
+            )
             childCoordinator = coordinator
+            
+            
         case .environmentalSetting:
-            let coordinator = EnvSettingCO(dependency: .init(navigationController: navigationController))
+            
+            
+            let coordinator = EnvironmentSettingPageCoordinator(
+                navigationController: navigationController
+            )
             childCoordinator = coordinator
+            
+            
         }
+        
+        
         addChild(childCoordinator)
         // 코디네이터들을 실행
         childCoordinator.start()

@@ -15,39 +15,32 @@ import Util
 
 public protocol RootViewModelable: BaseVMable {
     
-    var coordinator: RootCoordinator? { get set }
-    
     // Input
     var viewDidLoad: PublishRelay<Void> { get }
-    
-    // Output
-    
 }
 
-public class RootVM: RootViewModelable {
+public class RootViewModel: RootViewModelable {
     
-    public weak var coordinator: RootCoordinator?
+    @Injected var authUseCase: AuthUseCase
+    @Injected var onBoardingUseCase: OnBoardingCheckUseCase
+    
+    
+    // Navigation
+    public var presentClickToStartPage: (() -> ())?
+    public var presentMainTabBar: (() -> ())?
+    public var presentChoosePlatformPage: (() -> ())?
+    
     
     // Input
-    public var viewDidLoad: RxRelay.PublishRelay<Void> = .init()
+    public let viewDidLoad: RxRelay.PublishRelay<Void> = .init()
     
     // Output
     public var alert: RxCocoa.Driver<Entity.CapAlertVO>?
     
-    // Init
-    let authUseCase: AuthUseCase
-    let onBoardingUseCase: OnBoardingCheckUseCase
-    
     let disposeBag: DisposeBag = .init()
     
-    public init(
-        coordinator: RootCoordinator,
-        onBoardingUseCase: OnBoardingCheckUseCase,
-        authUseCase: AuthUseCase
-    ) {
-        self.coordinator = coordinator
-        self.authUseCase = authUseCase
-        self.onBoardingUseCase = onBoardingUseCase
+    
+    public init() {
         
         // MARK: 토큰 확인 플로우
         let checkExistingMemberResult = viewDidLoad
@@ -64,7 +57,8 @@ public class RootVM: RootViewModelable {
             .filter { !$0 }
         
         let tokenGenerationResult = userIsfreshMan
-            .flatMap { _ in
+            .flatMap { [authUseCase] _ in
+                
                 authUseCase
                     .generateToken()
             }
@@ -94,9 +88,11 @@ public class RootVM: RootViewModelable {
         
         // 카테고리 선택화면으로 이동
         categoryExistsResult.filter { !$0 }
-            .subscribe { [weak self] _ in
+            .withUnretained(self)
+            .subscribe { (viewModel, _) in
+                
                 // 카테고리를 선택하는 화면으로 이동
-                self?.coordinator?.clickToStartScreen()
+                viewModel.presentClickToStartPage?()
             }
             .disposed(by: disposeBag)
         
@@ -111,11 +107,16 @@ public class RootVM: RootViewModelable {
         let checkingSummariesFailure = checkingSummariesResult.compactMap { $0.error }
         
         checkingSummariesSuccess
-            .subscribe(onNext: { [weak self] isExists in
+            .withUnretained(self)
+            .subscribe(onNext: { (viewModel, isExists) in
                 if isExists {
-                    self?.coordinator?.executeMainTabBarFlow()
+                    
+                    viewModel.presentMainTabBar?()
+                    
                 } else {
-                    self?.coordinator?.showShortFormHuntingScreen()
+                    
+                    viewModel.presentChoosePlatformPage?()
+                    
                 }
             })
             .disposed(by: disposeBag)
@@ -140,5 +141,4 @@ public class RootVM: RootViewModelable {
             }
             .asDriver(onErrorJustReturn: .default)
     }
-    
 }

@@ -1,5 +1,5 @@
 //
-//  HuntingShortFormVC.swift
+//  ChoosePlatformPageViewController.swift
 //  MainAppFeatures
 //
 //  Created by choijunios on 8/10/24.
@@ -14,14 +14,9 @@ import DSKit
 import CommonUI
 import PresentationUtil
 
-public protocol HuntingShortFormViewModelable: BaseVMable {
-    func openYoutubeApp()
-    func openInstagramApp()
-}
-
-public class HuntingShortFormVC: BaseVC {
+public class ChoosePlatformPageViewController: BaseVC {
     
-    var viewModel: HuntingShortFormViewModelable?
+    private var viewModel: ChoosePlatformPageViewModelable?
     
     // Init
     
@@ -121,7 +116,7 @@ public class HuntingShortFormVC: BaseVC {
         
     }
     
-    public func bind(viewModel: HuntingShortFormViewModelable) {
+    public func bind(viewModel: ChoosePlatformPageViewModelable) {
         
         self.viewModel = viewModel
         

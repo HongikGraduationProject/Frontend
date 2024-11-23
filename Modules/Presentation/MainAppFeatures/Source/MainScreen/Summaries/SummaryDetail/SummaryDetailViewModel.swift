@@ -12,7 +12,7 @@ import Entity
 import DSKit
 import UseCase
 
-public class SummaryDetailVM {
+public class SummaryDetailViewModel {
     
     // Init
     let videoId: Int

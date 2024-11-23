@@ -14,72 +14,74 @@ import Util
 
 class DefaultRootCoordinator: RootCoordinator {
     
-    public struct Dependency {
-        let navigationController: UINavigationController
-        let injector: Injector
-    }
-    
     var viewController: UIViewController?
-    var navigationController: UINavigationController?
+    var navigationController: UINavigationController
     var finishDelegate: CoordinatorFinishDelegate?
-    
-    let injector: Injector
     
     var children: [Coordinator] = []
     var parent: (Coordinator)?
     
-    init(dependency: Dependency) {
-        self.navigationController = dependency.navigationController
-        self.injector = dependency.injector
+    init(navigationController: UINavigationController) {
+        
+        self.navigationController = navigationController
     }
     
     func start() {
-        let vc = RootVC()
-        viewController = vc
         
-        let vm = RootVM(
-            coordinator: self, 
-            onBoardingUseCase: injector.resolve(OnBoardingCheckUseCase.self),
-            authUseCase: injector.resolve(AuthUseCase.self)
+        let viewModel = RootViewModel()
+        viewModel.presentMainTabBar = { [weak self] in
+            self?.presentMainTabBar()
+        }
+        viewModel.presentClickToStartPage = { [weak self] in
+            self?.presentClickToStartPage()
+        }
+        viewModel.presentChoosePlatformPage = { [weak self] in
+            self?.presentChoosePlatformPage()
+        }
+        
+        
+        let viewController = RootViewController()
+        viewController.bind(viewModel: viewModel)
+        
+        
+        self.viewController = viewController
+        
+        
+        navigationController.pushViewController(
+            viewController,
+            animated: false
         )
-        
-        vc.bind(viewModel: vm)
-        
-        navigationController?.pushViewController(vc, animated: false)
     }
 }
 
 extension DefaultRootCoordinator {
     
-    func executeMainTabBarFlow() {
-        let coordinator = MainScreenCoordinator(dependency: .init(
-            inejector: injector,
-            navigationController: navigationController)
+    func presentMainTabBar() {
+        
+        let coordinator = MainScreenCoordinator(
+            navigationController: navigationController
         )
+        
         addChild(coordinator)
         coordinator.start()
     }
     
-    func clickToStartScreen() {
-        let coordinator = ClickToStartCO(
-            dependency: .init(
-                userConfigRepository: injector.resolve(UserConfigRepository.self),
-                videoCodeRepository: injector.resolve(VideoCodeRepository.self),
-                onBoardingCheckUseCase: injector.resolve(OnBoardingCheckUseCase.self),
-                navigationController: navigationController
-            )
+    func presentClickToStartPage() {
+        
+        let coordinator = ClickToStartPageCoordinator(
+            navigationController: navigationController
         )
+        
         addChild(coordinator)
         coordinator.start()
     }
     
-    func showShortFormHuntingScreen() {
-        let coordinator = HuntingShortFormCO(
-            dependency: .init(
-                navigationController: navigationController,
-                videoCodeRepository: injector.resolve(VideoCodeRepository.self)
-            )
+    func presentChoosePlatformPage() {
+        
+        let coordinator = ChoosePlatformPageCoordinator(
+            navigationController: navigationController
         )
+        
         addChild(coordinator)
         coordinator.start()
     }
@@ -87,7 +89,5 @@ extension DefaultRootCoordinator {
 
 extension DefaultRootCoordinator: CoordinatorFinishDelegate {
     
-    func coordinatorDidFinish(childCoordinator: Coordinator) {
-        
-    }
+    func coordinatorDidFinish(childCoordinator: Coordinator) { }
 }

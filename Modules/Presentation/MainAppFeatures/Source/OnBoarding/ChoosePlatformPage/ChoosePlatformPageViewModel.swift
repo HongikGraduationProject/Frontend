@@ -6,16 +6,26 @@
 //
 
 import UIKit
+
+import Entity
+import PresentationUtil
+import UseCase
+import Util
+
 import RxSwift
 import RxCocoa
-import Entity
-import UseCase
 
-public class HuntingShortFormVM: HuntingShortFormViewModelable {
+public protocol ChoosePlatformPageViewModelable: BaseVMable {
+    func openYoutubeApp()
+    func openInstagramApp()
+}
+
+public class ChoosePlatformPageViewModel: ChoosePlatformPageViewModelable {
     
-    // Init
-    weak var coordinator: HuntingShortFormCO?
-    let videoCodeRepository: VideoCodeRepository
+    @Injected var videoCodeRepository: VideoCodeRepository
+    
+    // Navigation
+    var presentMainTabBar: (() -> ())?
     
     // Output
     public var alert: Driver<CapAlertVO>?
@@ -25,9 +35,7 @@ public class HuntingShortFormVM: HuntingShortFormViewModelable {
     
     var checkingVideoCodeDisposable: Disposable?
     
-    init(coordinator: HuntingShortFormCO?, videoCodeRepository: VideoCodeRepository) {
-        self.coordinator = coordinator
-        self.videoCodeRepository = videoCodeRepository
+    init() {
         
         // Output
         alert = deepLinkError
@@ -41,9 +49,14 @@ public class HuntingShortFormVM: HuntingShortFormViewModelable {
         checkingVideoCodeDisposable = NotificationCenter.default.rx
             .notification(UIApplication.willEnterForegroundNotification)
             .subscribe(onNext: { [weak self] notification in
+                
                 guard let self else { return }
+                
                 if videoCodeRepository.getVideoCodes().count > 0 {
-                    coordinator?.showMainTapBarFlow()
+                    
+                    
+                    presentMainTabBar?()
+                    
                     
                     // 요약내역이 있을 경우 구독을 종료하고 메인화면으로 이동한다.
                     checkingVideoCodeDisposable?.dispose()

@@ -13,12 +13,12 @@ import DSKit
 import CommonUI
 import PresentationUtil
 
-public class SelectMainCategoryVC: BaseVC {
+public class SelectMainCategoryViewController: BaseVC {
     
     typealias Cell = CategorySelectionCell
     
     // Init
-    let viewModel: SelectMainCategoryViewModelable
+    private var viewModel: SelectMainCategoryViewModelable?
     
     private let mainCategories: [MainCategory] = {
         let items = MainCategory.allCases.filter { $0 != .all }
@@ -31,6 +31,7 @@ public class SelectMainCategoryVC: BaseVC {
         let label = CapLabel()
         label.typographyStyle = .extraLargeBold
         label.attrTextColor = .black
+        label.text = "선호하는 카테고리를 선택해 주세요."
         return label
     }()
     
@@ -57,9 +58,7 @@ public class SelectMainCategoryVC: BaseVC {
     // Observable
     private let disposeBag = DisposeBag()
     
-    public init(viewModel: SelectMainCategoryViewModelable) {
-        self.viewModel = viewModel
-        
+    public init() {
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -100,11 +99,11 @@ public class SelectMainCategoryVC: BaseVC {
         ])
     }
     
-    private func setObservable() {
-        
-    }
+    private func setObservable() { }
     
-    public func bind() {
+    public func bind(viewModel: InitialSelectMainCategoryViewModel) {
+        
+        self.viewModel = viewModel
         
         // Input
         nextButton
@@ -114,22 +113,23 @@ public class SelectMainCategoryVC: BaseVC {
         
         // Output
         viewModel
-            .nextable?
-            .drive(onNext: { [nextButton] isNextable in
-                nextButton.setState(isNextable)
+            .nextButtonIsActive?
+            .drive(onNext: { [nextButton] isActive in
+                
+                nextButton.setState(isActive)
             })
             .disposed(by: disposeBag)
         
-        titleLabel.text = viewModel.defaultTitleText
         
         viewModel
             .selectedCategoryCount?
-            .filter { [viewModel] count in viewModel.isCategoryCountTitle }
-            .drive { [titleLabel, viewModel] count in
+            .drive { [titleLabel] count in
                 
                 if count == 0 {
+                    
                     // 선택된 카테고리가 없는 경우 기본 라벨로 변경
-                    titleLabel.text = viewModel.defaultTitleText
+                    titleLabel.text = "선호하는 카테고리를 선택해 주세요."
+                    
                     return
                 }
                 
@@ -161,7 +161,7 @@ public class SelectMainCategoryVC: BaseVC {
     }
 }
 
-extension SelectMainCategoryVC: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension SelectMainCategoryViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     // MARK: UICollectionViewDataSource
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -172,10 +172,13 @@ extension SelectMainCategoryVC: UICollectionViewDataSource, UICollectionViewDele
      
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cell.identifier, for: indexPath) as! Cell
         
-        cell.bind(
-            category: mainCategories[indexPath.item],
-            viewModel: viewModel
-        )
+        if let viewModel {
+            
+            cell.bind(
+                category: mainCategories[indexPath.item],
+                viewModel: viewModel
+            )
+        }
         
         return cell
     }

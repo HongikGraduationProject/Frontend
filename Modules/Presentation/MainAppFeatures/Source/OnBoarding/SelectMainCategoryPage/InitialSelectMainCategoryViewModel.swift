@@ -21,25 +21,20 @@ public protocol SelectMainCategoryViewModelable: AnyObject, BaseVMable, Category
     var nextButtonClicked: PublishRelay<Void> { get }
     
     // Output
-    var nextable: Driver<Bool>? { get }
+    var nextButtonIsActive: Driver<Bool>? { get }
     var selectedCategoryCount: Driver<Int>? { get }
-    
-    // Config
-    var defaultTitleText: String { get }
-    var isCategoryCountTitle: Bool { get }
-    var coordinator: SelectMainCategoryCO? { get set }
 }
 
-public class InitialSelectMainCategoryVM: SelectMainCategoryViewModelable {
+public class InitialSelectMainCategoryViewModel: SelectMainCategoryViewModelable {
     
-    // Init
-    let onBoardingUseCase: OnBoardingCheckUseCase
-    let userConfigRepository: UserConfigRepository
-    public weak var coordinator: SelectMainCategoryCO?
+    @Injected var onBoardingUseCase: OnBoardingCheckUseCase
+    @Injected var userConfigRepository: UserConfigRepository
     
-    // Config
-    public var defaultTitleText: String = "선호하는 카테고리를 선택해 주세요."
-    public var isCategoryCountTitle: Bool = true
+    
+    // Navigation
+    var terminateOnboardingPage: (() -> ())?
+    var presentChoosePlatformPage: (() -> ())?
+    
     
     // Input
     public var previousSelectedStates: [MainCategory : Driver<Bool>] = [:]
@@ -48,7 +43,7 @@ public class InitialSelectMainCategoryVM: SelectMainCategoryViewModelable {
     
     // Output
     public var selectedCategoryCount: Driver<Int>?
-    public var nextable: Driver<Bool>?
+    public var nextButtonIsActive: Driver<Bool>?
     public var alert: Driver<CapAlertVO>?
     
     // State
@@ -56,13 +51,7 @@ public class InitialSelectMainCategoryVM: SelectMainCategoryViewModelable {
     
     let disposeBag: DisposeBag = .init()
     
-    public init(
-        onBoardingUseCase: OnBoardingCheckUseCase,
-        userConfigRepository: UserConfigRepository) 
-    {
-        
-        self.onBoardingUseCase = onBoardingUseCase
-        self.userConfigRepository = userConfigRepository
+    public init() {
         
         // Input
         let selectionCnt = categorySelectionState
@@ -110,11 +99,16 @@ public class InitialSelectMainCategoryVM: SelectMainCategoryViewModelable {
         let checkingSummariesFailure = checkingSummariesResult.compactMap { $0.error }
         
         checkingSummariesSuccess
-            .subscribe(onNext: { [weak self] isExists in
+            .withUnretained(self)
+            .subscribe(onNext: { (viewModel, isExists) in
                 if isExists {
-                    self?.coordinator?.finishOnBoardingFlow()
+                    
+                    viewModel.terminateOnboardingPage?()
+                    
                 } else {
-                    self?.coordinator?.showShortFormHuntingScreen()
+                    
+                    viewModel.presentChoosePlatformPage?()
+                    
                 }
             })
             .disposed(by: disposeBag)
@@ -123,7 +117,7 @@ public class InitialSelectMainCategoryVM: SelectMainCategoryViewModelable {
         selectedCategoryCount = selectionCnt
             .asDriver(onErrorJustReturn: 0)
         
-        nextable = selectionCnt
+        nextButtonIsActive = selectionCnt
             .map { cnt in
                 // 선택된 카테고리 수가 최소 1개이상이야 화면을 넘어갈 수 있음
                 cnt > 0

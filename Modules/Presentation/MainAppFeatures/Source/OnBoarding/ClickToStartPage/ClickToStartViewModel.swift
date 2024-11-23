@@ -22,9 +22,10 @@ public protocol ClickToStartViewModelable {
     var viewWillAppear: PublishRelay<Void> { get }
 }
 
-public class ClickToStartVM: ClickToStartViewModelable {
+public class ClickToStartViewModel: ClickToStartViewModelable {
     
-    public weak var coordinator: ClickToStartCO?
+    // Navigation
+    var presentCategorySelectionPage: (() -> ())?
     
     public var nextButtonClicked: PublishRelay<Void> = .init()
     public var viewWillAppear: RxRelay.PublishRelay<Void> = .init()
@@ -36,7 +37,7 @@ public class ClickToStartVM: ClickToStartViewModelable {
         nextButtonClicked
             .subscribe(onNext: { [weak self] _ in
                 
-                self?.coordinator?.showCategoryScreen()
+                self?.presentCategorySelectionPage?()
             })
             .disposed(by: disposeBag)
         
@@ -49,7 +50,7 @@ public class ClickToStartVM: ClickToStartViewModelable {
     }
 }
 
-extension ClickToStartVM {
+extension ClickToStartViewModel {
     
     /// 앱추적 허용 요청
     func requestPermission() {

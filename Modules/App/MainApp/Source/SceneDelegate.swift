@@ -5,16 +5,17 @@
 //
 
 import UIKit
-import Swinject
-import MainAppFeatures
-import DataSource
+
+import PresentationUtil
 import Util
+
+import Swinject
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     
-    private var rootCoordinator: DefaultRootCoordinator?
+    private var rootCoordinator: RootCoordinator?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -26,21 +27,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = rootNavigationController
         window?.makeKeyAndVisible()
         
+        // 의존성 주입
+        self.registerDependencies()
+        
+        self.rootCoordinator = DefaultRootCoordinator(
+            navigationController: rootNavigationController
+        )
+
+        rootCoordinator?.start()
+    }
+    
+    func registerDependencies() {
+        
         DependencyInjector.shared
             .assemble([
                 DataAssembly(),
                 DomainAssembly(),
                 PresentationAssembly(),
             ])
-        
-        self.rootCoordinator = .init(
-            dependency: .init(
-                navigationController: rootNavigationController,
-                injector: DependencyInjector.shared
-            )
-        )
-
-        rootCoordinator?.start()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

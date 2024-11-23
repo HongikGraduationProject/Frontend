@@ -20,10 +20,10 @@ fileprivate enum SummariesVCConfig {
     static let tabItemWidth: CGFloat = 54
 }
 
-class SummariesVC: BaseVC {
+class SummaryDetailPageViewController: BaseVC {
     
     // Init
-    let viewModel: SummariesVM
+    let viewModel: SummaryDetailPageViewModel
     
     
     // Not init
@@ -81,7 +81,7 @@ class SummariesVC: BaseVC {
     // Observable
     private let disposeBag = DisposeBag()
     
-    init(viewModel: SummariesVM) {
+    init(viewModel: SummaryDetailPageViewModel) {
         
         self.viewModel = viewModel
         
@@ -284,5 +284,5 @@ class SummariesVC: BaseVC {
     }
 }
 
-extension SummariesVC: UITableViewDelegate { }
+extension SummaryDetailPageViewController: UITableViewDelegate { }
 

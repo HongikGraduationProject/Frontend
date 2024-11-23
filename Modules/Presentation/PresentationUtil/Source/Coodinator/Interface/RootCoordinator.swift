@@ -8,13 +8,10 @@
 import Foundation
 
 public protocol RootCoordinator: Coordinator {
-    // Flow
-    func executeMainTabBarFlow()
     
-    // Screen
-    /// 신규 유저가 확인하는 화면입니다.
-    func clickToStartScreen()
+    func presentMainTabBar()
     
-    /// 숏폼이 없는 경우 이동하는 화면입니다.
-    func showShortFormHuntingScreen()
+    func presentClickToStartPage()
+    
+    func presentChoosePlatformPage()
 }

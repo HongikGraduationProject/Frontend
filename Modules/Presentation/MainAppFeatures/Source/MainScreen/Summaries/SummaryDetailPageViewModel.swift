@@ -30,11 +30,15 @@ protocol SummariesVMable {
 }
 
 /// 요약화면 전체를 담당하는 VM입니다.
-class SummariesVM: SummariesVMable {
+class SummaryDetailPageViewModel: SummariesVMable {
     
-    private weak var coordinator: SummariesCO?
     @Injected private var summaryUseCase: SummaryUseCase
     @Injected private var summaryDetailRepository: SummaryDetailRepository
+    
+    
+    // Navigation
+    var showSummaryDetailPage: ((Int) -> ())?
+    
     
     private let requestAllSummaryItems: BehaviorSubject<Void> = .init(value: ())
     let currentSelectedCategoryForFilter: PublishSubject<MainCategory> = .init()
@@ -45,8 +49,7 @@ class SummariesVM: SummariesVMable {
     
     private let disposeBag = DisposeBag()
     
-    init(coordinator: SummariesCO) {
-        self.coordinator = coordinator
+    init() {
         
         // MARK: 스트림 연결
         let summaryItemList = summaryUseCase
@@ -118,9 +121,9 @@ class SummariesVM: SummariesVMable {
         
         let cellVM = SummaryCellVM(videoId: videoId)
         
-        cellVM.presentDetailPage = { [weak self] videoId in
+        if let presentDetail = showSummaryDetailPage {
             
-            self?.coordinator?.showDetail(videoId: videoId)
+            cellVM.presentDetailPage = presentDetail
         }
         
         return cellVM

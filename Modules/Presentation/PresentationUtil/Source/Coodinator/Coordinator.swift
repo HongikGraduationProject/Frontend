@@ -22,7 +22,7 @@ public protocol Coordinator: AnyObject {
     
     /// weak참조를 사용합니다.
     var viewController: UIViewController? { get set }
-    var navigationController: UINavigationController? { get set }
+    var navigationController: UINavigationController { get }
     var children: [Coordinator] { get set }
     var parent: Coordinator? { get set }
     var finishDelegate: CoordinatorFinishDelegate? { get set }
@@ -76,7 +76,7 @@ public extension Coordinator {
             
         // 현재 뷰컨트롤러를 제거합니다.
         // 자식이 없다면 애니메이션과 함께 현재 뷰컨트롤러를 종료합니다.
-        navigationController?.popViewController(animated: hasChild ? false : animated)
+        navigationController.popViewController(animated: hasChild ? false : animated)
         
         // 자식 코디네이터를 부모 배열에서 제거합니다.
         parent?.removeChild(self)
