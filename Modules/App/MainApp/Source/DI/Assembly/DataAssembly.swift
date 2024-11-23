@@ -49,6 +49,10 @@ public struct DataAssembly: Assembly {
             DefaultSummaryRequestRepository()
         }
         
+        container.register(SummarySearchRepository.self) { _ in
+            DefualtSummarySearchRepository()
+        }
+        
         // ⭐️ 해당 레포지토리는 같은 인스턴스를 공유합니다.
         container.register(SummaryDetailRepository.self) { _ in
             DefaultSummaryDetailRepository()

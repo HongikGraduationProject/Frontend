@@ -13,9 +13,15 @@ import RxSwift
 
 public class DefualtSummarySearchRepository: SummarySearchRepository {
     
-    @Injected var authService: AuthService
+    @Injected var summaryService: SummaryService
+    
+    public init() { }
     
     public func requestSearchedItems(searchWord: String) -> Single<[Int]> {
-        .just([])
+        
+        summaryService
+            .request(api: .search(word: searchWord), with: .withToken)
+            .map(CAPResponse<[Int]>.self)
+            .map { $0.data ?? [] }
     }
 }
