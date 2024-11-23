@@ -13,7 +13,14 @@ public class ScrollingLabel: UIScrollView {
     
     private let label: CapLabel
     
-    public private(set) var isScrolling = false
+    public var text: String {
+        get {
+            label.text ?? ""
+        }
+        set {
+            label.text = newValue
+        }
+    }
     
     public init(label: CapLabel) {
         
@@ -47,28 +54,26 @@ public class ScrollingLabel: UIScrollView {
             label.leftAnchor.constraint(equalTo: contentGuide.leftAnchor),
             label.rightAnchor.constraint(equalTo: contentGuide.rightAnchor),
             label.bottomAnchor.constraint(equalTo: frameGuide.bottomAnchor),
-            
-            self.widthAnchor.constraint(equalToConstant: 100)
         ])
     }
     
     public func stopScrolling() {
         
-        self.isScrolling = false
         self.layer.removeAllAnimations()
         self.contentOffset = .zero
     }
     
-    public func startScrolling(duration: CGFloat) {
+    public func startScrolling(speed: CGFloat = 500) {
         
-        if isScrolling { return }
-        isScrolling = true
+        stopScrolling()
         
         self.layoutIfNeeded()
         
         let originWidth = label.intrinsicContentSize.width
         let currentWidth = self.frame.width
         let distance = originWidth - currentWidth
+        
+        let duration = distance / speed
         
         UIView.animateKeyframes(
             withDuration: duration,

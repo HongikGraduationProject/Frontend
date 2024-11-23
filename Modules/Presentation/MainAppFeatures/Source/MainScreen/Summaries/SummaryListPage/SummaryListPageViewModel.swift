@@ -30,7 +30,7 @@ protocol SummariesVMable {
 }
 
 /// 요약화면 전체를 담당하는 VM입니다.
-class SummaryDetailPageViewModel: SummariesVMable {
+class SummaryListPageViewModel: SummariesVMable {
     
     @Injected private var summaryUseCase: SummaryUseCase
     @Injected private var summaryDetailRepository: SummaryDetailRepository

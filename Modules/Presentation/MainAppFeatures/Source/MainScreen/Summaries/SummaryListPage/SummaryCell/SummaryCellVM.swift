@@ -25,10 +25,12 @@ protocol SummaryCellVMable {
     func requestDetail()
     
     /// Input: 셀이 클릭됨
-    var cellClicked: PublishRelay<Void> { get }
+    var cellClicked: PublishSubject<Void> { get }
+    var viewIsAppear: BehaviorSubject<Void> { get }
     
     /// Ouptut: 요약 상세정보를 가져옵니다.
-    var summaryDetail: Driver<SummaryDetail>? { get }
+    var summaryDetail: Driver<SummaryDetail> { get }
+    var startScrollingTitleLabel: Driver<Void> { get }
 }
 
 class SummaryCellVM: SummaryCellVMable {
@@ -41,9 +43,14 @@ class SummaryCellVM: SummaryCellVMable {
     var presentDetailPage: ((Int) -> ())?
     
     
-    var cellClicked: RxRelay.PublishRelay<Void> = .init()
-    var summaryDetail: RxCocoa.Driver<Entity.SummaryDetail>?
+    // Input
+    let cellClicked: PublishSubject<Void> = .init()
+    let viewIsAppear: BehaviorSubject<Void> = .init(value: ())
     
+    
+    // Output
+    var summaryDetail: Driver<Entity.SummaryDetail> = .empty()
+    var startScrollingTitleLabel: Driver<Void> = .empty()
     
     
     // Observable
@@ -62,6 +69,9 @@ class SummaryCellVM: SummaryCellVMable {
                 self?.presentDetailPage?(videoId)
             })
             .disposed(by: disposeBag)
+        
+        startScrollingTitleLabel = viewIsAppear
+            .asDriver(onErrorDriveWith: .never())
     }
     
     func requestDetail() {

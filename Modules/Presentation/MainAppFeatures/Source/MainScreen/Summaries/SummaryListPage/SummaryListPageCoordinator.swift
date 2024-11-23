@@ -35,14 +35,14 @@ public class SummaryListPageCoordinator: Coordinator {
     
     public func start() {
         
-        let viewModel = SummaryDetailPageViewModel()
+        let viewModel = SummaryListPageViewModel()
         
         viewModel.showSummaryDetailPage = { [weak self] videoId in
             
             self?.presentDetailPage(videoId: videoId)
         }
         
-        let viewController = SummaryDetailPageViewController(viewModel: viewModel)
+        let viewController = SummaryListPageViewController(viewModel: viewModel)
         
         self.viewController = viewController
         

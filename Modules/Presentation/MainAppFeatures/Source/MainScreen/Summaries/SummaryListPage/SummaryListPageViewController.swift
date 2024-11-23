@@ -1,5 +1,5 @@
 //
-//  SummariesVC.swift
+//  SummaryListPageViewController.swift
 //  MainAppFeatures
 //
 //  Created by choijunios on 8/18/24.
@@ -16,10 +16,10 @@ import PresentationUtil
 import RxCocoa
 import RxSwift
 
-class SummaryDetailPageViewController: BaseVC {
+class SummaryListPageViewController: BaseVC {
     
     // Init
-    let viewModel: SummaryDetailPageViewModel
+    private let viewModel: SummaryListPageViewModel
     
     
     // Not init
@@ -77,7 +77,8 @@ class SummaryDetailPageViewController: BaseVC {
     // Observable
     private let disposeBag = DisposeBag()
     
-    init(viewModel: SummaryDetailPageViewModel) {
+    
+    init(viewModel: SummaryListPageViewModel) {
         
         self.viewModel = viewModel
         
@@ -88,6 +89,7 @@ class SummaryDetailPageViewController: BaseVC {
         
         bindViewModel()
     }
+    
     
     required init?(coder: NSCoder) { fatalError() }
     
@@ -123,7 +125,6 @@ class SummaryDetailPageViewController: BaseVC {
             return cell
         })
         summariesTableView.dataSource = tableViewDataSource
-        summariesTableView.delegate = self
         summariesTableView.register(Cell.self, forCellReuseIdentifier: Cell.identifier)
         summariesTableView.separatorStyle = .none
         summariesTableView.delaysContentTouches = false
@@ -135,6 +136,17 @@ class SummaryDetailPageViewController: BaseVC {
         setAppearance()
         setLayout()
         setObservable()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        for cell in summariesTableView.visibleCells {
+            
+            guard let summaryCell = cell as? Cell else { continue }
+            
+            summaryCell.viewModel?.viewIsAppear.onNext(())
+        }
     }
     
     func bindViewModel() {
@@ -279,6 +291,4 @@ class SummaryDetailPageViewController: BaseVC {
         mainCategoryTabItems[.all]?.toAccent()
     }
 }
-
-extension SummaryDetailPageViewController: UITableViewDelegate { }
 
