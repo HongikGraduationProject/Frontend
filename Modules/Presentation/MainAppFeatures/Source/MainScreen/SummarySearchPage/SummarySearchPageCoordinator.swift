@@ -29,7 +29,10 @@ public class SummarySearchPageCoordinator: Coordinator {
     
     public func start() {
         
+        let viewModel = SummarySearchPageViewModel()
+        
         let viewController = SummarySearchPageViewController()
+        viewController.bind(viewModel: viewModel)
         
         navigationController.pushViewController(viewController, animated: true)
     }

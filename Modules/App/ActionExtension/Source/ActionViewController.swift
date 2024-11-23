@@ -6,6 +6,19 @@
 //
 
 import UIKit
+import Util
+
 import AppExtensionFeatures
 
-class ActionViewController: SummaryRequestVC { }
+class ActionViewController: SummaryRequestVC {
+    
+    required init?(coder: NSCoder) {
+        
+        DependencyInjector.shared.assemble([
+            
+            AppExtensionAssembly()
+        ])
+        
+        super.init(coder: coder)
+    }
+}

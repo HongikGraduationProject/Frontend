@@ -11,10 +11,16 @@ import DSKit
 import PresentationUtil
 import CommonUI
 
+import RxSwift
+
 class SummarySearchPageViewController: BaseVC {
     
     // View
-    private let navigationBar: CAPSummaryDetailNavigationBar = .init(titleText: "숏폼 검색")
+    private let navigationBar: CAPSummaryDetailNavigationBar = {
+        let view = CAPSummaryDetailNavigationBar(titleText: "숏폼 검색")
+        view.optionButton.alpha = 0
+        return view
+    }()
     private let searchField: UITextField = .init()
     private let searchArea: UIView = {
         let view = UIView()
@@ -22,6 +28,19 @@ class SummarySearchPageViewController: BaseVC {
         view.backgroundColor = DSColors.gray5.color
         return view
     }()
+    
+    // MARK: TableView
+    typealias Cell = SummaySearchCell
+    private var tableViewDataSource: UITableViewDiffableDataSource<Int, String>!
+    private let summariesTableView: UITableView = {
+        let tableView = UITableView()
+        return tableView
+    }()
+    
+    
+    private var viewModel: SummarySearchPageViewModelable?
+    
+    private let disposeBag: DisposeBag = .init()
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -36,6 +55,12 @@ class SummarySearchPageViewController: BaseVC {
         
         setAppearance()
         setLayout()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        searchField.becomeFirstResponder()
     }
     
     private func setAppearance() {
@@ -123,6 +148,60 @@ class SummarySearchPageViewController: BaseVC {
             ),
             searchArea.heightAnchor.constraint(equalToConstant: 52),
         ])
+    }
+    
+    private func setTableView() {
+        // MARK: DataSource
+        tableViewDataSource = .init(tableView: summariesTableView, cellProvider: { [weak self] tableView, indexPath, itemIdentifier in
+            
+            guard let self else { return Cell() }
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: Cell.identifier) as! Cell
+            
+            if let detail = viewModel?.getItem(index: indexPath.item) {
+                
+                cell.bind(
+                    titleText: detail.title,
+                    categoryText: detail.mainCategory.korWordText
+                )
+            }
+            
+            return cell
+        })
+        summariesTableView.dataSource = tableViewDataSource
+        summariesTableView.register(Cell.self, forCellReuseIdentifier: Cell.identifier)
+        summariesTableView.separatorStyle = .none
+        summariesTableView.delaysContentTouches = false
+        summariesTableView.rowHeight = 160
+    }
+    
+    
+    func bind(viewModel: SummarySearchPageViewModelable) {
+        
+        self.viewModel = viewModel
+        
+        // Output
+        viewModel
+            .cellIdentifiers
+            .drive(onNext: { [weak self] identifiers in
+                
+                guard let self else { return }
+            
+                var snapShot: NSDiffableDataSourceSnapshot<Int, String> = .init()
+                snapShot.appendSections([0])
+                snapShot.appendItems(identifiers, toSection: 0)
+                
+                tableViewDataSource.apply(snapShot, animatingDifferences: true)
+            })
+            .disposed(by: disposeBag)
+        
+        
+        // Input
+        searchField
+            .rx.text
+            .compactMap({ $0 })
+            .bind(to: viewModel.searchingText)
+            .disposed(by: disposeBag)
     }
 }
 

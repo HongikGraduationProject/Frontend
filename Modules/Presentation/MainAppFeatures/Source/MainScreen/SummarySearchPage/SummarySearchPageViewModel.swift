@@ -20,7 +20,9 @@ protocol SummarySearchPageViewModelable {
     var cellIsClicked: PublishSubject<Void> { get }
     
     // OutPut
-    var summaryDetails: Driver<[SummaryDetail]> { get }
+    var cellIdentifiers: Driver<[String]> { get }
+    
+    func getItem(index: Int) -> SummaryDetail
 }
 
 
@@ -32,17 +34,32 @@ class SummarySearchPageViewModel: SummarySearchPageViewModelable {
     let exitButtonClicked: PublishSubject<Void> = .init()
     let cellIsClicked: PublishSubject<Void> = .init()
     
-    var summaryDetails: Driver<[SummaryDetail]> = .empty()
+    var cellIdentifiers: Driver<[String]> = .empty()
+    
+    private var data: [SummaryDetail] = []
     
     init() {
            
-        self.summaryDetails = searchingText
+        self.cellIdentifiers = searchingText
             .debounce(.milliseconds(350), scheduler: MainScheduler.instance)
             .flatMap { [summarySearchUseCase] word in
                 
                 summarySearchUseCase
                     .requestSearchItem(searchWord: word)
             }
+            .observe(on: MainScheduler.instance)
+            .withUnretained(self)
+            .map { viewModel, details in
+                
+                viewModel.data = details
+                
+                return details.map({ $0.videoCode })
+            }
             .asDriver(onErrorDriveWith: .never())
+    }
+    
+    func getItem(index: Int) -> SummaryDetail {
+        
+        data[index]
     }
 }

@@ -11,6 +11,8 @@ import DSKit
 
 class SummaySearchCell: UITableViewCell {
     
+    static let identifier = String(describing: SummaySearchCell.self)
+    
     private let titleLabel: CapLabel = {
         let label = CapLabel()
         label.typographyStyle = .baseRegular

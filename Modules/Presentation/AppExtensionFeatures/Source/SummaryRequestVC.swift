@@ -40,17 +40,9 @@ enum FetchResourceError: Error {
 open class SummaryRequestVC: UIViewController {
     
     // Repository
-    let summaryRequestRepo: SummaryRequestRepository = DefaultSummaryRequestRepository(
-        summaryService: SummaryService()
-    )
-    let videoCodeRepo: VideoCodeRepository = DefaultVideoCodeRepository(
-        coreDataService: DefaultCoreDataService()
-    )
-    let authUseCase: AuthUseCase = DefaultAuthUseCase(
-        authRepository: DefaultAuthRepository(
-            authService: DefaultAuthService()
-        )
-    )
+    @Injected private var summaryRequestRepo: SummaryRequestRepository
+    @Injected private var videoCodeRepo: VideoCodeRepository
+    @Injected private var authUseCase: AuthUseCase
     
     // View
     let titleLabel: CapLabel = {
