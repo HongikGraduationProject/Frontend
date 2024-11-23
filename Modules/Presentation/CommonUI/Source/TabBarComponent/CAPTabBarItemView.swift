@@ -73,7 +73,7 @@ public class CAPTabBarItemView: TappableUIView {
     public required init?(coder: NSCoder) { nil }
     
     private func setAppearance() {
-        self.layer.cornerRadius = 44
+        self.layer.cornerRadius = 35
         self.clipsToBounds = true
     }
     
