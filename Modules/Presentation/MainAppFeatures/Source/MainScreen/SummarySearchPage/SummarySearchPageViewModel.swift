@@ -5,7 +5,9 @@
 //  Created by choijunios on 11/24/24.
 //
 
+import UseCase
 import Entity
+import Util
 
 import RxSwift
 import RxCocoa
@@ -18,19 +20,29 @@ protocol SummarySearchPageViewModelable {
     var cellIsClicked: PublishSubject<Void> { get }
     
     // OutPut
-    var summaryItems: Driver<[SummaryItem]> { get }
+    var summaryDetails: Driver<[SummaryDetail]> { get }
 }
 
 
 class SummarySearchPageViewModel: SummarySearchPageViewModelable {
     
-    let searchingText: RxSwift.PublishSubject<String> = .init()
-    let exitButtonClicked: RxSwift.PublishSubject<Void> = .init()
-    let cellIsClicked: RxSwift.PublishSubject<Void> = .init()
+    @Injected private var summarySearchUseCase: SummarySearchUseCase
     
-    var summaryItems: RxCocoa.Driver<[Entity.SummaryItem]> = .empty()
+    let searchingText: PublishSubject<String> = .init()
+    let exitButtonClicked: PublishSubject<Void> = .init()
+    let cellIsClicked: PublishSubject<Void> = .init()
+    
+    var summaryDetails: Driver<[SummaryDetail]> = .empty()
     
     init() {
            
+        self.summaryDetails = searchingText
+            .debounce(.milliseconds(350), scheduler: MainScheduler.instance)
+            .flatMap { [summarySearchUseCase] word in
+                
+                summarySearchUseCase
+                    .requestSearchItem(searchWord: word)
+            }
+            .asDriver(onErrorDriveWith: .never())
     }
 }

@@ -34,5 +34,10 @@ public struct DomainAssembly: Assembly {
             DefaultSummaryUseCase()
         }
         .inObjectScope(.transient)
+        
+        container.register(SummarySearchUseCase.self) { _ in
+            
+            DefaultSummarySearchUseCase()
+        }
     }
 }
