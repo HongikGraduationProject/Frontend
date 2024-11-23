@@ -20,7 +20,7 @@ protocol SummariesVMable {
     
     // Input
     var currentSelectedCategoryForFilter: PublishSubject<MainCategory> { get }
-    
+    var searchButtonClicked: PublishSubject<Void> { get }
     
     // Output
     var alert: Driver<CapAlertVO> { get }
@@ -38,16 +38,20 @@ class SummaryListPageViewModel: SummariesVMable {
     
     // Navigation
     var showSummaryDetailPage: ((Int) -> ())?
+    var presentSearchPage: (() -> ())?
     
     
-    private let requestAllSummaryItems: BehaviorSubject<Void> = .init(value: ())
+    // Input
+    let searchButtonClicked: PublishSubject<Void> = .init()
     let currentSelectedCategoryForFilter: PublishSubject<MainCategory> = .init()
     
     // Output
     private(set) var summaryItems: Driver<[SummaryItem]> = .empty()
     var alert: Driver<CapAlertVO> = .empty()
     
+    
     private let disposeBag = DisposeBag()
+    private let requestAllSummaryItems: BehaviorSubject<Void> = .init(value: ())
     
     init() {
         
@@ -99,6 +103,16 @@ class SummaryListPageViewModel: SummariesVMable {
                 vm.summaryUseCase
                     .requestCheckNewSummary()
             }
+            .disposed(by: disposeBag)
+        
+        
+        // MARK: Search button
+        searchButtonClicked
+            .withUnretained(self)
+            .subscribe(onNext: { (viewModel, _) in
+                
+                viewModel.presentSearchPage?()
+            })
             .disposed(by: disposeBag)
         
         

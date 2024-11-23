@@ -194,6 +194,10 @@ class SummaryListPageViewController: BaseVC {
             .merge(categorySelectionEvent)
             .bind(to: viewModel.currentSelectedCategoryForFilter)
             .disposed(by: disposeBag)
+        
+        searchButton.rx.tap
+            .bind(to: viewModel.searchButtonClicked)
+            .disposed(by: disposeBag)
     }
     
     /// 탭바의 순서를 변경합니다.

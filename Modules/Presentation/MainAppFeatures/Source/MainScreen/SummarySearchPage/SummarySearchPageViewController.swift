@@ -9,9 +9,12 @@ import UIKit
 
 import DSKit
 import PresentationUtil
+import CommonUI
 
 class SummarySearchPageViewController: BaseVC {
     
+    // View
+    private let navigationBar: CAPSummaryDetailNavigationBar = .init(titleText: "숏폼 검색")
     private let searchField: UITextField = .init()
     private let searchArea: UIView = {
         let view = UIView()
@@ -31,7 +34,13 @@ class SummarySearchPageViewController: BaseVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setAppearance()
         setLayout()
+    }
+    
+    private func setAppearance() {
+        
+        view.backgroundColor = DSColors.gray0.color
     }
     
     private func setTextField() {
@@ -73,10 +82,16 @@ class SummarySearchPageViewController: BaseVC {
         
         NSLayoutConstraint.activate([
             
-            searchStack.topAnchor.constraint(equalTo: searchArea.layoutMarginsGuide.topAnchor),
-            searchStack.bottomAnchor.constraint(equalTo: searchArea.layoutMarginsGuide.bottomAnchor),
-            searchStack.leftAnchor.constraint(equalTo: searchArea.layoutMarginsGuide.leftAnchor),
-            searchStack.rightAnchor.constraint(equalTo: searchArea.layoutMarginsGuide.rightAnchor),
+            searchStack.topAnchor.constraint(
+                equalTo: searchArea.layoutMarginsGuide.topAnchor),
+            searchStack.bottomAnchor.constraint(
+                equalTo: searchArea.layoutMarginsGuide.bottomAnchor),
+            searchStack.leftAnchor.constraint(
+                equalTo: searchArea.layoutMarginsGuide.leftAnchor),
+            searchStack.rightAnchor.constraint(
+                equalTo: searchArea.layoutMarginsGuide.rightAnchor),
+            
+            searchIcon.widthAnchor.constraint(equalToConstant: 24),
         ])
     }
     
@@ -84,6 +99,7 @@ class SummarySearchPageViewController: BaseVC {
     private func setLayout() {
         
         [
+            navigationBar,
             searchArea
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -92,10 +108,20 @@ class SummarySearchPageViewController: BaseVC {
         
         NSLayoutConstraint.activate([
             
-            searchArea.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
-            searchArea.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
-            searchArea.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
+            navigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            navigationBar.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
+            navigationBar.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             
+            searchArea.topAnchor.constraint(equalTo: navigationBar.bottomAnchor, constant: 30),
+            searchArea.leftAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leftAnchor,
+                constant: 10
+            ),
+            searchArea.rightAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.rightAnchor,
+                constant: -10
+            ),
+            searchArea.heightAnchor.constraint(equalToConstant: 52),
         ])
     }
 }

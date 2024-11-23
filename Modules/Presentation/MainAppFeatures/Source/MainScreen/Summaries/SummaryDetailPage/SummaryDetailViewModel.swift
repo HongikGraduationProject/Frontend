@@ -6,17 +6,21 @@
 //
 
 import UIKit
-import RxCocoa
-import RxSwift
+
 import Entity
 import DSKit
 import UseCase
+import Util
+
+import RxCocoa
+import RxSwift
 
 public class SummaryDetailViewModel {
     
+    @Injected var summaryDetailRepository: SummaryDetailRepository
+    
     // Init
     let videoId: Int
-    let repo: SummaryDetailRepository
     
     // Input
     let viewDidLoad: PublishRelay<Void> = .init()
@@ -27,13 +31,12 @@ public class SummaryDetailViewModel {
     
     private let disposeBag: DisposeBag = .init()
     
-    public init(videoId: Int, repo: SummaryDetailRepository) {
+    public init(videoId: Int) {
         self.videoId = videoId
-        self.repo = repo
         
         let detail = viewDidLoad
-            .flatMap { [repo] _ in
-                repo.fetchSummaryDetail(videoId: videoId)
+            .flatMap { [summaryDetailRepository] _ in
+                summaryDetailRepository.fetchSummaryDetail(videoId: videoId)
             }
         
         summaryDetail = detail

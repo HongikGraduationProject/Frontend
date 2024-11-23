@@ -15,10 +15,6 @@ import Util
 
 public class SummaryListPageCoordinator: Coordinator {
     
-    @Injected var summaryUseCase: SummaryUseCase
-    @Injected var summaryDetailRepository: SummaryDetailRepository
-    
-    
     public var navigationController: UINavigationController
     
     
@@ -36,10 +32,13 @@ public class SummaryListPageCoordinator: Coordinator {
     public func start() {
         
         let viewModel = SummaryListPageViewModel()
-        
         viewModel.showSummaryDetailPage = { [weak self] videoId in
             
             self?.presentDetailPage(videoId: videoId)
+        }
+        viewModel.presentSearchPage = { [weak self] in
+            
+            self?.presentSearchPage()
         }
         
         let viewController = SummaryListPageViewController(viewModel: viewModel)
@@ -56,9 +55,18 @@ public class SummaryListPageCoordinator: Coordinator {
         
         // 추후 Coordinator생성
         let vc = SummaryDetailViewController()
-        let vm = SummaryDetailViewModel(videoId: videoId, repo: summaryDetailRepository)
+        let vm = SummaryDetailViewModel(videoId: videoId)
         
         vc.bind(viewModel: vm)
         navigationController.pushViewController(vc, animated: true)
+    }
+    
+    public func presentSearchPage() {
+        
+        let coordinator = SummarySearchPageCoordinator(
+            navigationController: navigationController
+        )
+        addChild(coordinator)
+        coordinator.start()
     }
 }
