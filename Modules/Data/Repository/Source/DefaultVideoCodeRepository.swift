@@ -6,19 +6,19 @@
 //
 
 import Foundation
+
 import Entity
-import RxSwift
 import UseCase
 import DataSource
 import Util
 
+import RxSwift
+
 public class DefaultVideoCodeRepository: VideoCodeRepository {
     
-    let coreDataService: CoreDataService
+    @Injected var coreDataService: CoreDataService
     
-    public init(coreDataService: CoreDataService) {
-        self.coreDataService = coreDataService
-    }
+    public init() { }
     
     public func getVideoCodes() -> [String] {
         let fetchRequest = SummaryInfoObject.fetchRequest()

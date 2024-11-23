@@ -34,38 +34,24 @@ public struct DataAssembly: Assembly {
         
         // MARK: Repositories
         container.register(UserConfigRepository.self) { resolver in
-            return DefaultUserConfigRepository()
+            DefaultUserConfigRepository()
         }
         
-        container.register(AuthRepository.self) { resolver in
-            let service = resolver.resolve(AuthService.self)!
-            return DefaultAuthRepository(authService: service)
+        container.register(AuthRepository.self) { _ in
+            DefaultAuthRepository()
         }
         
-        container.register(VideoCodeRepository.self) { resolver in
-            let coreDataService = resolver.resolve(CoreDataService.self)!
-            return DefaultVideoCodeRepository(
-                coreDataService: coreDataService
-            )
+        container.register(VideoCodeRepository.self) { _ in
+            DefaultVideoCodeRepository()
         }
         
-        container.register(SummaryRequestRepository.self) { resolver in
-            let summaryService = resolver.resolve(SummaryService.self)!
-            return DefaultSummaryRequestRepository(
-                summaryService: summaryService
-            )
+        container.register(SummaryRequestRepository.self) { _ in
+            DefaultSummaryRequestRepository()
         }
         
         // ⭐️ 해당 레포지토리는 같은 인스턴스를 공유합니다.
-        container.register(SummaryDetailRepository.self) { resolver in
-            let summaryService = resolver.resolve(SummaryService.self)!
-            let coreDataService = resolver.resolve(CoreDataService.self)!
-            return DefaultSummaryDetailRepository(
-                dependency: .init(
-                    coreDataService: coreDataService,
-                    summaryService: summaryService
-                )
-            )
+        container.register(SummaryDetailRepository.self) { _ in
+            DefaultSummaryDetailRepository()
         }.inObjectScope(.container)
     }
 }

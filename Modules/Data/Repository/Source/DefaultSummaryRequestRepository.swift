@@ -17,11 +17,9 @@ import RxSwift
 public class DefaultSummaryRequestRepository: SummaryRequestRepository {
     
     // Init
-    private let summaryService: SummaryService
+    @Injected private var summaryService: SummaryService
     
-    public init(summaryService: SummaryService) {
-        self.summaryService = summaryService
-    }
+    public init() { }
     
     public func fetchAllSummaryItems() -> RxSwift.Single<[SummaryItem]> {
         summaryService

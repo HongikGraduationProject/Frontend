@@ -16,6 +16,7 @@ public enum SummariesAPI {
     case initiateSummary(dto: SummaryInitiateDTO)
     case checkSummaryStatus(videoCode: String)
     case fetchSummaryDetail(videoId: Int)
+    case search(word: String)
 }
 
 extension SummariesAPI: BaseAPI {
@@ -33,6 +34,8 @@ extension SummariesAPI: BaseAPI {
             .get
         case .fetchSummaryDetail:
             .get
+        case .search:
+            .get
         }
     }
     
@@ -46,6 +49,8 @@ extension SummariesAPI: BaseAPI {
             "/status/\(videoCode)"
         case .fetchSummaryDetail(let videoId):
             "/\(videoId)"
+        case .search:
+            "/search"
         }
     }
     
@@ -60,8 +65,10 @@ extension SummariesAPI: BaseAPI {
     
     var parameterEncoding: ParameterEncoding {
         switch self {
+        case .search:
+            URLEncoding.queryString
         default:
-            return JSONEncoding.default
+            JSONEncoding.default
         }
     }
     
@@ -69,6 +76,11 @@ extension SummariesAPI: BaseAPI {
         switch self {
         case .initiateSummary(let dto):
             .requestJSONEncodable(dto)
+        case .search(let word):
+            .requestParameters(
+                parameters: ["searchWord" : word],
+                encoding: parameterEncoding
+            )
         default:
             .requestPlain
         }

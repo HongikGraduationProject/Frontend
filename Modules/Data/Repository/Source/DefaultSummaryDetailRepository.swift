@@ -14,28 +14,14 @@ import Util
 
 public class DefaultSummaryDetailRepository: SummaryDetailRepository {
     
-    public struct Dependency {
-        let coreDataService: CoreDataService
-        let summaryService: SummaryService
-        public init(coreDataService: CoreDataService, summaryService: SummaryService) {
-            self.coreDataService = coreDataService
-            self.summaryService = summaryService
-        }
-    }
+    @Injected private var coreDataService: CoreDataService
+    @Injected private var summaryService: SummaryService
     
-    // Caching
+    // Memory cacheing
     private let cacheStorage: ThreadSafeDictionary<Int, SummaryDetail> = .init()
     
-    // Init
-    private let coreDataService: CoreDataService
-    private let summaryService: SummaryService
-    
-    public init(
-        dependency: Dependency
-    ) {
-        self.coreDataService = dependency.coreDataService
-        self.summaryService = dependency.summaryService
-        
+    public init() {
+
         // 캐시를 WarnUp합니다.
         warmUpCache()
     }

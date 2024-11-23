@@ -6,19 +6,19 @@
 //
 
 import Foundation
+
 import UseCase
 import DataSource
-import RxSwift
 import Entity
 import Util
 
+import RxSwift
+
 public class DefaultAuthRepository: AuthRepository {
 
-    let authService: AuthService
+    @Injected private var authService: AuthService
     
-    public init(authService: AuthService) {
-        self.authService = authService
-    }
+    public init() { }
     
     public func checkAuthTokenExists() -> Bool {
         if let accessToken: String = UserDefaultsDataSource.shared.fetchData(key: .accessToken) {
