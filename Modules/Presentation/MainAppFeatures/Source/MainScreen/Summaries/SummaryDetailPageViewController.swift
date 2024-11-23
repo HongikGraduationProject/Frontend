@@ -16,10 +16,6 @@ import PresentationUtil
 import RxCocoa
 import RxSwift
 
-fileprivate enum SummariesVCConfig {
-    static let tabItemWidth: CGFloat = 54
-}
-
 class SummaryDetailPageViewController: BaseVC {
     
     // Init
@@ -100,7 +96,7 @@ class SummaryDetailPageViewController: BaseVC {
         let itemViews = MainCategory.allCases.map { cat in
             let itemVew = MainCategoryTabButton(
                 mainCategory: cat,
-                itemWidth: SummariesVCConfig.tabItemWidth
+                itemWidth: 54
             )
             mainCategoryTabItems[cat] = itemVew
             return itemVew
@@ -131,7 +127,7 @@ class SummaryDetailPageViewController: BaseVC {
         summariesTableView.register(Cell.self, forCellReuseIdentifier: Cell.identifier)
         summariesTableView.separatorStyle = .none
         summariesTableView.delaysContentTouches = false
-        summariesTableView.rowHeight = UITableView.automaticDimension
+        summariesTableView.rowHeight = 160
     }
     
     override func viewDidLoad() {
