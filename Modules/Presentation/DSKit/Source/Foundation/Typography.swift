@@ -20,11 +20,21 @@ public struct Typography {
 
     public func attributes() -> [NSAttributedString.Key: Any] {
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = lineHeightMultiple
+        
+        let lineHeight = font.lineHeight * lineHeightMultiple
+        
+        paragraphStyle.minimumLineHeight = lineHeight
+        paragraphStyle.maximumLineHeight = lineHeight
+            
+        let wordMinHeight = font.ascender + abs(font.descender)
+            
+        let baseLineOffset = (lineHeight-wordMinHeight) / 2
+        
         return [
             .font: font,
             .kern: kerning,
-            .paragraphStyle: paragraphStyle
+            .paragraphStyle: paragraphStyle,
+            .baselineOffset : baseLineOffset
         ]
     }
 }
