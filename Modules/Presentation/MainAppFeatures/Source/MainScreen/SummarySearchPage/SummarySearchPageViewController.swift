@@ -28,6 +28,10 @@ class SummarySearchPageViewController: BaseVC {
         view.backgroundColor = DSColors.gray5.color
         return view
     }()
+    private let searchButton: TappableUIView = {
+        let view = TappableUIView()
+        return view
+    }()
     
     // MARK: TableView
     typealias Cell = SummaySearchCell
@@ -55,6 +59,7 @@ class SummarySearchPageViewController: BaseVC {
         
         setAppearance()
         setLayout()
+        setObservable()
         setTableView()
     }
     
@@ -91,9 +96,24 @@ class SummarySearchPageViewController: BaseVC {
         
         let searchIcon = UIImageView(image: DSKitAsset.Images.search.image)
         
+        searchButton.addSubview(searchIcon)
+        searchIcon.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            
+            searchIcon.topAnchor.constraint(
+                equalTo: searchButton.topAnchor),
+            searchIcon.bottomAnchor.constraint(
+                equalTo: searchButton.bottomAnchor),
+            searchIcon.leftAnchor.constraint(
+                equalTo: searchButton.leftAnchor),
+            searchIcon.rightAnchor.constraint(
+                equalTo: searchButton.rightAnchor),
+        ])
+        
         let searchStack: HStack = .init([
             searchField,
-            searchIcon
+            searchButton
         ], spacing: 10, alignment: .center, distribution: .fill)
         
         searchArea.addSubview(searchStack)
@@ -117,7 +137,8 @@ class SummarySearchPageViewController: BaseVC {
             searchStack.rightAnchor.constraint(
                 equalTo: searchArea.layoutMarginsGuide.rightAnchor),
             
-            searchIcon.widthAnchor.constraint(equalToConstant: 24),
+            searchButton.widthAnchor.constraint(equalToConstant: 24),
+            searchButton.heightAnchor.constraint(equalTo: searchIcon.widthAnchor),
         ])
     }
     
@@ -155,6 +176,17 @@ class SummarySearchPageViewController: BaseVC {
             summariesTableView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             summariesTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
+    }
+    
+    private func setObservable() {
+        
+        searchButton.rx.tap
+            .withUnretained(self)
+            .subscribe(onNext: { vc, _ in
+                
+                vc.searchField.resignFirstResponder()
+            })
+            .disposed(by: disposeBag)
     }
     
     private func setTableView() {
