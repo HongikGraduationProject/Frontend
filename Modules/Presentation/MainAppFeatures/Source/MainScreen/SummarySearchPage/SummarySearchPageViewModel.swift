@@ -107,6 +107,12 @@ class SummarySearchPageViewModel: SummarySearchPageViewModelable {
             .withUnretained(self)
             .subscribe(onNext: { viewModel, details in
                 
+                // Detail sorting
+                let sortedDetails = details.sorted {
+                    
+                    $0.createdAt > $1.createdAt
+                }
+                
                 viewModel.data = details
                 
                 let identifiers = details.map({ $0.videoCode })
