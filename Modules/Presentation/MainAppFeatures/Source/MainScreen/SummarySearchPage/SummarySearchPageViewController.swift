@@ -47,7 +47,6 @@ class SummarySearchPageViewController: BaseVC {
         
         setTextField()
         setSearchUI()
-        setTableView()
     }
     required init?(coder: NSCoder) { nil }
     
@@ -56,6 +55,7 @@ class SummarySearchPageViewController: BaseVC {
         
         setAppearance()
         setLayout()
+        setTableView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -178,7 +178,7 @@ class SummarySearchPageViewController: BaseVC {
         summariesTableView.dataSource = tableViewDataSource
         summariesTableView.delegate = self
         summariesTableView.register(Cell.self, forCellReuseIdentifier: Cell.identifier)
-        summariesTableView.separatorStyle = .none
+        summariesTableView.separatorStyle = .singleLine
         summariesTableView.delaysContentTouches = false
         summariesTableView.rowHeight = 65
     }
@@ -197,10 +197,7 @@ class SummarySearchPageViewController: BaseVC {
             
                 var snapShot: NSDiffableDataSourceSnapshot<Int, String> = .init()
                 snapShot.appendSections([0])
-                
-                let idSet = Set(identifiers)
-                
-                snapShot.appendItems(Array(idSet), toSection: 0)
+                snapShot.appendItems(identifiers, toSection: 0)
                 
                 tableViewDataSource.apply(snapShot, animatingDifferences: false)
             })

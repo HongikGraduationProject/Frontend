@@ -113,9 +113,9 @@ class SummarySearchPageViewModel: SummarySearchPageViewModelable {
                     $0.createdAt > $1.createdAt
                 }
                 
-                viewModel.data = details
+                viewModel.data = sortedDetails
                 
-                let identifiers = details.map({ $0.videoCode })
+                let identifiers = sortedDetails.map({ $0.videoCode })
                 
                 viewModel
                     .cellIdentifierPublisher

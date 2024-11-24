@@ -28,7 +28,8 @@ public class DefaultSummarySearchUseCase: SummarySearchUseCase {
             .requestSearchedItems(searchWord: searchWord)
             .flatMap { [detailRepository] items in
                 
-                var willRequestItems = items
+                // 중복 아이디 제거
+                var willRequestItems = Array(Set(items))
                 
                 if willRequestItems.count > 15 {
                     
