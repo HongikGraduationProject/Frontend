@@ -47,8 +47,8 @@ class SummaySearchCell: UITableViewCell {
         NSLayoutConstraint.activate([
             
             labelStack.topAnchor.constraint(equalTo: contentView.topAnchor),
-            labelStack.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            labelStack.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            labelStack.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
+            labelStack.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
             labelStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }

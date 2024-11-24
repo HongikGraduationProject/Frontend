@@ -47,6 +47,7 @@ class SummarySearchPageViewController: BaseVC {
         
         setTextField()
         setSearchUI()
+        setTableView()
     }
     required init?(coder: NSCoder) { nil }
     
@@ -125,7 +126,8 @@ class SummarySearchPageViewController: BaseVC {
         
         [
             navigationBar,
-            searchArea
+            searchArea,
+            summariesTableView,
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
@@ -147,6 +149,11 @@ class SummarySearchPageViewController: BaseVC {
                 constant: -10
             ),
             searchArea.heightAnchor.constraint(equalToConstant: 52),
+            
+            summariesTableView.topAnchor.constraint(equalTo: searchArea.bottomAnchor, constant: 30),
+            summariesTableView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
+            summariesTableView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
+            summariesTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
     
@@ -169,10 +176,11 @@ class SummarySearchPageViewController: BaseVC {
             return cell
         })
         summariesTableView.dataSource = tableViewDataSource
+        summariesTableView.delegate = self
         summariesTableView.register(Cell.self, forCellReuseIdentifier: Cell.identifier)
         summariesTableView.separatorStyle = .none
         summariesTableView.delaysContentTouches = false
-        summariesTableView.rowHeight = 160
+        summariesTableView.rowHeight = 65
     }
     
     
@@ -189,9 +197,12 @@ class SummarySearchPageViewController: BaseVC {
             
                 var snapShot: NSDiffableDataSourceSnapshot<Int, String> = .init()
                 snapShot.appendSections([0])
-                snapShot.appendItems(identifiers, toSection: 0)
                 
-                tableViewDataSource.apply(snapShot, animatingDifferences: true)
+                let idSet = Set(identifiers)
+                
+                snapShot.appendItems(Array(idSet), toSection: 0)
+                
+                tableViewDataSource.apply(snapShot, animatingDifferences: false)
             })
             .disposed(by: disposeBag)
         
@@ -202,10 +213,18 @@ class SummarySearchPageViewController: BaseVC {
             .compactMap({ $0 })
             .bind(to: viewModel.searchingText)
             .disposed(by: disposeBag)
+        
+        navigationBar
+            .backButton.rx.tap
+            .bind(to: viewModel.exitButtonClicked)
+            .disposed(by: disposeBag)
     }
 }
 
-#Preview("", traits: .defaultLayout, body: {
-
-    SummarySearchPageViewController()
-})
+extension SummarySearchPageViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        viewModel?.clickedCellIndex.onNext(indexPath.item)
+    }
+}

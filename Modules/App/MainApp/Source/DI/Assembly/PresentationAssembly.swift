@@ -10,6 +10,5 @@ import Swinject
 import UseCase
 
 public struct PresentationAssembly: Assembly {
-    public func assemble(container: Container) {
-    }
+    public func assemble(container: Container) { }
 }

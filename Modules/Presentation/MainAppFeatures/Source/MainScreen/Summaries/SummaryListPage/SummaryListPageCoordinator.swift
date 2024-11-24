@@ -67,6 +67,15 @@ public class SummaryListPageCoordinator: Coordinator {
             navigationController: navigationController
         )
         addChild(coordinator)
+        coordinator.finishDelegate = self
         coordinator.start()
+    }
+}
+
+extension SummaryListPageCoordinator: CoordinatorFinishDelegate {
+    
+    public func coordinatorDidFinish(childCoordinator: any PresentationUtil.Coordinator) {
+        
+        removeChild(childCoordinator)
     }
 }

@@ -15,15 +15,18 @@ public struct DataAssembly: Assembly {
         
         // MARK: Services
         container.register(AuthService.self) { _ in
-            return DefaultAuthService()
+            
+            DefaultAuthService()
         }
         
         container.register(SummaryService.self) { _ in
-            return DefaultSummaryService()
+            
+            DefaultSummaryService()
         }
         
         container.register(CoreDataService.self) { _ in
-            return DefaultCoreDataService()
+            
+            DefaultCoreDataService()
         }.inObjectScope(.container)
         
         container.register(RequestCountTracker.self) { _ in

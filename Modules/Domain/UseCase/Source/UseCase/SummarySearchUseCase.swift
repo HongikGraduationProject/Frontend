@@ -39,6 +39,14 @@ public class DefaultSummarySearchUseCase: SummarySearchUseCase {
                     
                     detailRepository
                         .fetchSummaryDetail(videoId: videoId)
+                        .map { detail in
+                            
+                            var _detail = detail
+                            
+                            _detail.videoId = videoId
+                            
+                            return _detail
+                        }
                 }
                 
                 return Single.zip(detailObservables)

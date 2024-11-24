@@ -73,6 +73,8 @@ public class ScrollingLabel: UIScrollView {
         let currentWidth = self.frame.width
         let distance = originWidth - currentWidth
         
+        if distance <= 0 { return }
+        
         let duration = distance / speed
         
         UIView.animateKeyframes(

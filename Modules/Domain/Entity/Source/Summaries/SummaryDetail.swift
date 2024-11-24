@@ -30,6 +30,7 @@ public struct SummaryDetail {
     public let latitude: Double?
     public let longitude: Double?
     public let videoCode: String
+    public var videoId: Int?
     
     public init(
         title: String,
