@@ -27,6 +27,8 @@ protocol SummariesVMable {
     var summaryItems: Driver<[SummaryItem]> { get }
     
     func createCellVM(videoId: Int) -> SummaryCellVM
+    
+    func requestPreferedCategories() -> [MainCategory]?
 }
 
 /// 요약화면 전체를 담당하는 VM입니다.
@@ -34,7 +36,7 @@ class SummaryListPageViewModel: SummariesVMable {
     
     @Injected private var summaryUseCase: SummaryUseCase
     @Injected private var summaryDetailRepository: SummaryDetailRepository
-    
+    @Injected private var userConfigRepository: UserConfigRepository
     
     // Navigation
     var showSummaryDetailPage: ((Int) -> ())?
@@ -47,7 +49,7 @@ class SummaryListPageViewModel: SummariesVMable {
     
     // Output
     private(set) var summaryItems: Driver<[SummaryItem]> = .empty()
-    var alert: Driver<CapAlertVO> = .empty()
+    private(set) var alert: Driver<CapAlertVO> = .empty()
     
     
     private let disposeBag = DisposeBag()
@@ -141,5 +143,10 @@ class SummaryListPageViewModel: SummariesVMable {
         }
         
         return cellVM
+    }
+    
+    func requestPreferedCategories() -> [MainCategory]? {
+        
+        userConfigRepository.getPreferedCategories()
     }
 }

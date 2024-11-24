@@ -179,6 +179,14 @@ class SummaryListPageViewController: BaseVC {
             .disposed(by: disposeBag)
         
         
+        if let preferedCategories = viewModel.requestPreferedCategories() {
+            
+            reConfigureTabOrder(
+                preferredCategory: preferedCategories
+            )
+        }
+        
+        
         // Input
         let initialEvent = Single.just((MainCategory.all))
         
