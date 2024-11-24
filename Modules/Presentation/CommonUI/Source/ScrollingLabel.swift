@@ -40,7 +40,7 @@ public class ScrollingLabel: UIScrollView {
     }
     required init?(coder: NSCoder) { nil }
     
-    func startInfiniteScrolling() {
+    private func startInfiniteScrolling() {
         
         if animator?.state == .active { return }
         
@@ -120,41 +120,13 @@ public class ScrollingLabel: UIScrollView {
     
     public func stopScrolling() {
         
-        self.layer.removeAllAnimations()
+        self.animator?.stopAnimation(true)
+        self.animator = nil
         self.contentOffset = .zero
     }
     
-    public func startScrolling(speed: CGFloat = 10) {
+    public func startScrolling() {
         
         startInfiniteScrolling()
-        
-//        stopScrolling()
-//        
-//        self.layoutIfNeeded()
-//        
-//        let originWidth = label.intrinsicContentSize.width
-//        let currentWidth = self.frame.width
-//        let distance = originWidth - currentWidth
-//        
-//        if distance <= 0 { return }
-//        
-//        let duration = distance / speed
-//        
-//        UIView.animateKeyframes(
-//            withDuration: duration,
-//            delay: 0,
-//            options: [
-//                .repeat,
-//                .calculationModeLinear,
-//                .autoreverse
-//            ],
-//            animations: {
-//                
-//                UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 1.0) {
-//                    
-//                    self.contentOffset = .init(x: distance, y: 0)
-//                }
-//            }
-//        )
     }
 }
