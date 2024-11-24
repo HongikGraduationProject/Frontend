@@ -26,11 +26,9 @@ protocol SummaryCellVMable {
     
     /// Input: 셀이 클릭됨
     var cellClicked: PublishSubject<Void> { get }
-    var viewIsAppear: BehaviorSubject<Void> { get }
     
     /// Ouptut: 요약 상세정보를 가져옵니다.
     var summaryDetail: Driver<SummaryDetail> { get }
-    var startScrollingTitleLabel: Driver<Void> { get }
     
     func requestDateDiffText(date: Date) -> String
 }
@@ -47,7 +45,6 @@ class SummaryCellVM: SummaryCellVMable {
     
     // Input
     let cellClicked: PublishSubject<Void> = .init()
-    let viewIsAppear: BehaviorSubject<Void> = .init(value: ())
     
     
     // Output
@@ -71,9 +68,6 @@ class SummaryCellVM: SummaryCellVMable {
                 self?.presentDetailPage?(videoId)
             })
             .disposed(by: disposeBag)
-        
-        startScrollingTitleLabel = viewIsAppear
-            .asDriver(onErrorDriveWith: .never())
     }
     
     func requestDetail() {

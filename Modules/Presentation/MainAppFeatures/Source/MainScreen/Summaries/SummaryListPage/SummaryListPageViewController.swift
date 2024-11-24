@@ -139,17 +139,6 @@ class SummaryListPageViewController: BaseVC {
         setObservable()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        for cell in summariesTableView.visibleCells {
-            
-            guard let summaryCell = cell as? Cell else { continue }
-            
-            summaryCell.viewModel?.viewIsAppear.onNext(())
-        }
-    }
-    
     func bindViewModel() {
         
         // Output

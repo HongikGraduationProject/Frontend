@@ -11,8 +11,15 @@ import DSKit
 
 public class ScrollingLabel: UIScrollView {
     
+    // View
     private let label: CapLabel
     
+    
+    // Animation
+    private var animator: UIViewPropertyAnimator?
+    
+    
+    // Util
     public var text: String {
         get {
             label.text ?? ""
@@ -32,6 +39,60 @@ public class ScrollingLabel: UIScrollView {
         setLayout()
     }
     required init?(coder: NSCoder) { nil }
+    
+    func startInfiniteScrolling() {
+        
+        if animator?.state == .active { return }
+        
+        self.layoutIfNeeded()
+        
+        let originWidth = label.intrinsicContentSize.width
+        let currentWidth = self.frame.width
+        let distance = originWidth - currentWidth
+        
+        if distance <= 0 { return }
+        
+        let duration = distance / 10
+        
+        executeAnimation(duration: duration, distance: distance)
+    }
+    
+    private func executeAnimation(duration: TimeInterval, distance: CGFloat) {
+        
+        let animator = UIViewPropertyAnimator(
+            duration: duration,
+            curve: .easeInOut
+        )
+        
+        animator.addAnimations { [weak self] in
+            
+            self?.contentOffset = .init(x: distance, y: 0)
+        }
+        
+        animator.addCompletion { [weak self] _ in
+            
+            let reversedAnimator = UIViewPropertyAnimator(
+                duration: duration,
+                curve: .easeInOut
+            )
+            
+            reversedAnimator.addAnimations { [weak self] in
+                
+                self?.contentOffset = .init(x: 0, y: 0)
+            }
+            
+            reversedAnimator.addCompletion { [weak self] _ in
+                
+                self?.executeAnimation(duration: duration, distance: distance)
+            }
+            
+            self?.animator = reversedAnimator
+            self?.animator?.startAnimation()
+        }
+        
+        self.animator = animator
+        self.animator?.startAnimation()
+    }
     
     private func setScrollView() {
         
@@ -63,35 +124,37 @@ public class ScrollingLabel: UIScrollView {
         self.contentOffset = .zero
     }
     
-    public func startScrolling(speed: CGFloat = 500) {
+    public func startScrolling(speed: CGFloat = 10) {
         
-        stopScrolling()
+        startInfiniteScrolling()
         
-        self.layoutIfNeeded()
-        
-        let originWidth = label.intrinsicContentSize.width
-        let currentWidth = self.frame.width
-        let distance = originWidth - currentWidth
-        
-        if distance <= 0 { return }
-        
-        let duration = distance / speed
-        
-        UIView.animateKeyframes(
-            withDuration: duration,
-            delay: 0,
-            options: [
-                .repeat,
-                .calculationModeLinear,
-                .autoreverse
-            ],
-            animations: {
-                
-                UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 1.0) {
-                    
-                    self.contentOffset = .init(x: distance, y: 0)
-                }
-            }
-        )
+//        stopScrolling()
+//        
+//        self.layoutIfNeeded()
+//        
+//        let originWidth = label.intrinsicContentSize.width
+//        let currentWidth = self.frame.width
+//        let distance = originWidth - currentWidth
+//        
+//        if distance <= 0 { return }
+//        
+//        let duration = distance / speed
+//        
+//        UIView.animateKeyframes(
+//            withDuration: duration,
+//            delay: 0,
+//            options: [
+//                .repeat,
+//                .calculationModeLinear,
+//                .autoreverse
+//            ],
+//            animations: {
+//                
+//                UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 1.0) {
+//                    
+//                    self.contentOffset = .init(x: distance, y: 0)
+//                }
+//            }
+//        )
     }
 }
