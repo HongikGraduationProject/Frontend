@@ -20,8 +20,6 @@ import UIKit
 
 public protocol Coordinator: AnyObject {
     
-    /// weak참조를 사용합니다.
-    var viewController: UIViewController? { get set }
     var navigationController: UINavigationController { get }
     var children: [Coordinator] { get set }
     var parent: Coordinator? { get set }

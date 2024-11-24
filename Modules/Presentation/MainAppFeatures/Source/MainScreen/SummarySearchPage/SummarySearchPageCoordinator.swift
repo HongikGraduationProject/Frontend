@@ -16,10 +16,9 @@ public class SummarySearchPageCoordinator: Coordinator {
     public var navigationController: UINavigationController
     
     
-    public var viewController: UIViewController?
     public var children: [Coordinator] = []
-    public var parent: (Coordinator)?
-    public var finishDelegate: (CoordinatorFinishDelegate)?
+    public weak var parent: (Coordinator)?
+    public weak var finishDelegate: (CoordinatorFinishDelegate)?
     
     
     public init(navigationController: UINavigationController) {

@@ -13,16 +13,13 @@ import Util
 
 public class ClickToStartPageCoordinator: Coordinator {
     
-    public var viewController: UIViewController?
     public let navigationController: UINavigationController
     
-    public var children: [Coordinator] = []
-    public var parent: (Coordinator)?
-    public var finishDelegate: (CoordinatorFinishDelegate)?
     
-    @Injected var userConfigRepository: UserConfigRepository
-    @Injected var videoCodeRepository: VideoCodeRepository
-    @Injected var onBoardingCheckUseCase: OnBoardingCheckUseCase
+    public var children: [Coordinator] = []
+    public weak var parent: (Coordinator)?
+    public weak var finishDelegate: (CoordinatorFinishDelegate)?
+    
     
     public init(navigationController: UINavigationController) {
         self.navigationController = navigationController

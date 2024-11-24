@@ -14,12 +14,11 @@ import Util
 
 class DefaultRootCoordinator: RootCoordinator {
     
-    var viewController: UIViewController?
     var navigationController: UINavigationController
-    var finishDelegate: CoordinatorFinishDelegate?
     
     var children: [Coordinator] = []
-    var parent: (Coordinator)?
+    weak var parent: (Coordinator)?
+    weak var finishDelegate: CoordinatorFinishDelegate?
     
     init(navigationController: UINavigationController) {
         
@@ -42,9 +41,6 @@ class DefaultRootCoordinator: RootCoordinator {
         
         let viewController = RootViewController()
         viewController.bind(viewModel: viewModel)
-        
-        
-        self.viewController = viewController
         
         
         navigationController.pushViewController(
