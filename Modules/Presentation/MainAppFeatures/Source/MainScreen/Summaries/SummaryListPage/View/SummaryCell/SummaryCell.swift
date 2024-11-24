@@ -119,6 +119,11 @@ class SummaryCell: UITableViewCell {
                 cellContentView.titleLabel.text = detail.title
                 
                 
+                // 생성일시
+                cellContentView.creationDateLabel.text = viewModel
+                    .requestDateDiffText(date: detail.createdAt)
+                
+                
                 // 카테고리 정보
                 let categoryText = detail.mainCategory.twoLetterKorWordText
                 let fullCategoryText = "\(categoryText) 카테고리에 숏폼을 저장했어요!"

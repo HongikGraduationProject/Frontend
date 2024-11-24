@@ -39,7 +39,7 @@ public class SummaryDetailViewController: BaseVC {
     let videoThumbNailView: UIImageView = {
         let view = UIImageView()
         view.backgroundColor = DSColors.gray10.color
-        view.contentMode = .scaleAspectFit
+        view.contentMode = .scaleAspectFill
         view.isUserInteractionEnabled = true
         return view
     }()
@@ -72,14 +72,14 @@ public class SummaryDetailViewController: BaseVC {
     let scriptContentLabel: CapLabel = {
         let label = CapLabel()
         label.typographyStyle = .baseRegular
-        label.attrTextColor = DSColors.gray50.color
+        label.attrTextColor = DSColors.gray60.color
         label.numberOfLines = 0
         return label
     }()
     
     
     // MARK: 맵뷰
-    let mapView: SummaryMapView = .init()
+    private let mapView: SummaryMapView = .init()
     
     
     // Observable
@@ -146,7 +146,7 @@ public class SummaryDetailViewController: BaseVC {
             playButton.centerXAnchor.constraint(equalTo: videoThumbNailView.centerXAnchor),
             playButton.centerYAnchor.constraint(equalTo: videoThumbNailView.centerYAnchor),
             
-            keywordCollectionView.heightAnchor.constraint(equalToConstant: 66),
+            keywordCollectionView.heightAnchor.constraint(equalToConstant: 100),
             
             contentView.topAnchor.constraint(equalTo: contentGuide.topAnchor),
             contentView.leftAnchor.constraint(equalTo: contentGuide.leftAnchor),

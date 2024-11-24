@@ -31,6 +31,8 @@ protocol SummaryCellVMable {
     /// Ouptut: 요약 상세정보를 가져옵니다.
     var summaryDetail: Driver<SummaryDetail> { get }
     var startScrollingTitleLabel: Driver<Void> { get }
+    
+    func requestDateDiffText(date: Date) -> String
 }
 
 class SummaryCellVM: SummaryCellVMable {
@@ -80,5 +82,23 @@ class SummaryCellVM: SummaryCellVMable {
             .asObservable()
             .bind(to: summaryDetailRelay)
             .disposed(by: disposeBag)
+    }
+    
+    func requestDateDiffText(date: Date) -> String {
+        
+        let dateDiff = Calendar.current
+            .dateComponents([.day, .hour, .minute], from: date, to: .now)
+        
+        guard let day = dateDiff.day, let hour = dateDiff.hour, let minute = dateDiff.minute else { return "이전 업데이트" }
+        
+        if day > 0 {
+            return "\(day)일 전 업데이트"
+        } else if hour > 0 {
+            return "\(hour)시간 전 업데이트"
+        } else if minute > 0 {
+            return "\(minute)분 전 업데이트"
+        } else {
+            return "방금전 업데이트"
+        }
     }
 }

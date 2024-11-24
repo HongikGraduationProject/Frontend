@@ -19,8 +19,8 @@ public class SummaryKeywordCell: UICollectionViewCell {
     // View
     public let label: CapLabel = {
         let label = CapLabel()
-        label.typographyStyle = .baseRegular
-        label.attrTextColor = DSColors.primary60.color
+        label.typographyStyle = .baseMedium
+        label.attrTextColor = DSColors.primary80.color
         label.textAlignment = .center
         return label
     }()

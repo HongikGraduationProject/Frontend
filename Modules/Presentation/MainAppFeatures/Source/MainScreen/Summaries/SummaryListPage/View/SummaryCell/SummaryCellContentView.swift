@@ -41,6 +41,13 @@ class SummaryCellContentView: TappableUIView {
         return label
     }()
     
+    let creationDateLabel: CapLabel = {
+        let label = CapLabel()
+        label.typographyStyle = .smallRegular
+        label.attrTextColor = DSColors.gray40.color
+        return label
+    }()
+    
     override init() {
         super.init()
         
@@ -62,10 +69,20 @@ class SummaryCellContentView: TappableUIView {
             alignment: .fill
         )
         
-        let summaryCaptionStack = VStack(
+        let dateIconView = UIImageView(
+            image: DSKitAsset.Images.refresh.image
+        )
+        let creationDateStack = HStack([
+            dateIconView,
+            creationDateLabel,
+        ], spacing: 3, alignment: .bottom)
+        
+        let summaryDescriptiomStack = VStack(
             [
                 labelStack,
-                Spacer()
+                Spacer(),
+                creationDateStack,
+                Spacer(height: 5)
             ],
             alignment: .fill
         )
@@ -73,7 +90,7 @@ class SummaryCellContentView: TappableUIView {
         let mainStack = HStack(
             [
                 videoImageView,
-                summaryCaptionStack,
+                summaryDescriptiomStack,
             ],
             spacing: 15,
             alignment: .fill
@@ -85,6 +102,8 @@ class SummaryCellContentView: TappableUIView {
         videoImageView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
+            
+            dateIconView.widthAnchor.constraint(equalToConstant: 16),
             
             videoImageView.widthAnchor.constraint(equalToConstant: 120),
             

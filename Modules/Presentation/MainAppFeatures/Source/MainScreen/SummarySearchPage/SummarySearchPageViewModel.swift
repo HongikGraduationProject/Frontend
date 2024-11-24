@@ -48,7 +48,6 @@ class SummarySearchPageViewModel: SummarySearchPageViewModelable {
     init() {
            
         searchingText
-            .filter({ !$0.isEmpty })
             .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
             .withUnretained(self)
             .subscribe { (viewModel, word) in
@@ -89,6 +88,14 @@ class SummarySearchPageViewModel: SummarySearchPageViewModelable {
     private var searchTask: Disposable?
     
     private func requestSearchResult(word: String) {
+        
+        if word.isEmpty {
+            
+            self.data = []
+            self.cellIdentifierPublisher.onNext([])
+            
+            return
+        }
         
         // 기존의 작업 종료
         searchTask?.dispose()
