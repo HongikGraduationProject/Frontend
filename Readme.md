@@ -1,8 +1,30 @@
-# Shorcap iOS
+![숏캡 썸네일](https://github.com/user-attachments/assets/4c40e92d-38a2-4363-bf7b-a5dd250b3514)
 
-숏캡 어플리케이션 iOS 레포지토리 입니다.
+## About ShortCap
 
-# Application features
+<table>
+    <tr>
+        <td><span>소속</span></td>
+        <td><span>2024학년도 홍익대학교 컴퓨터공학과 창직종합설계프로젝트, IT 연합동아리 코테이토 9기</span></td>
+    </tr>
+    <tr>
+        <td><span>개발기간</span></td>
+        <td><span>2024.03 ~ 2024.11</span></td>
+    </tr>
+    <tr>
+        <td><span>사용기술</span></td>
+        <td><span>Swift, UIKit, RxSwift, MVVM-C</span></td>
+    </tr>
+</table>
+
+💡 기존의 숏폼 플랫폼에서 제공하는 ‘저장하기’ 기능은 단순히 숏폼의 썸네일만을 나열하여 보여주며 분류, 검색과 같은 사용자 친화적인 기능을 제공하지 있지 않습니다.
+
+이로 인해 사용자는 저장했던 영상 중 원하는 영상을 찾기 위해 무한정 스크롤을 내리며 영상들을 일일이 확인해야합니다.
+
+이러한 불편함을 해소시켜주기 위해 사용자가 저장한 숏폼을 자동으로 요약 및 분류해주는 ‘숏폼 동영상 자동 요약 및 분류 앱’, `숏캡(ShortCap)`을 개발하게 되었습니다. 
+
+
+## Application features
 
 <table>
 <tr>
@@ -42,7 +64,7 @@
 
 
 
-# Tech features
+# iOS tech features
 
 ## 클린 아키텍처
 
