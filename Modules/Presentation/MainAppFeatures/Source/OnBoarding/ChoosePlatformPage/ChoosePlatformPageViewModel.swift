@@ -9,7 +9,7 @@ import UIKit
 
 import Entity
 import PresentationUtil
-import UseCase
+import RepositoryInterface
 import Util
 
 import RxSwift

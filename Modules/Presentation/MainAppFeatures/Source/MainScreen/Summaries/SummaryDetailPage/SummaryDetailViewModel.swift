@@ -9,7 +9,7 @@ import UIKit
 
 import Entity
 import DSKit
-import UseCase
+import RepositoryInterface
 import Util
 
 import RxCocoa

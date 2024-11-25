@@ -7,7 +7,7 @@
 
 import Foundation
 
-import UseCase
+import RepositoryInterface
 import DataSource
 import Entity
 import Util

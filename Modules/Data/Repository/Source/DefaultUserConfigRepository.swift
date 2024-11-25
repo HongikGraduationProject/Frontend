@@ -6,8 +6,9 @@
 //
 
 import Foundation
+
 import Entity
-import UseCase
+import RepositoryInterface
 import DataSource
 
 public class DefaultUserConfigRepository: UserConfigRepository {

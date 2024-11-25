@@ -11,6 +11,7 @@ import UniformTypeIdentifiers
 import Entity
 import UseCase
 import Repository
+import RepositoryInterface
 import DataSource
 import RxCocoa
 import RxSwift

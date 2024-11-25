@@ -6,9 +6,12 @@
 //
 
 import Foundation
-import RxSwift
+
+import RepositoryInterface
 import Entity
 import Util
+
+import RxSwift
 
 public protocol UseCaseBase: AnyObject { }
 

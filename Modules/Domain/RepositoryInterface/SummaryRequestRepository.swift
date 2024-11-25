@@ -11,9 +11,6 @@ import RxSwift
 
 public protocol SummaryRequestRepository {
     
-    /// 요약성공한 모든 요약정보를 가져옵니다.
-    func fetchAllSummaryItems() -> RxSwift.Single<[Entity.SummaryItem]>
-    
     /// 특정 비디오의 요약상태를 확인합니다.
     func checkSummaryState(videoCode: String) -> Single<SummaryStatus>
     

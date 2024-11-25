@@ -8,7 +8,7 @@
 import Foundation
 
 import Entity
-import UseCase
+import RepositoryInterface
 import DSKit
 import Util
 

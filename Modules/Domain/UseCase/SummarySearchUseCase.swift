@@ -5,6 +5,7 @@
 //  Created by choijunios on 11/24/24.
 //
 
+import RepositoryInterface
 import Entity
 import Util
 

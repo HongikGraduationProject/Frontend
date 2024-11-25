@@ -6,14 +6,17 @@
 //
 
 import UIKit
-import RxCocoa
-import RxSwift
-import Entity
+
 import DSKit
+import Entity
 import UseCase
+import RepositoryInterface
 import Util
 import CommonUI
 import PresentationUtil
+
+import RxCocoa
+import RxSwift
 
 public protocol SelectMainCategoryViewModelable: AnyObject, BaseVMable, CategorySelectionCellViewModelable {
     

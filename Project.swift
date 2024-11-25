@@ -171,12 +171,12 @@ let project = Project(
         
         // MARK: Domain
         .target(
-            name: "UseCase",
+            name: "RepositoryInterface",
             destinations: .iOS,
             product: .framework,
-            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).usecase",
+            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).repoInterface",
             deploymentTargets: DeploymentSettings.deploymentVersion,
-            sources: ["Modules/Domain/UseCase/Source/**"],
+            sources: ["Modules/Domain/RepositoryInterface/**"],
             dependencies: [
                 // Util
                 .target(name: "Util"),
@@ -185,13 +185,31 @@ let project = Project(
                 .target(name: "Entity"),
             ]
         ),
+        
+        .target(
+            name: "UseCase",
+            destinations: .iOS,
+            product: .framework,
+            bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).usecase",
+            deploymentTargets: DeploymentSettings.deploymentVersion,
+            sources: ["Modules/Domain/UseCase/**"],
+            dependencies: [
+                // Util
+                .target(name: "Util"),
+                
+                // Domain
+                .target(name: "RepositoryInterface"),
+                .target(name: "Entity"),
+            ]
+        ),
+        
         .target(
             name: "Entity",
             destinations: .iOS,
             product: .framework,
             bundleId: "\(DeploymentSettings.bundleIdentifierPrefix).entity",
             deploymentTargets: DeploymentSettings.deploymentVersion,
-            sources: ["Modules/Domain/Entity/Source/**"]
+            sources: ["Modules/Domain/Entity/**"]
         ),
         
         
@@ -227,7 +245,7 @@ let project = Project(
             deploymentTargets: DeploymentSettings.deploymentVersion,
             sources: ["Modules/Data/Repository/Source/**"],
             dependencies: [
-                .target(name: "UseCase"),
+                .target(name: "RepositoryInterface"),
                 .target(name: "DataSource"),
             ]
         ),

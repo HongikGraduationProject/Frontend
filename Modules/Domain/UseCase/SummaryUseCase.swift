@@ -6,9 +6,12 @@
 //
 
 import Foundation
+
+import RepositoryInterface
 import Entity
-import RxSwift
 import Util
+
+import RxSwift
 
 public protocol SummaryUseCase: UseCaseBase {
     
@@ -27,6 +30,7 @@ public protocol SummaryUseCase: UseCaseBase {
 public class DefaultSummaryUseCase: SummaryUseCase {
     
     @Injected var summaryRequestRepository: SummaryRequestRepository
+    @Injected var summarizedItemRepository: SummarizedItemRepository
     @Injected var summaryDetailRepository: SummaryDetailRepository
     @Injected var videoCodeRepository: VideoCodeRepository
     @Injected var requestCounter: RequestCountTracker
@@ -48,8 +52,8 @@ public class DefaultSummaryUseCase: SummaryUseCase {
     
     public func requestFetchSummarriedItems() -> Single<Result<Void, SummariesError>> {
         
-        let task = summaryRequestRepository
-            .fetchAllSummaryItems()
+        let task = summarizedItemRepository
+            .requestAllSummaryItems()
             .map { [weak self] items in
                 
                 guard let self else { return }

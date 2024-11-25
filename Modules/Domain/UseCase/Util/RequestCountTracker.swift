@@ -7,11 +7,14 @@
 
 import Foundation
 
-import Entity
-import UseCase
-
-
 import RxSwift
+
+public protocol RequestCountTracker {
+    
+    func requestRequestCount(videoCode: String) -> Single<Int>
+    
+    func countUpRequestCount(videoCode: String)
+}
 
 public class DefaultRequestCountTracker: RequestCountTracker {
     

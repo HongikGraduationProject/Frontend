@@ -8,6 +8,7 @@
 import UIKit
 
 import Entity
+import RepositoryInterface
 import UseCase
 import CommonUI
 import Util

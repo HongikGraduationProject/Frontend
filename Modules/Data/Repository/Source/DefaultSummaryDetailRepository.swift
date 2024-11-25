@@ -6,11 +6,13 @@
 //
 
 import Foundation
-import UseCase
+
+import RepositoryInterface
 import Entity
 import DataSource
-import RxSwift
 import Util
+
+import RxSwift
 
 public class DefaultSummaryDetailRepository: SummaryDetailRepository {
     

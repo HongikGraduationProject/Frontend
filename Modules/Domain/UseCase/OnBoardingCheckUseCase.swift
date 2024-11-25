@@ -6,7 +6,11 @@
 //
 
 import Foundation
+
+import RepositoryInterface
 import Entity
+import Util
+
 import RxSwift
 
 public protocol OnBoardingCheckUseCase: UseCaseBase {
@@ -20,27 +24,11 @@ public protocol OnBoardingCheckUseCase: UseCaseBase {
 
 public class DefaultOnBoardingCheckUseCase: OnBoardingCheckUseCase {
     
-    public struct Dependency {
-        let userConfigRepository: UserConfigRepository
-        let summaryRequestRepository: SummaryRequestRepository
-        let videoCodeRepository: VideoCodeRepository
-        
-        public init(userConfigRepository: UserConfigRepository, summaryRequestRepository: SummaryRequestRepository, videoCodeRepository: VideoCodeRepository) {
-            self.userConfigRepository = userConfigRepository
-            self.summaryRequestRepository = summaryRequestRepository
-            self.videoCodeRepository = videoCodeRepository
-        }
-    }
+    @Injected private var userConfigRepository: UserConfigRepository
+    @Injected private var summarizedItemRepository: SummarizedItemRepository
+    @Injected private var videoCodeRepository: VideoCodeRepository
     
-    let userConfigRepository: UserConfigRepository
-    let summaryRequestRepository: SummaryRequestRepository
-    let videoCodeRepository: VideoCodeRepository
-    
-    public init(dependency: Dependency) {
-        self.userConfigRepository = dependency.userConfigRepository
-        self.summaryRequestRepository = dependency.summaryRequestRepository
-        self.videoCodeRepository = dependency.videoCodeRepository
-    }
+    public init() { }
     
     public func checkingSelectedCategoriesExists() -> Bool {
         let categories = userConfigRepository.getPreferedCategories()
@@ -49,8 +37,8 @@ public class DefaultOnBoardingCheckUseCase: OnBoardingCheckUseCase {
     
     public func checkingSummariesExists() -> RxSwift.Single<Result<Bool, Entity.SummariesError>> {
         
-        let task = summaryRequestRepository
-            .fetchAllSummaryItems()
+        let task = summarizedItemRepository
+            .requestAllSummaryItems()
             .map { [videoCodeRepository] items in
                 // 비디오 코드수 + 요약된 리스트
                 let videoCodes = videoCodeRepository.getVideoCodes()

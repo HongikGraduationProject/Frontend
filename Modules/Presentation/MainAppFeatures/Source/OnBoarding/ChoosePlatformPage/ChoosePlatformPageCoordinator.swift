@@ -8,7 +8,7 @@
 import UIKit
 
 import PresentationUtil
-import UseCase
+import RepositoryInterface
 import Util
 
 public class ChoosePlatformPageCoordinator: Coordinator {

@@ -6,7 +6,11 @@
 //
 
 import Foundation
+
+import RepositoryInterface
 import Entity
+import Util
+
 import RxSwift
 
 /// 유저의 인증/인가 유스케이스
@@ -22,11 +26,9 @@ public protocol AuthUseCase: UseCaseBase {
 
 public class DefaultAuthUseCase: AuthUseCase {
     
-    let authRepository: AuthRepository
+    @Injected private var authRepository: AuthRepository
     
-    public init(authRepository: AuthRepository) {
-        self.authRepository = authRepository
-    }
+    public init() { }
     
     public func checkIsExistingMemeber() -> Bool {
         authRepository.checkAuthTokenExists()

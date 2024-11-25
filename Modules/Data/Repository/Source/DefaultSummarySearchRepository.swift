@@ -5,7 +5,7 @@
 //  Created by choijunios on 11/24/24.
 //
 
-import UseCase
+import RepositoryInterface
 import DataSource
 import Util
 
