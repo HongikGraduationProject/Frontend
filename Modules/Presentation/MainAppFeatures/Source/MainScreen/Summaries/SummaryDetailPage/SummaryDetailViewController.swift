@@ -13,7 +13,7 @@ import UseCase
 import CommonUI
 import PresentationUtil
 
-import Kingfisher
+import SimpleImageProvider
 import RxCocoa
 import RxSwift
 
@@ -204,19 +204,20 @@ public class SummaryDetailViewController: BaseVC {
                     guard let self else { return }
                     
                     // 썸네일
-                    if let rawCode = detail.rawVideoCode,
-                       let thumbNailUrl = URL(string: "https://img.youtube.com/vi/\(rawCode)/maxresdefault.jpg") {
+                    if let rawCode = detail.rawVideoCode {
                         
-                        let processor = DownsamplingImageProcessor(size: videoThumbNailView.bounds.size)
+                        let thumbNailUrl = "https://img.youtube.com/vi/\(rawCode)/maxresdefault.jpg"
                         
-                        videoThumbNailView.kf.setImage(
-                            with: thumbNailUrl,
-                            options: [
-                                .processor(processor),
-                                .scaleFactor(UIScreen.main.scale),
-                                .transition(.fade(0.25)),
-                                .cacheOriginalImage
-                            ])
+                        videoThumbNailView
+                            .simple
+                            .setImage(
+                                url: thumbNailUrl,
+                                size: .init(
+                                    width: UIScreen.main.bounds.width-40,
+                                    height: 160
+                                ),
+                                fadeOutDuration: 0.25
+                            )
                     }
                     
                     titleLabel.text = detail.title

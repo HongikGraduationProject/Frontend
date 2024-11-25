@@ -79,7 +79,7 @@ let project = Project(
             dependencies: [
                 .target(name: "CommonFeature"),
                 
-                .external(name: "Kingfisher"),
+                .external(name: "SimpleImageProvider"),
                 .external(name: "Junios.NMapSDKForSPM"),
             ]
         ),

@@ -13,7 +13,7 @@ import CommonUI
 
 import RxSwift
 import RxCocoa
-import Kingfisher
+import SimpleImageProvider
 
 class SummaryCell: UITableViewCell {
     
@@ -100,24 +100,17 @@ class SummaryCell: UITableViewCell {
                     
                     // 셀 썸네일
                     
-                    if let rawCode = detail.rawVideoCode, let thumbNailUrl = URL(string: "https://img.youtube.com/vi/\(rawCode)/mqdefault.jpg") {
+                    if let rawCode = detail.rawVideoCode {
                         
-                        let thumbNailView = cellContentView.videoImageView
+                        let thumbNailUrl = "https://img.youtube.com/vi/\(rawCode)/mqdefault.jpg"
                         
-                        let processor = DownsamplingImageProcessor(size: thumbNailView.bounds.size)
-                        
-                        thumbNailView.kf.setImage(
-                            with: thumbNailUrl,
-                            options: [
-                                    .processor(processor),
-                                    .scaleFactor(UIScreen.main.scale),
-                                    .transition(.fade(0.25)),
-                                    .cacheOriginalImage
-                            ])
-                        
-                        cellContentView.videoImageView.kf.setImage(with: thumbNailUrl)
+                        cellContentView.videoImageView.simple
+                            .setImage(
+                                url: thumbNailUrl,
+                                size: .init(width: 120, height: 160),
+                                fadeOutDuration: 0.25
+                            )
                     }
-                    
                     
                     // 메인 타이틀 정보
                     cellContentView.titleLabel.text = detail.title
