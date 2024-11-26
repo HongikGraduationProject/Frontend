@@ -17,8 +17,6 @@ import RxSwift
 
 public class BaseNetworkService<TagetAPI: BaseAPI> {
     
-    @Injected private var networkConfigController: NetworkConfigController
-        
     private lazy var providerWithToken: MoyaProvider<TagetAPI> = {
         
         let provider = MoyaProvider<TagetAPI>(session: sessionWithToken)

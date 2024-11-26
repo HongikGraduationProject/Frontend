@@ -16,17 +16,11 @@ public protocol NetworkConfigController {
 
 public class DefaultNetworkConfigController: NetworkConfigController {
     
-    private let keyForBaseURL = "kBaseURL"
-    
-    private var baseURL: String? {
-        UserDefaults.standard.string(forKey: keyForBaseURL)
-    }
-    
     public init() { }
     
     public func requestBaseURL() -> String? {
         
-        keyForBaseURL
+        UserDefaultsDataSource.shared.fetchData(key: .baseURL)
     }
     
     public func requestChangeBaseURL(baseURL: String) throws {
@@ -37,6 +31,6 @@ public class DefaultNetworkConfigController: NetworkConfigController {
         
         guard let _ = try regex.wholeMatch(in: baseURL) else { return }
         
-        UserDefaults.standard.set(baseURL, forKey: keyForBaseURL)
+        UserDefaultsDataSource.shared.saveData(key: .baseURL, value: baseURL)
     }
 }

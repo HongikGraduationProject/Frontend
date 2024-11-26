@@ -14,6 +14,12 @@ import Swinject
 public struct DataAssembly: Assembly {
     public func assemble(container: Container) {
         
+        // MARK: Network config
+        container.register(NetworkConfigController.self) { _ in
+            DefaultNetworkConfigController()
+        }
+        
+        
         // MARK: Services
         container.register(AuthService.self) { _ in
             DefaultAuthService()
