@@ -26,7 +26,7 @@ public protocol AuthUseCase: UseCaseBase {
 
 public class DefaultAuthUseCase: AuthUseCase {
     
-    @LazyInject private var authRepository: AuthRepository
+    @Injected private var authRepository: AuthRepository
     
     public init() { }
     

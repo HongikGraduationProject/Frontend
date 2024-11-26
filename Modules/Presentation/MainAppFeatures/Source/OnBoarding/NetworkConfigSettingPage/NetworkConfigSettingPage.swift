@@ -17,6 +17,7 @@ struct NetworkConfigSettingView: View {
     
     @State private var inputText: String = "http://"
     @State private var presentAlert: Bool = false
+    @FocusState private var focusInputField
     
     private var onSuccess: (() -> ())?
     
@@ -34,6 +35,7 @@ struct NetworkConfigSettingView: View {
             HStack(spacing: 5) {
                 
                 TextField("baseURL 입력", text: $inputText)
+                    .focused($focusInputField)
                 
                 Button {
                     
@@ -47,7 +49,7 @@ struct NetworkConfigSettingView: View {
                         .padding(.vertical, 5)
                         .background {
                             RoundedRectangle(cornerRadius: 5)
-                                .foregroundStyle(DSColors.primary10.swiftUIColor)
+                                .foregroundStyle(DSColors.primary90.swiftUIColor)
                         }
                     
                 }
@@ -69,6 +71,10 @@ struct NetworkConfigSettingView: View {
             }
         } message: {
             Text("BaseURL이 형식에 어긋납니다.")
+        }
+        .onAppear {
+            
+            focusInputField = true
         }
     }
     

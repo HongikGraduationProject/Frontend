@@ -13,9 +13,6 @@ import Util
 
 public class ChoosePlatformPageCoordinator: Coordinator {
     
-    @Injected var videoCodeRepository: VideoCodeRepository
-    
-    
     public let navigationController: UINavigationController
     
     
