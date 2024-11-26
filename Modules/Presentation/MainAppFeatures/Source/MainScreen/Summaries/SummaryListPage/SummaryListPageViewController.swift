@@ -50,6 +50,13 @@ class SummaryListPageViewController: BaseVC {
     }()
     private let searchButton: SearchButton = .init()
     
+    // MARK: 로딩 텍스트
+    private let summaryLoadingView: SummaryLoadingView = {
+        let view = SummaryLoadingView()
+        view.alpha = 0
+        return view
+    }()
+    
     // MARK: 상단 메인카테고리 탭바
     private let mainCategoryTabContainer: HStack = {
         let stack = HStack([], spacing: 0, alignment: .fill)
@@ -77,6 +84,10 @@ class SummaryListPageViewController: BaseVC {
     
     // Observable
     private let disposeBag = DisposeBag()
+    
+    
+    // Constraints
+    private var topConstraintForTableView: NSLayoutConstraint?
     
     
     init(viewModel: SummaryListPageViewModel) {
@@ -126,6 +137,7 @@ class SummaryListPageViewController: BaseVC {
             return cell
         })
         summariesTableView.dataSource = tableViewDataSource
+        summariesTableView.delegate = self
         summariesTableView.register(Cell.self, forCellReuseIdentifier: Cell.identifier)
         summariesTableView.separatorStyle = .none
         summariesTableView.delaysContentTouches = false
@@ -159,11 +171,30 @@ class SummaryListPageViewController: BaseVC {
             })
             .disposed(by: disposeBag)
         
+        
         viewModel
             .alert
             .drive(onNext: { [weak self] alertVO in
 
                 self?.showAlert(alertVO: alertVO)
+            })
+            .disposed(by: disposeBag)
+        
+        
+        viewModel
+            .presentSummaryLoading
+            .drive(onNext: { [weak self] isPresented in
+                
+                guard let self else { return }
+                
+                if isPresented {
+                    
+                    startSummaryLoading()
+                } else {
+                    
+                    stopSummaryLoading()
+                }
+                
             })
             .disposed(by: disposeBag)
         
@@ -224,11 +255,16 @@ class SummaryListPageViewController: BaseVC {
             shortcapLogoView,
             mainCategoryTabScrollView,
             searchButton,
+            summaryLoadingView,
             summariesTableView,
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
+        
+        self.topConstraintForTableView = summariesTableView.topAnchor.constraint(equalTo: searchButton.bottomAnchor, constant: 10)
+        
+        self.topConstraintForTableView?.isActive = true
        
         NSLayoutConstraint.activate([
             
@@ -253,9 +289,12 @@ class SummaryListPageViewController: BaseVC {
             searchButton.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 20),
             searchButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20),
             
+            // MARK: 요약중 로딩 뷰
+            summaryLoadingView.topAnchor.constraint(equalTo: searchButton.bottomAnchor, constant: 10),
+            summaryLoadingView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
+            
             
             // MARK: 테이블뷰
-            summariesTableView.topAnchor.constraint(equalTo: searchButton.bottomAnchor, constant: 20),
             summariesTableView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
             summariesTableView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             summariesTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30),
@@ -305,5 +344,43 @@ class SummaryListPageViewController: BaseVC {
         // 첫번째 버튼은 all
         mainCategoryTabItems[.all]?.toAccent()
     }
+    
+    private func startSummaryLoading() {
+        
+        summaryLoadingView.alpha = 1
+        
+        UIView.animate(withDuration: 0.35) {
+            self.topConstraintForTableView?.constant = 54
+            self.view.layoutIfNeeded()
+        }
+        
+        summaryLoadingView.start()
+    }
+    
+    private func stopSummaryLoading() {
+        
+        DispatchQueue.main.asyncAfter(deadline: .now()+1) { [weak self] in
+            
+            guard let self else { return }
+            
+            UIView.animate(withDuration: 0.2) {
+                self.topConstraintForTableView?.constant = 10
+                self.view.layoutIfNeeded()
+            } completion: { _ in
+                self.summaryLoadingView.alpha = 0
+            }
+            
+            summaryLoadingView.stop()
+        }
+    }
 }
 
+extension SummaryListPageViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        guard let cell = cell as? Cell else { fatalError() }
+        
+        cell.cellIsAppeared()
+    }
+}

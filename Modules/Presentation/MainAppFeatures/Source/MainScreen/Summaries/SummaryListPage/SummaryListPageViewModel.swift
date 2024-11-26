@@ -26,6 +26,7 @@ protocol SummariesVMable {
     // Output
     var alert: Driver<CapAlertVO> { get }
     var summaryItems: Driver<[SummaryItem]> { get }
+    var presentSummaryLoading: Driver<Bool> { get }
     
     func createCellVM(videoId: Int) -> SummaryCellVM
     
@@ -51,10 +52,12 @@ class SummaryListPageViewModel: SummariesVMable {
     // Output
     private(set) var summaryItems: Driver<[SummaryItem]> = .empty()
     private(set) var alert: Driver<CapAlertVO> = .empty()
-    
+    private(set) var presentSummaryLoading: Driver<Bool> = .empty()
     
     private let disposeBag = DisposeBag()
     private let requestAllSummaryItems: BehaviorSubject<Void> = .init(value: ())
+    private let presentSummaryLoadingPublisher: PublishSubject<Bool> = .init()
+    private let summaryRequestErrorPublisher: PublishSubject<CapAlertVO> = .init()
     
     init() {
         
@@ -98,15 +101,17 @@ class SummaryListPageViewModel: SummariesVMable {
             .map({ _ in })
             .asObservable()
         
+        
+        // MARK: Request summary
         Observable
             .merge(initialRequestSuccess, activeNotification)
             .withUnretained(self)
             .subscribe { (vm, _) in
                 
-                vm.summaryUseCase
-                    .requestCheckNewSummary()
+                vm.requestSummary()
             }
             .disposed(by: disposeBag)
+        
         
         
         // MARK: Search button
@@ -119,8 +124,14 @@ class SummaryListPageViewModel: SummariesVMable {
             .disposed(by: disposeBag)
         
         
-        // MARK: Alert, 최초로 리스트를 불러오는 요청이 실패할 경우
-        alert = initialRequestFailure
+        
+        // MARK: Summary loading
+        self.presentSummaryLoading = presentSummaryLoadingPublisher
+            .asDriver(onErrorDriveWith: .never())
+            
+        
+        
+        let requestSummaryListErrorAlert = initialRequestFailure
             .map { error in
                 CapAlertVO(title: "요약 불러오기 오류", message: error.message,
                     info: [
@@ -131,6 +142,13 @@ class SummaryListPageViewModel: SummariesVMable {
                     ]
                 )
             }
+        
+        // MARK: Alert, 최초로 리스트를 불러오는 요청이 실패할 경우
+        self.alert = Observable
+            .merge(
+                requestSummaryListErrorAlert,
+                summaryRequestErrorPublisher
+            )
             .asDriver(onErrorDriveWith: .never())
     }
 
@@ -149,5 +167,41 @@ class SummaryListPageViewModel: SummariesVMable {
     func requestPreferedCategories() -> [MainCategory]? {
         
         userConfigRepository.getPreferedCategories()
+    }
+    
+    private func requestSummary() {
+        
+        let summaryRequestStream = summaryUseCase
+            .requestCheckNewSummary()
+        
+        // 로딩 시작
+        presentSummaryLoadingPublisher.onNext(true)
+        
+        summaryRequestStream
+            .withUnretained(self)
+            .subscribe(onNext: { viewModel, result in
+                
+                switch result {
+                case .success:
+                    
+                    // 요약 요청 로딩 종료
+                    viewModel.presentSummaryLoadingPublisher.onNext(false)
+                    
+                    
+                case .failure(let error):
+                    
+                    let alertVO: CapAlertVO = .init(
+                        title: "요청 실패",
+                        message: error.localizedDescription
+                    )
+                    
+                    // 에러 메시지 전송
+                    viewModel.summaryRequestErrorPublisher
+                        .onNext(alertVO)
+                    
+                    return
+                }
+            })
+            .disposed(by: disposeBag)
     }
 }

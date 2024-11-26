@@ -22,16 +22,7 @@ class SummaryCellContentView: TappableUIView {
         return view
     }()
     
-    let titleLabel: ScrollingLabel = {
-        let label = CapLabel()
-        label.typographyStyle = .extraLargeBold
-        label.attrTextColor = DSColors.primary80.color
-        label.textAlignment = .left
-        
-        let scrollingLabel: ScrollingLabel = .init(label: label)
-        
-        return scrollingLabel
-    }()
+    let titleLabel: ScrollingLabel = .init()
     
     let categoryLabel: CapLabel = {
         let label = CapLabel()
@@ -116,7 +107,6 @@ class SummaryCellContentView: TappableUIView {
     
     func prepareForeReuse() {
         videoImageView.image = nil
-        titleLabel.text = ""
         categoryLabel.text = ""
         
         titleLabel.stopScrolling()

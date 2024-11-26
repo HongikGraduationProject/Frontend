@@ -27,6 +27,8 @@ class SummaryCell: UITableViewCell {
     var viewModel: SummaryCellVMable?
     var disposables: [Disposable] = []
     
+    private let cellIsAppearedPublisher: PublishSubject<Void> = .init()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setAppearance()
@@ -51,7 +53,13 @@ class SummaryCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        
         contentView.frame = contentView.frame.inset(by: .init(top: 0, left: 20, bottom: 14, right: 20))
+    }
+    
+    func cellIsAppeared() {
+    
+        cellIsAppearedPublisher.onNext(())
     }
     
     private func setAppearance() { }
@@ -89,56 +97,65 @@ class SummaryCell: UITableViewCell {
         self.viewModel = viewModel
         
         
+        let bindingDisposable = viewModel
+            .summaryDetail
+            .map { [weak self] detail in
+                
+                guard let self else { return }
+                
+                // 셀 썸네일
+                
+                if let rawCode = detail.rawVideoCode {
+                    
+                    let thumbNailUrl = "https://img.youtube.com/vi/\(rawCode)/mqdefault.jpg"
+                    
+                    cellContentView.videoImageView.simple
+                        .setImage(
+                            url: thumbNailUrl,
+                            size: .init(width: 120, height: 160),
+                            fadeOutDuration: 0.25
+                        )
+                }
+                
+                // 메인 타이틀 정보
+                cellContentView.titleLabel.text = detail.title
+                
+                
+                // 생성일시
+                cellContentView.creationDateLabel.text = viewModel
+                    .requestDateDiffText(date: detail.createdAt)
+                
+                
+                // 카테고리 정보
+                let categoryText = detail.mainCategory.twoLetterKorWordText
+                let fullCategoryText = "\(categoryText) 카테고리에 숏폼을 저장했어요!"
+                let catRange = NSRange(fullCategoryText.range(of: categoryText)!, in: fullCategoryText)
+                cellContentView.categoryLabel.text = fullCategoryText
+                let font = TypographyStyle.smallBold.typography.font
+                
+                cellContentView.categoryLabel.applyAttribute(
+                    attributes: [
+                        .foregroundColor : DSColors.secondary90.color,
+                        .font : font
+                    ],
+                    range: catRange
+                )
+                
+                // 로딩 스크린 종료, 셀이 클릭가능함
+                loadingIndicatorView.turnOff()
+            }
+            .asObservable()
+        
+        
         let disposables: [Disposable?] = [
             
             // Output
-            viewModel
-                .summaryDetail
-                .drive(onNext: { [weak self] detail in
+            Observable
+                .zip(bindingDisposable, cellIsAppearedPublisher)
+                .withUnretained(self)
+                .subscribe(onNext: { cell, _ in
                     
-                    guard let self else { return }
-                    
-                    // 셀 썸네일
-                    
-                    if let rawCode = detail.rawVideoCode {
-                        
-                        let thumbNailUrl = "https://img.youtube.com/vi/\(rawCode)/mqdefault.jpg"
-                        
-                        cellContentView.videoImageView.simple
-                            .setImage(
-                                url: thumbNailUrl,
-                                size: .init(width: 120, height: 160),
-                                fadeOutDuration: 0.25
-                            )
-                    }
-                    
-                    // 메인 타이틀 정보
-                    cellContentView.titleLabel.text = detail.title
-                    cellContentView.titleLabel
-                        .startScrolling()
-                    
-                    // 생성일시
-                    cellContentView.creationDateLabel.text = viewModel
-                        .requestDateDiffText(date: detail.createdAt)
-                    
-                    
-                    // 카테고리 정보
-                    let categoryText = detail.mainCategory.twoLetterKorWordText
-                    let fullCategoryText = "\(categoryText) 카테고리에 숏폼을 저장했어요!"
-                    let catRange = NSRange(fullCategoryText.range(of: categoryText)!, in: fullCategoryText)
-                    cellContentView.categoryLabel.text = fullCategoryText
-                    let font = TypographyStyle.smallBold.typography.font
-                    
-                    cellContentView.categoryLabel.applyAttribute(
-                        attributes: [
-                            .foregroundColor : DSColors.secondary90.color,
-                            .font : font
-                        ],
-                        range: catRange
-                    )
-                    
-                    // 로딩 스크린 종료, 셀이 클릭가능함
-                    loadingIndicatorView.turnOff()
+                    cell.cellContentView.titleLabel.startScrolling()
                 }),
             
             // Input
@@ -152,12 +169,4 @@ class SummaryCell: UITableViewCell {
         // MARK: 디테일 정보 요청
         viewModel.requestDetail()
     }
-}
-
-@available(iOS 17.0, *)
-#Preview("Preview", traits: .defaultLayout) {
-    let cellContentView = SummaryCellContentView()
-    cellContentView.titleLabel.text = "테스트 타이틀"
-    cellContentView.categoryLabel.text = "테스트 카테고리"
-    return cellContentView
 }

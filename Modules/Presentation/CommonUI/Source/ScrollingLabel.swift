@@ -11,27 +11,26 @@ import DSKit
 
 public class ScrollingLabel: UIScrollView {
     
-    // View
-    private let label: CapLabel
+    private let label: CapLabel = {
+        let label: CapLabel = .init()
+        label.typographyStyle = .extraLargeBold
+        label.attrTextColor = DSColors.primary80.color
+        return label
+    }()
     
+    public var text: String? {
+        get {
+            self.label.text
+        }
+        set {
+            self.label.text = newValue
+        }
+    }
     
     // Animation
     private var animator: UIViewPropertyAnimator?
     
-    
-    // Util
-    public var text: String {
-        get {
-            label.text ?? ""
-        }
-        set {
-            label.text = newValue
-        }
-    }
-    
-    public init(label: CapLabel) {
-        
-        self.label = label
+    public init() {
         
         super.init(frame: .zero)
         
@@ -44,15 +43,13 @@ public class ScrollingLabel: UIScrollView {
         
         if animator?.state == .active { return }
         
-        self.layoutIfNeeded()
-        
         let originWidth = label.intrinsicContentSize.width
         let currentWidth = self.frame.width
         let distance = originWidth - currentWidth
         
         if distance <= 0 { return }
         
-        let duration = distance / 10
+        let duration = distance / 20
         
         executeAnimation(duration: duration, distance: distance)
     }
@@ -61,7 +58,7 @@ public class ScrollingLabel: UIScrollView {
         
         let animator = UIViewPropertyAnimator(
             duration: duration,
-            curve: .easeInOut
+            curve: .linear
         )
         
         animator.addAnimations { [weak self] in
@@ -121,7 +118,6 @@ public class ScrollingLabel: UIScrollView {
     public func stopScrolling() {
         
         self.animator?.stopAnimation(true)
-        self.animator = nil
         self.contentOffset = .zero
     }
     

@@ -1,11 +1,9 @@
 //
-//  ResultExtensionForStream.swift
-//  BaseFeature
+//  Result+Ex.swift
+//  Shortcap
 //
-//  Created by choijunios on 8/11/24.
+//  Created by choijunios on 11/26/24.
 //
-
-import Foundation
 
 public extension Result {
     var value: Success? {
