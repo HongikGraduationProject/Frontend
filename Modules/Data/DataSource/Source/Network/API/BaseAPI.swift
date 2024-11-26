@@ -6,6 +6,9 @@
 //
 
 import Foundation
+
+import Util
+
 import Moya
 
 /// Shortcap API 도메인 타입입니다.
@@ -26,7 +29,9 @@ public extension BaseAPI {
     
     var baseURL: URL {
         
-        var baseUrlString = DataSourceConfig.baseUrl
+        let configControler = DependencyInjector.shared.resolve(NetworkConfigController.self)
+        
+        var baseUrlString = configControler.requestBaseURL()!
         
         switch apiType {
         case .auth:

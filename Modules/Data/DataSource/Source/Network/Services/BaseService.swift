@@ -6,13 +6,18 @@
 //
 
 import Foundation
+
 import Entity
+import Util
+
 import Moya
 import RxMoya
 import Alamofire
 import RxSwift
 
 public class BaseNetworkService<TagetAPI: BaseAPI> {
+    
+    @Injected private var networkConfigController: NetworkConfigController
         
     private lazy var providerWithToken: MoyaProvider<TagetAPI> = {
         
