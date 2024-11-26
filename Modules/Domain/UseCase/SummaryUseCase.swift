@@ -151,6 +151,7 @@ public class DefaultSummaryUseCase: SummaryUseCase {
     }
     
     private func publishSummaryList() {
-        summariesStream.onNext(summariesList)
+        let list = Set(summariesList)
+        summariesStream.onNext(Array(list))
     }
 }

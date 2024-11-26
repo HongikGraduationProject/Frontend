@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct SummaryItem {
+public struct SummaryItem: Hashable {
     public let title: String
     public let mainCategory: MainCategory
     public let createdAt: Date
