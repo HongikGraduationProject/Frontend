@@ -15,7 +15,7 @@ class SummaryLoadingView: UIView {
     
     private let loadingTextLabel: CapLabel = {
         let label = CapLabel()
-        label.typographyStyle = .smallRegular
+        label.typographyStyle = .largeRegular
         label.attrTextColor = DSColors.gray30.color
         label.text = "요약중"
         return label
@@ -29,6 +29,7 @@ class SummaryLoadingView: UIView {
     required init?(coder: NSCoder) { nil }
     
     private func setLayout() {
+        
         let mainStack = HStack([
             loadingTextLabel,
             loadingIndicator,
@@ -38,6 +39,9 @@ class SummaryLoadingView: UIView {
         mainStack.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
+            
+            loadingIndicator.widthAnchor.constraint(equalToConstant: 44),
+            loadingIndicator.heightAnchor.constraint(equalToConstant: 44),
             
             mainStack.topAnchor.constraint(equalTo: self.topAnchor),
             mainStack.leftAnchor.constraint(equalTo: self.leftAnchor),
