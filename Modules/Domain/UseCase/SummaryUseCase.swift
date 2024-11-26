@@ -88,6 +88,11 @@ public class DefaultSummaryUseCase: SummaryUseCase {
         
         var responseCount = 0
         
+        if videoCodes.isEmpty {
+            
+            return .just(.success(()))
+        }
+        
         Observable<Void>
             .merge(observables)
             .observe(on: serialScheduler)
@@ -100,6 +105,7 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                     // 요약 요청 수만큼 응답 도착
                     
                     resultPublisher.onNext(.success(()))
+                    resultPublisher.onCompleted()
                 }
                 
             }, onError: { error in
@@ -140,7 +146,7 @@ public class DefaultSummaryUseCase: SummaryUseCase {
         
         Observable
             .combineLatest(summaryStatusRequestFailure, requestFailureCount)
-            .subscribe(onNext: { [weak self] error, fc in
+            .subscribe(onNext: { [weak self, summaryResultPublisher] error, fc in
                 
                 guard let self else { return }
                 
@@ -149,11 +155,19 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                     // 3회이상 요청 실패시
                     summaryResultPublisher.onError(error)
                     
+                    // 트레킹중이던 값 삭제
+                    requestCounter.removeRequestCount(videoCode: videoCode)
+                    requestCounter.removeFailureCount(videoCode: videoCode)
+                    
                     return
                 }
                 
+                // 실패 횟수 증가
+                requestCounter.countUpFailureCount(videoCode: videoCode)
+                
+                
                 // 지연 재귀요청
-                trackSummaryStatus(videoCode: videoCode, delaySeconds: 1.0)
+                trackSummaryStatus(videoCode: videoCode, delaySeconds: 1.5)
                     .asObservable()
                     .subscribe(summaryResultPublisher)
                     .disposed(by: disposeBag)
@@ -163,7 +177,7 @@ public class DefaultSummaryUseCase: SummaryUseCase {
         Observable
             .zip(summaryStatusRequestSuccess, requestCount)
             .delay(.milliseconds(Int(delaySeconds * 1000.0)), scheduler: ConcurrentDispatchQueueScheduler(qos: .default))
-            .subscribe(onNext: { [weak self] (requestResult, rc) in
+            .subscribe(onNext: { [weak self, summaryResultPublisher] requestResult, rc in
                 
                 guard let self else { return }
                 
@@ -180,12 +194,23 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                     requestSubDetailOfVideo(videoId: videoId)
                     
                     
+                    // 트레킹중이던 값 삭제
+                    requestCounter.removeRequestCount(videoCode: videoCode)
+                    requestCounter.removeFailureCount(videoCode: videoCode)
+                    
+                    
                     // 요약 성공 여부 전송
                     summaryResultPublisher.onNext(())
+                    summaryResultPublisher.onCompleted()
                     
                 case .processing:
                     
                     if rc >= 20 {
+                        
+                        // 트레킹중이던 값 삭제
+                        requestCounter.removeRequestCount(videoCode: videoCode)
+                        requestCounter.removeFailureCount(videoCode: videoCode)
+                        
                         
                         // 20회이상인 경우 더이상 요청하지 않고 비디오코드를 삭제한다.
                         videoCodeRepository.removeVideoCode(videoCode)
@@ -193,7 +218,7 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                     } else {
                         
                         // 지연 재귀요청
-                        trackSummaryStatus(videoCode: videoCode, delaySeconds: 1.0)
+                        trackSummaryStatus(videoCode: videoCode, delaySeconds: 1.5)
                             .asObservable()
                             .subscribe(summaryResultPublisher)
                             .disposed(by: disposeBag)
