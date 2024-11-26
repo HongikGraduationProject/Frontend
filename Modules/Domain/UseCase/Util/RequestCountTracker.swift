@@ -15,10 +15,14 @@ public protocol RequestCountTracker {
     
     func countUpRequestCount(videoCode: String)
     
+    func removeRequestCount(videoCode: String)
+    
     
     func requestFailureCount(videoCode: String) -> Single<Int>
     
     func countUpFailureCount(videoCode: String)
+    
+    func removeFailureCount(videoCode: String)
 }
 
 public class DefaultRequestCountTracker: RequestCountTracker {
@@ -70,6 +74,17 @@ public class DefaultRequestCountTracker: RequestCountTracker {
         }
     }
     
+    public func removeRequestCount(videoCode: String) {
+        
+        requestCountManagementQueue.async(flags: .barrier) { [weak self] in
+            
+            guard let self else { return }
+            
+            requestCountState.removeValue(forKey: videoCode)
+        }
+    }
+    
+    
     public func requestFailureCount(videoCode: String) -> RxSwift.Single<Int> {
         
         Single.create { [weak self] single in
@@ -100,6 +115,16 @@ public class DefaultRequestCountTracker: RequestCountTracker {
             guard let self else { return }
             
             requestFailureState[videoCode]? += 1
+        }
+    }
+    
+    public func removeFailureCount(videoCode: String) {
+        
+        requestFailureCountManagementQueue.async(flags: .barrier) { [weak self] in
+            
+            guard let self else { return }
+            
+            requestFailureState.removeValue(forKey: videoCode)
         }
     }
 }
