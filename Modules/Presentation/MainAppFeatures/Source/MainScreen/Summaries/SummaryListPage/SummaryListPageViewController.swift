@@ -137,6 +137,7 @@ class SummaryListPageViewController: BaseVC {
             return cell
         })
         summariesTableView.dataSource = tableViewDataSource
+        summariesTableView.delegate = self
         summariesTableView.register(Cell.self, forCellReuseIdentifier: Cell.identifier)
         summariesTableView.separatorStyle = .none
         summariesTableView.delaysContentTouches = false
@@ -368,3 +369,12 @@ class SummaryListPageViewController: BaseVC {
     }
 }
 
+extension SummaryListPageViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        guard let cell = cell as? Cell else { fatalError() }
+        
+        cell.cellIsAppeared()
+    }
+}
