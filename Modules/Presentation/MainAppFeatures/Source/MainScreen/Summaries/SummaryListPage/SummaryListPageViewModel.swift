@@ -181,14 +181,10 @@ class SummaryListPageViewModel: SummariesVMable {
             .withUnretained(self)
             .subscribe(onNext: { viewModel, result in
                 
-                switch result {
-                case .success:
-                    
-                    // 요약 요청 로딩 종료
-                    viewModel.presentSummaryLoadingPublisher.onNext(false)
-                    
-                    
-                case .failure(let error):
+                // 요약 요청 로딩 종료
+                viewModel.presentSummaryLoadingPublisher.onNext(false)
+                
+                if case .failure(let error) = result {
                     
                     let alertVO: CapAlertVO = .init(
                         title: "요청 실패",
@@ -198,9 +194,8 @@ class SummaryListPageViewModel: SummariesVMable {
                     // 에러 메시지 전송
                     viewModel.summaryRequestErrorPublisher
                         .onNext(alertVO)
-                    
-                    return
                 }
+                
             })
             .disposed(by: disposeBag)
     }

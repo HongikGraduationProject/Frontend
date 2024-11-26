@@ -176,7 +176,11 @@ public class DefaultSummaryUseCase: SummaryUseCase {
         
         Observable
             .zip(summaryStatusRequestSuccess, requestCount)
-            .delay(.milliseconds(Int(delaySeconds * 1000.0)), scheduler: ConcurrentDispatchQueueScheduler(qos: .default))
+            .delay(
+                .milliseconds(Int(delaySeconds * 1000.0)),
+                scheduler: ConcurrentDispatchQueueScheduler(qos: .default)
+            )
+            .observe(on: SerialDispatchQueueScheduler.init(qos: .default))
             .subscribe(onNext: { [weak self, summaryResultPublisher] requestResult, rc in
                 
                 guard let self else { return }
@@ -205,7 +209,9 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                     
                 case .processing:
                     
-                    if rc >= 20 {
+                    requestCounter.countUpRequestCount(videoCode: videoCode)
+                    
+                    if rc >= 10 {
                         
                         // 트레킹중이던 값 삭제
                         requestCounter.removeRequestCount(videoCode: videoCode)
@@ -214,6 +220,8 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                         
                         // 20회이상인 경우 더이상 요청하지 않고 비디오코드를 삭제한다.
                         videoCodeRepository.removeVideoCode(videoCode)
+                        
+                        summaryResultPublisher.onError(SummariesError.summaryRequestFailed)
                         
                     } else {
                         
