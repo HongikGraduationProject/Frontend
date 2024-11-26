@@ -61,22 +61,31 @@ class SummaryListPageViewModel: SummariesVMable {
     
     init() {
         
-        // MARK: 스트림 연결
-        let summaryItemList = summaryUseCase
-            .summariesStream
-
-        
-        // MARK: 필터적용
+        // MARK: 스트림 연결 + 필터적용
         self.summaryItems = Observable
-            .combineLatest(summaryItemList, currentSelectedCategoryForFilter)
+            .combineLatest(
+                summaryUseCase.summariesStream,
+                currentSelectedCategoryForFilter
+            )
             .map { (items, category) in
+                
+                var filteredItems: [SummaryItem] = []
                 
                 if category == .all {
                     
-                    return items
+                    filteredItems = items
+                    
+                } else {
+                    
+                    filteredItems = items.filter({ $0.mainCategory == category })
+                    
                 }
                 
-                return items.filter({ $0.mainCategory == category })
+                let sortedList = filteredItems.sorted { lhs, rhs in
+                    lhs.createdAt > rhs.createdAt
+                }
+                
+                return sortedList
             }
             .asDriver(onErrorJustReturn: [])
         

@@ -157,6 +157,11 @@ public class RootViewModel: RootViewModelable {
                         "닫기": {
                             // 어플리케이션을 강제 종료합니다.
                             exit(0)
+                        },
+                        
+                        "네트워크 주소 재입력": { [weak self] in
+                            
+                            self?.presentNetworkConfigInputPage?()
                         }
                     ]
                 )

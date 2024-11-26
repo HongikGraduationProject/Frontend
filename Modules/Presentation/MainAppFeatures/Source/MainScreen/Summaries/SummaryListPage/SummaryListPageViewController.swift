@@ -159,9 +159,8 @@ class SummaryListPageViewController: BaseVC {
             .drive(onNext: { [weak self] summaries in
                 
                 guard let self else { return }
-            
-                var snapShot: NSDiffableDataSourceSnapshot<Int, Int> = .init()
                 
+                var snapShot: NSDiffableDataSourceSnapshot<Int, Int> = .init()
                 snapShot.appendSections([0])
                 
                 let itemIds = summaries.map { $0.videoSummaryId }
@@ -359,18 +358,17 @@ class SummaryListPageViewController: BaseVC {
     
     private func stopSummaryLoading() {
         
-        DispatchQueue.main.asyncAfter(deadline: .now()+1) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now()+1.5) { [weak self] in
             
             guard let self else { return }
             
-            UIView.animate(withDuration: 0.2) {
+            UIView.animate(withDuration: 0.5) {
                 self.topConstraintForTableView?.constant = 10
                 self.view.layoutIfNeeded()
             } completion: { _ in
                 self.summaryLoadingView.alpha = 0
+                self.summaryLoadingView.stop()
             }
-            
-            summaryLoadingView.stop()
         }
     }
 }
