@@ -40,7 +40,7 @@
             <img src="https://github.com/user-attachments/assets/0b37db05-d2ca-4cfd-bda3-0c01c7a89c0c" width=300 />
         </td>
         <td>
-            <img src="https://github.com/user-attachments/assets/4585ab84-3294-4b44-b18f-7c7266ddb9b1" width=300 />
+            <img src="https://github.com/user-attachments/assets/051340f5-1cfe-4fcf-89a4-80fe2dbddc78" width=300 />
         </td>
     </tr>
     <tr>
