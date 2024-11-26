@@ -10,6 +10,9 @@ import ProjectDescription
 public enum ShorcapInfoPlist {
     
     public static let mainApp: InfoPlist = .extendingDefault(with: [
+        
+        "CFBundleShortVersionString": "1.0.0",
+        
         "NSAppTransportSecurity" : [
             "NSAllowsArbitraryLoads" : true
         ],
@@ -41,6 +44,9 @@ public enum ShorcapInfoPlist {
         "NSLocalNetworkUsageDescription": "이 앱은 로컬 네트워크를 통해 서버에 연결하여 데이터를 주고받기 위해 로컬 네트워크 접근 권한이 필요합니다.",
         
         "NMFClientId": "$(NAVER_API_CLIENT_ID)",
+        
+        // iPad 런치시 풀스크린 요구
+        "UIRequiresFullScreen": true,
     ])
     
     public static let actionExtension: InfoPlist = .extendingDefault(

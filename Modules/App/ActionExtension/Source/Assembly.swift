@@ -19,6 +19,7 @@ public struct AppExtensionAssembly: Assembly {
         container.register(NetworkConfigController.self) { _ in
             DefaultNetworkConfigController()
         }
+        .inObjectScope(.container)
         
         
         // MARK: Services

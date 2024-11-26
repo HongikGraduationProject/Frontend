@@ -29,9 +29,7 @@ public extension BaseAPI {
     
     var baseURL: URL {
         
-        let configControler = DependencyInjector.shared.resolve(NetworkConfigController.self)
-        
-        var baseUrlString = configControler.requestBaseURL()!
+        var baseUrlString = DataSourceConfig.baseUrl
         
         switch apiType {
         case .auth:

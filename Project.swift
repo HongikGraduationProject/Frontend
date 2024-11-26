@@ -12,7 +12,7 @@ let project = Project(
     targets: [
         // MARK: App
         .target(
-            name: "MainApp",
+            name: "Shortcap",
             destinations: .iOS,
             product: .app,
             productName: DeploymentSettings.productName,
