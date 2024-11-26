@@ -289,8 +289,9 @@ class SummaryListPageViewController: BaseVC {
             searchButton.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 20),
             searchButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20),
             
+            // MARK: 요약중 로딩 뷰
             summaryLoadingView.topAnchor.constraint(equalTo: searchButton.bottomAnchor, constant: 10),
-            summaryLoadingView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20),
+            summaryLoadingView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
             
             
             // MARK: 테이블뷰
@@ -358,14 +359,19 @@ class SummaryListPageViewController: BaseVC {
     
     private func stopSummaryLoading() {
         
-        UIView.animate(withDuration: 0.15) {
-            self.topConstraintForTableView?.constant = 10
-            self.view.layoutIfNeeded()
-        } completion: { _ in
-            self.summaryLoadingView.alpha = 0
+        DispatchQueue.main.asyncAfter(deadline: .now()+1) { [weak self] in
+            
+            guard let self else { return }
+            
+            UIView.animate(withDuration: 0.2) {
+                self.topConstraintForTableView?.constant = 10
+                self.view.layoutIfNeeded()
+            } completion: { _ in
+                self.summaryLoadingView.alpha = 0
+            }
+            
+            summaryLoadingView.stop()
         }
-        
-        summaryLoadingView.stop()
     }
 }
 

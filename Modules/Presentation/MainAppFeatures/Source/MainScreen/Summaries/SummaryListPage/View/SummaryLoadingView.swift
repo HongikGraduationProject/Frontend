@@ -16,7 +16,7 @@ class SummaryLoadingView: UIView {
     private let loadingTextLabel: CapLabel = {
         let label = CapLabel()
         label.typographyStyle = .largeRegular
-        label.attrTextColor = DSColors.gray30.color
+        label.attrTextColor = DSColors.gray50.color
         label.text = "요약중"
         return label
     }()
@@ -33,7 +33,7 @@ class SummaryLoadingView: UIView {
         let mainStack = HStack([
             loadingTextLabel,
             loadingIndicator,
-        ], spacing: 5, alignment: .center)
+        ], spacing: 0, alignment: .center)
         
         self.addSubview(mainStack)
         mainStack.translatesAutoresizingMaskIntoConstraints = false
