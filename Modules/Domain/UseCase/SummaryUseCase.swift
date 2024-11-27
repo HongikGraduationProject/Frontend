@@ -153,7 +153,7 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                 if fc >= 3 {
                     
                     // 3회이상 요청 실패시
-                    summaryResultPublisher.onError(error)
+                    summaryResultPublisher.onError(SummariesError.summaryRequestFailed)
                     
                     // 트레킹중이던 값 삭제
                     requestCounter.removeRequestCount(videoCode: videoCode)
