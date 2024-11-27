@@ -190,6 +190,8 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                 switch requestResult.status {
                 case .complete:
                     
+                    printIfDebug("⬇️ #\(videoId) 요약요청 작업완료")
+                    
                     // 비디오 코드 삭제요청
                     videoCodeRepository.removeVideoCode(videoCode)
                     
@@ -266,6 +268,8 @@ public class DefaultSummaryUseCase: SummaryUseCase {
     
     private func publishSummaryList() {
         let list = Set(summariesList)
-        summariesStream.onNext(Array(list))
+        let unDuplicatedList = Array(list)
+        
+        summariesStream.onNext(unDuplicatedList)
     }
 }
