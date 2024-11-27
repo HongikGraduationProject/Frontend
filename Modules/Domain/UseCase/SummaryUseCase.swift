@@ -196,18 +196,28 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                     videoCodeRepository.removeVideoCode(videoCode)
                     
                     
-                    // 요약이 완료된 숏폼으로 부터 디테일정보 추출후 전송
-                    requestSubDetailOfVideo(videoId: videoId)
-                    
-                    
                     // 트레킹중이던 값 삭제
                     requestCounter.removeRequestCount(videoCode: videoCode)
                     requestCounter.removeFailureCount(videoCode: videoCode)
                     
                     
-                    // 요약 성공 여부 전송
-                    summaryResultPublisher.onNext(())
-                    summaryResultPublisher.onCompleted()
+                    // 요약이 완료된 숏폼으로 부터 디테일정보 추출후 전송
+                    requestSubDetailOfVideo(videoId: videoId) { result in
+                        
+                        switch result {
+                        case .success:
+                            
+                            // 요약 디테일 확인 성공 여부 전송
+                            summaryResultPublisher.onNext(())
+                            summaryResultPublisher.onCompleted()
+                            
+                        case .failure(let error):
+                            
+                            // 요약 디테일 확인 실패 여부 전송
+                            summaryResultPublisher.onError(error)
+                        }
+                    }
+                    
                     
                 case .processing:
                     
@@ -241,27 +251,44 @@ public class DefaultSummaryUseCase: SummaryUseCase {
             .asSingle()
     }
     
-    private func requestSubDetailOfVideo(videoId: Int) {
+    private func requestSubDetailOfVideo(
+        videoId: Int,
+        onComplete: @escaping ((Result<Void, SummariesError>) -> ())
+    ) {
         
-        summaryDetailRepository
-            .fetchSummaryDetail(videoId: videoId)
-            .subscribe(onSuccess: { [weak self] detail in
+        let detailRequestTask: Single<Result<SummaryDetail, SummariesError>> = convert(task: summaryDetailRepository.fetchSummaryDetail(videoId: videoId))
+        
+        detailRequestTask
+            .subscribe(onSuccess: { [weak self] result in
                 
-                let item = SummaryItem(
-                    title: detail.title,
-                    mainCategory: detail.mainCategory,
-                    createdAt: detail.createdAt,
-                    videoSummaryId: videoId
-                )
+                guard let self else { return }
                 
-                self?.summariesListManagementQueue.async(flags: .barrier) { [weak self] in
-                    guard let self else { return }
+                switch result {
+                case .success(let detail):
                     
-                    summariesList.insert(item, at: 0)
+                    let item = SummaryItem(
+                        title: detail.title,
+                        mainCategory: detail.mainCategory,
+                        createdAt: detail.createdAt,
+                        videoSummaryId: videoId
+                    )
                     
-                    publishSummaryList()
+                    self.summariesListManagementQueue.async(flags: .barrier) { [weak self] in
+                        guard let self else { return }
+                        
+                        summariesList.insert(item, at: 0)
+                        
+                        publishSummaryList()
+                        
+                        onComplete(.success(()))
+                    }
+                    
+                case .failure:
+                    
+                    // 디테일 요청중 에러 발생
+                    
+                    onComplete(.failure(SummariesError.summaryDetailRequestFailed))
                 }
-                
             })
             .disposed(by: disposeBag)
     }
