@@ -132,10 +132,17 @@ public class BaseNetworkService<TagetAPI: BaseAPI> {
                         }
                     }
                 
-            } else {
-                completion(.doNotRetry)
+                return
+                
+            }
+            
+            if httpResponse.statusCode == 403 {
+                
+                printIfDebug("❌ 숏폼 권한 오류, 백엔드와 함께 조치필요")
             }
         }
+        
+        completion(.doNotRetry)
     }
     
     public init() { }
