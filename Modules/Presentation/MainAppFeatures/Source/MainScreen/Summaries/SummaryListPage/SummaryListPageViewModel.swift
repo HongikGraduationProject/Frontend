@@ -197,7 +197,7 @@ class SummaryListPageViewModel: SummariesVMable {
                     
                     let alertVO: CapAlertVO = .init(
                         title: "요청 실패",
-                        message: error.localizedDescription
+                        message: error.message
                     )
                     
                     // 에러 메시지 전송
