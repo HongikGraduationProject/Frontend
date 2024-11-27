@@ -18,13 +18,16 @@ public enum CapUserDefaultKey: String {
     
     // imei
     case imei = "imei"
+    
+    // baseURL
+    case baseURL = "baseURL"
 }
 
 /// UserDefaults를 사용하여 로컬에 데이터를 저장힙니다.
 /// App Group은 동일한 UserDefaults를 사용하도록 설정됩니다.
 public class UserDefaultsDataSource {
     
-    let userDefaults: UserDefaults! = .init(suiteName: DataSourceConfig.appGroupIdentifier)
+    private let userDefaults: UserDefaults! = .init(suiteName: DataSourceConfig.appGroupIdentifier)
     
     private init() { }
     

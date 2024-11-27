@@ -6,12 +6,15 @@
 //
 
 import Foundation
+
+import DataSource
 import Entity
-import RxSwift
-import RxCocoa
 import UseCase
 import PresentationUtil
 import Util
+
+import RxSwift
+import RxCocoa
 
 public protocol RootViewModelable: BaseVMable {
     
@@ -21,11 +24,13 @@ public protocol RootViewModelable: BaseVMable {
 
 public class RootViewModel: RootViewModelable {
     
-    @Injected var authUseCase: AuthUseCase
-    @Injected var onBoardingUseCase: OnBoardingCheckUseCase
+    @Injected private var authUseCase: AuthUseCase
+    @Injected private var onBoardingUseCase: OnBoardingCheckUseCase
+    @Injected private var networkConfigController: NetworkConfigController
     
     
     // Navigation
+    public var presentNetworkConfigInputPage: (() -> ())?
     public var presentClickToStartPage: (() -> ())?
     public var presentMainTabBar: (() -> ())?
     public var presentChoosePlatformPage: (() -> ())?
@@ -37,13 +42,30 @@ public class RootViewModel: RootViewModelable {
     // Output
     public var alert: RxCocoa.Driver<Entity.CapAlertVO>?
     
-    let disposeBag: DisposeBag = .init()
+    private let disposeBag: DisposeBag = .init()
     
     
     public init() {
         
+        // MARK: 네트워크 주소 확인 플로우
+        let checkNetworkConfigResult = viewDidLoad
+            .withUnretained(self)
+            .map { viewModel, _ in
+                
+                let result = viewModel.networkConfigController.requestBaseURL()
+                
+                if result == nil {
+                    
+                    viewModel.presentNetworkConfigInputPage?()
+                    return false
+                }
+                
+                return true
+            }
+        
         // MARK: 토큰 확인 플로우
-        let checkExistingMemberResult = viewDidLoad
+        let checkExistingMemberResult = checkNetworkConfigResult
+            .filter({ $0 })
             .map { [authUseCase] _ in
                 authUseCase.checkIsExistingMemeber()
             }
@@ -135,6 +157,11 @@ public class RootViewModel: RootViewModelable {
                         "닫기": {
                             // 어플리케이션을 강제 종료합니다.
                             exit(0)
+                        },
+                        
+                        "네트워크 주소 재입력": { [weak self] in
+                            
+                            self?.presentNetworkConfigInputPage?()
                         }
                     ]
                 )

@@ -15,6 +15,13 @@ import Swinject
 public struct AppExtensionAssembly: Assembly {
     public func assemble(container: Container) {
         
+        // MARK: Network config
+        container.register(NetworkConfigController.self) { _ in
+            DefaultNetworkConfigController()
+        }
+        .inObjectScope(.container)
+        
+        
         // MARK: Services
         container.register(SummaryService.self) { _ in
             return DefaultSummaryService()

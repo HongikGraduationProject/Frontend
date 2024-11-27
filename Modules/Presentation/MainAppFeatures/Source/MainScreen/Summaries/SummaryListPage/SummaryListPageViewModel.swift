@@ -61,22 +61,31 @@ class SummaryListPageViewModel: SummariesVMable {
     
     init() {
         
-        // MARK: 스트림 연결
-        let summaryItemList = summaryUseCase
-            .summariesStream
-
-        
-        // MARK: 필터적용
+        // MARK: 스트림 연결 + 필터적용
         self.summaryItems = Observable
-            .combineLatest(summaryItemList, currentSelectedCategoryForFilter)
+            .combineLatest(
+                summaryUseCase.summariesStream,
+                currentSelectedCategoryForFilter
+            )
             .map { (items, category) in
+                
+                var filteredItems: [SummaryItem] = []
                 
                 if category == .all {
                     
-                    return items
+                    filteredItems = items
+                    
+                } else {
+                    
+                    filteredItems = items.filter({ $0.mainCategory == category })
+                    
                 }
                 
-                return items.filter({ $0.mainCategory == category })
+                let sortedList = filteredItems.sorted { lhs, rhs in
+                    lhs.createdAt > rhs.createdAt
+                }
+                
+                return sortedList
             }
             .asDriver(onErrorJustReturn: [])
         
@@ -181,26 +190,21 @@ class SummaryListPageViewModel: SummariesVMable {
             .withUnretained(self)
             .subscribe(onNext: { viewModel, result in
                 
-                switch result {
-                case .success:
-                    
-                    // 요약 요청 로딩 종료
-                    viewModel.presentSummaryLoadingPublisher.onNext(false)
-                    
-                    
-                case .failure(let error):
+                // 요약 요청 로딩 종료
+                viewModel.presentSummaryLoadingPublisher.onNext(false)
+                
+                if case .failure(let error) = result {
                     
                     let alertVO: CapAlertVO = .init(
                         title: "요청 실패",
-                        message: error.localizedDescription
+                        message: error.message
                     )
                     
                     // 에러 메시지 전송
                     viewModel.summaryRequestErrorPublisher
                         .onNext(alertVO)
-                    
-                    return
                 }
+                
             })
             .disposed(by: disposeBag)
     }

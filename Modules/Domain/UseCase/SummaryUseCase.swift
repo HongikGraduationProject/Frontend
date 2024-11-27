@@ -153,7 +153,7 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                 if fc >= 3 {
                     
                     // 3회이상 요청 실패시
-                    summaryResultPublisher.onError(error)
+                    summaryResultPublisher.onError(SummariesError.summaryRequestFailed)
                     
                     // 트레킹중이던 값 삭제
                     requestCounter.removeRequestCount(videoCode: videoCode)
@@ -176,7 +176,11 @@ public class DefaultSummaryUseCase: SummaryUseCase {
         
         Observable
             .zip(summaryStatusRequestSuccess, requestCount)
-            .delay(.milliseconds(Int(delaySeconds * 1000.0)), scheduler: ConcurrentDispatchQueueScheduler(qos: .default))
+            .delay(
+                .milliseconds(Int(delaySeconds * 1000.0)),
+                scheduler: ConcurrentDispatchQueueScheduler(qos: .default)
+            )
+            .observe(on: SerialDispatchQueueScheduler.init(qos: .default))
             .subscribe(onNext: { [weak self, summaryResultPublisher] requestResult, rc in
                 
                 guard let self else { return }
@@ -186,12 +190,10 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                 switch requestResult.status {
                 case .complete:
                     
+                    printIfDebug("⬇️ #\(videoId) 요약요청 작업완료")
+                    
                     // 비디오 코드 삭제요청
                     videoCodeRepository.removeVideoCode(videoCode)
-                    
-                    
-                    // 요약이 완료된 숏폼으로 부터 디테일정보 추출후 전송
-                    requestSubDetailOfVideo(videoId: videoId)
                     
                     
                     // 트레킹중이던 값 삭제
@@ -199,13 +201,29 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                     requestCounter.removeFailureCount(videoCode: videoCode)
                     
                     
-                    // 요약 성공 여부 전송
-                    summaryResultPublisher.onNext(())
-                    summaryResultPublisher.onCompleted()
+                    // 요약이 완료된 숏폼으로 부터 디테일정보 추출후 전송
+                    requestSubDetailOfVideo(videoId: videoId) { result in
+                        
+                        switch result {
+                        case .success:
+                            
+                            // 요약 디테일 확인 성공 여부 전송
+                            summaryResultPublisher.onNext(())
+                            summaryResultPublisher.onCompleted()
+                            
+                        case .failure(let error):
+                            
+                            // 요약 디테일 확인 실패 여부 전송
+                            summaryResultPublisher.onError(error)
+                        }
+                    }
+                    
                     
                 case .processing:
                     
-                    if rc >= 20 {
+                    requestCounter.countUpRequestCount(videoCode: videoCode)
+                    
+                    if rc >= 10 {
                         
                         // 트레킹중이던 값 삭제
                         requestCounter.removeRequestCount(videoCode: videoCode)
@@ -214,6 +232,8 @@ public class DefaultSummaryUseCase: SummaryUseCase {
                         
                         // 20회이상인 경우 더이상 요청하지 않고 비디오코드를 삭제한다.
                         videoCodeRepository.removeVideoCode(videoCode)
+                        
+                        summaryResultPublisher.onError(SummariesError.summaryRequestFailed)
                         
                     } else {
                         
@@ -231,32 +251,52 @@ public class DefaultSummaryUseCase: SummaryUseCase {
             .asSingle()
     }
     
-    private func requestSubDetailOfVideo(videoId: Int) {
+    private func requestSubDetailOfVideo(
+        videoId: Int,
+        onComplete: @escaping ((Result<Void, SummariesError>) -> ())
+    ) {
         
-        summaryDetailRepository
-            .fetchSummaryDetail(videoId: videoId)
-            .subscribe(onSuccess: { [weak self] detail in
+        let detailRequestTask: Single<Result<SummaryDetail, SummariesError>> = convert(task: summaryDetailRepository.fetchSummaryDetail(videoId: videoId))
+        
+        detailRequestTask
+            .subscribe(onSuccess: { [weak self] result in
                 
-                let item = SummaryItem(
-                    title: detail.title,
-                    mainCategory: detail.mainCategory,
-                    createdAt: detail.createdAt,
-                    videoSummaryId: videoId
-                )
+                guard let self else { return }
                 
-                self?.summariesListManagementQueue.async(flags: .barrier) { [weak self] in
-                    guard let self else { return }
+                switch result {
+                case .success(let detail):
                     
-                    summariesList.insert(item, at: 0)
+                    let item = SummaryItem(
+                        title: detail.title,
+                        mainCategory: detail.mainCategory,
+                        createdAt: detail.createdAt,
+                        videoSummaryId: videoId
+                    )
                     
-                    publishSummaryList()
+                    self.summariesListManagementQueue.async(flags: .barrier) { [weak self] in
+                        guard let self else { return }
+                        
+                        summariesList.insert(item, at: 0)
+                        
+                        publishSummaryList()
+                        
+                        onComplete(.success(()))
+                    }
+                    
+                case .failure:
+                    
+                    // 디테일 요청중 에러 발생
+                    
+                    onComplete(.failure(SummariesError.summaryDetailRequestFailed))
                 }
-                
             })
             .disposed(by: disposeBag)
     }
     
     private func publishSummaryList() {
-        summariesStream.onNext(summariesList)
+        let list = Set(summariesList)
+        let unDuplicatedList = Array(list)
+        
+        summariesStream.onNext(unDuplicatedList)
     }
 }

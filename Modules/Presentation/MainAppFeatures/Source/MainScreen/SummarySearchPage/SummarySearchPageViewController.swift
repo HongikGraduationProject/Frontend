@@ -58,9 +58,9 @@ class SummarySearchPageViewController: BaseVC {
         super.viewDidLoad()
         
         setAppearance()
+        setTableView()
         setLayout()
         setObservable()
-        setTableView()
     }
     
     override func viewDidAppear(_ animated: Bool) {

@@ -28,6 +28,9 @@ class DefaultRootCoordinator: RootCoordinator {
     func start() {
         
         let viewModel = RootViewModel()
+        viewModel.presentNetworkConfigInputPage = { [weak self] in
+            self?.presentNetworkConfigInputPage()
+        }
         viewModel.presentMainTabBar = { [weak self] in
             self?.presentMainTabBar()
         }
@@ -37,7 +40,6 @@ class DefaultRootCoordinator: RootCoordinator {
         viewModel.presentChoosePlatformPage = { [weak self] in
             self?.presentChoosePlatformPage()
         }
-        
         
         let viewController = RootViewController()
         viewController.bind(viewModel: viewModel)
@@ -51,6 +53,16 @@ class DefaultRootCoordinator: RootCoordinator {
 }
 
 extension DefaultRootCoordinator {
+    
+    func presentNetworkConfigInputPage() {
+        
+        let coordinator = NetworkConfigSettingPageCoordinator(
+            navigationController: navigationController
+        )
+        coordinator.finishDelegate = self
+        addChild(coordinator)
+        coordinator.start()
+    }
     
     func presentMainTabBar() {
         
@@ -85,5 +97,18 @@ extension DefaultRootCoordinator {
 
 extension DefaultRootCoordinator: CoordinatorFinishDelegate {
     
-    func coordinatorDidFinish(childCoordinator: Coordinator) { }
+    func coordinatorDidFinish(childCoordinator: Coordinator) {
+        
+        switch childCoordinator {
+        case is NetworkConfigSettingPageCoordinator:
+            
+            children.removeAll()
+            navigationController.viewControllers.removeAll()
+            
+            start()
+            
+        default:
+            return
+        }
+    }
 }

@@ -135,11 +135,11 @@ open class SummaryRequestVC: UIViewController {
             
             buttonStack.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             buttonStack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            buttonStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            buttonStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
             
             closeButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             closeButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            closeButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            closeButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
             
             loadingIndicatorView.topAnchor.constraint(equalTo: view.topAnchor),
             loadingIndicatorView.leftAnchor.constraint(equalTo: view.leftAnchor),

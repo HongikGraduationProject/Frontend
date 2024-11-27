@@ -11,10 +11,13 @@ public enum SummariesError: String, DomainError {
     
     case networkNotConnected="CAP-001"
     case summaryRequestFailed="CAP-002"
+    case summaryDetailRequestFailed="CAP-003"
     case undefinedError="CAP-000"
     
     public var message: String {
         switch self {
+        case .summaryDetailRequestFailed:
+            "요약 상세정보 요청에 실패했어요"
         case .summaryRequestFailed:
             "요약 요청에 실패했어요"
         case .networkNotConnected:

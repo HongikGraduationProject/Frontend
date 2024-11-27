@@ -6,6 +6,9 @@
 //
 
 import Foundation
+
+import Util
+
 import Moya
 
 /// Shortcap API 도메인 타입입니다.
